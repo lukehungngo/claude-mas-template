@@ -21,8 +21,10 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
      cp -r "$PLUGIN_DIR/rules" .claude/
      cp -r "$PLUGIN_DIR/templates" .claude/
      cp -n "$PLUGIN_DIR/.claude/settings.json" .claude/settings.json 2>/dev/null || true
-     cp -n "$PLUGIN_DIR/CLAUDE.md" ./CLAUDE.md 2>/dev/null || true
      ```
+   - **Handle CLAUDE.md:**
+     - If `CLAUDE.md` does NOT exist → copy the template as-is
+     - If `CLAUDE.md` already exists → do NOT overwrite. Instead, read the existing file and append the **Mandatory Workflow** and **Project Type** sections from the template (the `## Mandatory Workflow` and `## Project Type` blocks) at the end, only if those sections are not already present. Preserve all existing content.
    - If the plugin cache is not found, warn the user and ask them to use the git clone method instead.
 
 1. **Detect stack** — Read `package.json`, `go.mod`, `pyproject.toml`, `Cargo.toml`, `Gemfile`, or `pom.xml` to identify:
