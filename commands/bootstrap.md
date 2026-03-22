@@ -68,7 +68,16 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
    has_ui: {true/false}
    Agents: 7 (6 active + ui-ux-designer conditional)
    Skills: 13 | Commands: 4 | Rules: 4 | Hooks: 2
-   Remaining TODOs: Fill Architecture Invariants, Core Flow, Key Gotchas in CLAUDE.md
 
    All skills and agents are now local — use /ask-questions, /dev-loop, etc. without prefix.
+
+   Remaining TODOs:
+     - Fill Architecture Invariants in CLAUDE.md
+     - Fill Core Flow in CLAUDE.md
+     - Fill Key Gotchas in CLAUDE.md
+
+   Ready to go? Try one of these:
+     /dev-loop <describe your first task>
+     /new-feature <feature name>
+     /ask-questions <what you want to build>
    ```
