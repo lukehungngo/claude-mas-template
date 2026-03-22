@@ -172,6 +172,9 @@ claude "/mas:bootstrap"
 claude "/mas:dev-loop Add user authentication with JWT"
 claude "/mas:new-feature rate-limiting middleware"
 claude "/mas:release v1.2.0"
+
+# Non-stop autonomous mode — skips all human checkpoints
+claude "/mas:dev-loop Add user authentication with JWT --auto"
 ```
 
 ### Skills (available after bootstrap)
