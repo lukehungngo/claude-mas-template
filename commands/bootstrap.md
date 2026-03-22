@@ -47,8 +47,9 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
 
 3. **Fix hooks** — Update `lint.sh` and `pre-stop-gate.sh` with the detected lint/test commands. Run `chmod +x .claude/hooks/*.sh`.
 
-4. **Create task directories:**
+4. **Create output directories:**
    ```bash
+   mkdir -p docs/mas
    mkdir -p tasks/{pending,in-progress,done,blocked}
    ```
 

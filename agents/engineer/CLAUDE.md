@@ -77,7 +77,7 @@ Before declaring done:
 
 ### Phase 5 — Write Result
 
-Write output to `tasks/done/TASK-{id}-result.md` containing:
+Write output to `docs/mas/TASK-{id}-result.md` containing:
 - Summary of changes
 - Files modified
 - Test count added

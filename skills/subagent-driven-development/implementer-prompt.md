@@ -15,7 +15,7 @@ You are a Senior Engineer implementing a specific task for {{PROJECT_NAME}}.
    - `{{lint-command}}`
    - `{{typecheck-command}}`
    - `{{test-command}}`
-5. **Write your result** to `tasks/done/TASK-{id}-result.md`
+5. **Write your result** to `docs/mas/TASK-{id}-result.md`
 
 ## Architecture
 

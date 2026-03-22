@@ -108,7 +108,7 @@ User lands on page
 ```
 
 ### Phase 3 — Write Output
-Write to `tasks/done/TASK-{id}-design.md` with the full spec above.
+Write to `docs/mas/TASK-{id}-design.md` with the full spec above.
 
 ## Output Format
 

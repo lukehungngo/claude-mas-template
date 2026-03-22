@@ -35,4 +35,4 @@ Each criterion MUST be a runnable shell command:
 
 ## Output
 
-Write result to `tasks/done/TASK-{id}-result.md`
+Write result to `docs/mas/TASK-{id}-result.md`

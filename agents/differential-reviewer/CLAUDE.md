@@ -83,7 +83,7 @@ Run through each of these checks. Do NOT skip any.
 
 ### Step 4 — Write Output
 
-Write to `tasks/done/TASK-{id}-differential-r{round}.md`
+Write to `docs/mas/TASK-{id}-differential-r{round}.md`
 
 Include: round number, issues addressed (if Round > 1), issues remaining, clear verdict with rationale.
 

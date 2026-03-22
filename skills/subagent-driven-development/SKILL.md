@@ -26,7 +26,7 @@ Dispatch a fresh subagent per task with two-stage review. Each subagent gets a c
    - Reference files for existing components/patterns
    - Reference to CLAUDE.md for project type and architecture
 
-2. **Wait for design spec** (written to `tasks/done/TASK-{id}-design.md`)
+2. **Wait for design spec** (written to `docs/mas/TASK-{id}-design.md`)
 
 3. **Attach design spec** to the dependent implementation task as `design_spec`
 
@@ -85,7 +85,7 @@ You are the Engineer agent for {{PROJECT_NAME}}.
 - Run lint + typecheck + tests before completing
 
 ## Output
-Write result to `tasks/done/TASK-{id}-result.md`
+Write result to `docs/mas/TASK-{id}-result.md`
 ```
 
 ## Anti-patterns
