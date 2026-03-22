@@ -1,5 +1,5 @@
 {
-  "name": "claude-mas-template",
+  "name": "mas",
   "description": "Production-grade multi-agent system template for Claude Code: 7 agents, 13 skills, TDD workflows, and battle-tested engineering practices",
   "version": "1.0.0",
   "author": {

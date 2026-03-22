@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "claude-mas-template",
+      "name": "mas",
       "source": "./",
       "description": "7-agent multi-agent system with auto-bootstrap, TDD, and conditional UI/UX designer",
       "version": "1.0.0"

@@ -4,7 +4,6 @@ A production-grade template for building any project with Claude Code's multi-ag
 
 ## What's Included
 
-
 | Component     | Count | Description                                                                                                  |
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | **Agents**    | 7     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
@@ -14,7 +13,6 @@ A production-grade template for building any project with Claude Code's multi-ag
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
 | **Templates** | 2     | task-spec, review-report                                                                                     |
 
-
 ## Install
 
 ### Option A: Claude Code Plugin (recommended)
@@ -23,22 +21,22 @@ Add the marketplace and install — two commands:
 
 ```bash
 claude plugin marketplace add lukehungngo/claude-mas-template
-claude plugin install claude-mas-template@luke-plugins
+claude plugin install mas@luke-plugins
 ```
 
 Then bootstrap your project:
 
 ```bash
-claude "/bootstrap"
+claude "/mas:bootstrap"
 ```
 
 Update later:
 
 ```bash
-claude plugin update claude-mas-template
+claude plugin update mas
 ```
 
-### Option B: Git Clone
+### Option B: Clone Multi Agent System into your current Repository
 
 ```bash
 git clone https://github.com/lukehungngo/claude-mas-template /tmp/mas
@@ -150,100 +148,62 @@ claude-mas-template/
 
 ```bash
 # Bootstrap — auto-detect stack, fill placeholders, configure hooks
-claude "/bootstrap"
+/mas:bootstrap
 
 # Full development loop — end-to-end: ask → plan → implement → review → finish
-claude "/dev-loop Add user authentication with JWT"
+/mas:dev-loop Add user authentication with JWT
 
 # Scaffold a new feature
-claude "/new-feature rate-limiting middleware"
+/mas:new-feature rate-limiting middleware
 
 # Release checklist
-claude "/release v1.2.0"
+/mas:release v1.2.0
 ```
 
-### Skills (invoked via natural language or slash syntax)
+### Skills
 
 ```bash
-# Clarify requirements before coding
-claude "/ask-questions I need to add OAuth2 support"
-
-# Create a detailed implementation plan
-claude "/writing-plans Plan: migrate database from SQLite to PostgreSQL"
-
-# Execute a plan with subagents (one agent per task, two-stage review)
-claude "/subagent-driven-development Execute the migration plan"
-
-# Execute a plan in batches with human checkpoints
-claude "/executing-plans Execute the migration plan"
-
-# TDD workflow — RED-GREEN-REFACTOR
-claude "/test-driven-development Implement the rate limiter module"
-
-# Request a structured code review
-claude "/requesting-code-review Review the auth middleware changes"
-
-# Process reviewer feedback and fix issues
-claude "/receiving-code-review Fix issues from the review report"
-
-# Finish a branch — verify tests, merge/PR/keep/discard, cleanup
-claude "/finishing-branch"
-
-# Final verification checklist before declaring done
-claude "/verification"
-
-# Debug a bug systematically when root cause is unclear
-claude "/systematic-debugging Users get 500 on /api/payments"
-
-# Property-based testing for edge-case-heavy code
-claude "/property-based-testing Test the URL parser"
-
-# Stress-test a research proposal before committing
-claude "/differential-review Review the caching strategy proposal"
-
-# Reference software engineering principles for design decisions
-claude "/se-principles Should I use inheritance or composition here?"
+/mas:ask-questions            # Clarify requirements before coding
+/mas:writing-plans            # Create a detailed implementation plan
+/mas:subagent-driven-development  # Execute plan with subagents (two-stage review)
+/mas:executing-plans          # Execute plan in batches with human checkpoints
+/mas:test-driven-development  # TDD — RED-GREEN-REFACTOR
+/mas:requesting-code-review   # Dispatch a structured code review
+/mas:receiving-code-review    # Process reviewer feedback and fix issues
+/mas:finishing-branch         # Verify, merge/PR/keep/discard, cleanup
+/mas:verification             # Final checklist before declaring done
+/mas:systematic-debugging     # Debug when root cause is unclear
+/mas:property-based-testing   # Edge-case-heavy testing
+/mas:differential-review      # Stress-test a research proposal
+/mas:se-principles            # Reference for design decisions
 ```
 
 ### Direct Agent Usage
 
 ```bash
-# Orchestrator — decomposes tasks, dispatches to other agents, verifies outcomes
-claude --agent orchestrator "Build a complete CRUD API for products"
-
-# Engineer — implements features with TDD, writes minimal code
-claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
-
-# Reviewer — two-phase review (business alignment + technical audit)
-claude --agent reviewer "Review the changes in src/auth/"
-
-# Researcher — explores approaches, analyzes trade-offs, produces proposals
-claude --agent researcher "What are the best options for real-time notifications?"
-
-# Differential Reviewer — adversarial second opinion on proposals
-claude --agent differential-reviewer "Stress-test the Redis caching proposal"
-
-# Bug Fixer — TDD-focused, fixes exactly what's reported
-claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
-
-# UI/UX Designer — component specs, interaction flows, accessibility (requires has_ui: true)
-claude --agent ui-ux-designer "Design the settings page layout"
+claude --agent mas:orchestrator "Build a complete CRUD API for products"
+claude --agent mas:engineer "Implement TASK-003: Add rate limiting middleware"
+claude --agent mas:reviewer "Review the changes in src/auth/"
+claude --agent mas:researcher "What are the best options for real-time notifications?"
+claude --agent mas:differential-reviewer "Stress-test the Redis caching proposal"
+claude --agent mas:bug-fixer "Fix: login returns 401 when password has special chars"
+claude --agent mas:ui-ux-designer "Design the settings page layout"
 ```
 
 ### Combining Workflows
 
 ```bash
 # Full pipeline: ask → worktree → plan → implement (TDD) → review → finish
-claude "/dev-loop Implement WebSocket support for real-time updates"
+/mas:dev-loop Implement WebSocket support for real-time updates
 
 # Plan then execute with subagents
-claude "/writing-plans Plan: add pagination to all list endpoints"
-claude "/subagent-driven-development Execute the pagination plan"
+/mas:writing-plans Plan: add pagination to all list endpoints
+/mas:subagent-driven-development Execute the pagination plan
 
 # Debug → fix → review
-claude "/systematic-debugging Why are emails not sending?"
-claude --agent bug-fixer "Fix: SMTP connection timeout in email service"
-claude "/requesting-code-review Review the email fix"
+/mas:systematic-debugging Why are emails not sending?
+claude --agent mas:bug-fixer "Fix: SMTP connection timeout in email service"
+/mas:requesting-code-review Review the email fix
 ```
 
 ## Acknowledgments
