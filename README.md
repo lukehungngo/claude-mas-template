@@ -30,10 +30,20 @@ Then bootstrap your project:
 claude "/mas:bootstrap"
 ```
 
-Update later:
+Update plugin:
 
 ```bash
-claude plugin update mas
+claude plugin update mas                          # update to latest version
+claude plugin marketplace update luke-plugins     # refresh marketplace cache
+```
+
+After updating, run `/mas:bootstrap` again to sync new agents/skills into your project's `.claude/`. Existing files won't be overwritten without confirmation.
+
+Uninstall:
+
+```bash
+claude plugin uninstall mas
+claude plugin marketplace remove luke-plugins
 ```
 
 ### Option B: Clone Multi Agent System into your current Repository
