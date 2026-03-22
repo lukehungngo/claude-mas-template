@@ -1,0 +1,21 @@
+# Claude Code local
+.claude/settings.local.json
+.claude/worktrees/
+
+# Task tracking (ephemeral, per-session)
+tasks/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
