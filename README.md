@@ -33,8 +33,8 @@ claude "/mas:bootstrap"
 Update plugin:
 
 ```bash
-claude plugin update mas                          # update to latest version
 claude plugin marketplace update luke-plugins     # refresh marketplace cache
+claude plugin update mas@luke-plugins             # update to latest version
 ```
 
 After updating, run `/mas:bootstrap` again to sync new agents/skills into your project's `.claude/`. Existing files won't be overwritten without confirmation.
@@ -152,63 +152,79 @@ claude-mas-template/
     └── review-report.md
 ```
 
-## All Commands
+## Usage
+
+> **Two places you run things:**
+> - **Terminal** `$` — your normal shell (bash/zsh). Used for install, update, and launching Claude.
+> - **Claude CLI** `>` — inside a running Claude Code session. Used for slash commands and chat.
 
 ### Plugin Commands (available immediately after install)
 
+Run these from your **terminal** to start a Claude session with a command:
+
 ```bash
-/mas:bootstrap    # Auto-detect stack, fill placeholders, configure hooks
-/mas:dev-loop     # Full development loop — ask → plan → implement → review → finish
-/mas:new-feature  # Scaffold a new feature
-/mas:release      # Release checklist
+$ claude "/mas:bootstrap"
+$ claude "/mas:dev-loop Add user authentication with JWT"
+$ claude "/mas:new-feature rate-limiting middleware"
+$ claude "/mas:release v1.2.0"
+```
+
+Or start Claude first, then type the command inside:
+
+```bash
+$ claude                        # start Claude Code
+> /mas:bootstrap                # type this inside the Claude CLI
 ```
 
 ### Skills (available after bootstrap)
 
-Once `/mas:bootstrap` copies the MAS into your project's `.claude/`, all skills work without prefix:
+After `/mas:bootstrap` copies files into your project's `.claude/`, these work **inside the Claude CLI** without prefix:
 
-```bash
-/ask-questions            # Clarify requirements before coding
-/writing-plans            # Create a detailed implementation plan
-/subagent-driven-development  # Execute plan with subagents (two-stage review)
-/executing-plans          # Execute plan in batches with human checkpoints
-/test-driven-development  # TDD — RED-GREEN-REFACTOR
-/requesting-code-review   # Dispatch a structured code review
-/receiving-code-review    # Process reviewer feedback and fix issues
-/finishing-branch         # Verify, merge/PR/keep/discard, cleanup
-/verification             # Final checklist before declaring done
-/systematic-debugging     # Debug when root cause is unclear
-/property-based-testing   # Edge-case-heavy testing
-/differential-review      # Stress-test a research proposal
-/se-principles            # Reference for design decisions
+```
+> /ask-questions I need to add OAuth2 support
+> /writing-plans Plan: migrate database to PostgreSQL
+> /subagent-driven-development Execute the migration plan
+> /executing-plans Execute the migration plan
+> /test-driven-development Implement the rate limiter module
+> /requesting-code-review Review the auth middleware changes
+> /receiving-code-review Fix issues from the review report
+> /finishing-branch
+> /verification
+> /systematic-debugging Users get 500 on /api/payments
+> /property-based-testing Test the URL parser
+> /differential-review Review the caching strategy proposal
+> /se-principles Should I use inheritance or composition here?
 ```
 
 ### Direct Agent Usage (available after bootstrap)
 
+Launch a specific agent from your **terminal**:
+
 ```bash
-claude --agent orchestrator "Build a complete CRUD API for products"
-claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
-claude --agent reviewer "Review the changes in src/auth/"
-claude --agent researcher "What are the best options for real-time notifications?"
-claude --agent differential-reviewer "Stress-test the Redis caching proposal"
-claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
-claude --agent ui-ux-designer "Design the settings page layout"
+$ claude --agent orchestrator "Build a complete CRUD API for products"
+$ claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
+$ claude --agent reviewer "Review the changes in src/auth/"
+$ claude --agent researcher "What are the best options for real-time notifications?"
+$ claude --agent differential-reviewer "Stress-test the Redis caching proposal"
+$ claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
+$ claude --agent ui-ux-designer "Design the settings page layout"
 ```
 
-### Combining Workflows
+### Example Workflows
 
 ```bash
-# Full pipeline: ask → worktree → plan → implement (TDD) → review → finish
-/dev-loop Implement WebSocket support for real-time updates
+# 1. Full pipeline (one command does everything)
+$ claude "/mas:dev-loop Implement WebSocket support for real-time updates"
 
-# Plan then execute with subagents
-/writing-plans Plan: add pagination to all list endpoints
-/subagent-driven-development Execute the pagination plan
+# 2. Plan then execute (two steps, inside Claude CLI)
+$ claude
+> /writing-plans Plan: add pagination to all list endpoints
+> /subagent-driven-development Execute the pagination plan
 
-# Debug → fix → review
-/systematic-debugging Why are emails not sending?
-claude --agent bug-fixer "Fix: SMTP connection timeout in email service"
-/requesting-code-review Review the email fix
+# 3. Debug → fix → review (inside Claude CLI)
+> /systematic-debugging Why are emails not sending?
+> Tell the bug-fixer agent to fix the SMTP timeout
+> /requesting-code-review Review the email fix
 ```
 
 ## Acknowledgments
