@@ -8,6 +8,23 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
 
 ## Steps
 
+0. **Copy MAS files into project** — Copy agents, skills, commands, rules, hooks, and templates from the plugin into the project's `.claude/` directory. Also copy CLAUDE.md to the project root if it doesn't exist.
+   - Find the plugin cache directory at `~/.claude/plugins/cache/luke-plugins/mas/` (use the latest version subdirectory)
+   - Copy these directories into `.claude/`:
+     ```bash
+     mkdir -p .claude
+     PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ | sort -V | tail -1)
+     cp -r "$PLUGIN_DIR/agents" .claude/
+     cp -r "$PLUGIN_DIR/commands" .claude/
+     cp -r "$PLUGIN_DIR/skills" .claude/
+     cp -r "$PLUGIN_DIR/hooks" .claude/
+     cp -r "$PLUGIN_DIR/rules" .claude/
+     cp -r "$PLUGIN_DIR/templates" .claude/
+     cp -n "$PLUGIN_DIR/.claude/settings.json" .claude/settings.json 2>/dev/null || true
+     cp -n "$PLUGIN_DIR/CLAUDE.md" ./CLAUDE.md 2>/dev/null || true
+     ```
+   - If the plugin cache is not found, warn the user and ask them to use the git clone method instead.
+
 1. **Detect stack** — Read `package.json`, `go.mod`, `pyproject.toml`, `Cargo.toml`, `Gemfile`, or `pom.xml` to identify:
    - Language and version
    - Test command (e.g., `npm test`, `pytest`, `go test ./...`)
@@ -50,5 +67,8 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
    Stack: {language} + {framework}
    has_ui: {true/false}
    Agents: 7 (6 active + ui-ux-designer conditional)
+   Skills: 13 | Commands: 4 | Rules: 4 | Hooks: 2
    Remaining TODOs: Fill Architecture Invariants, Core Flow, Key Gotchas in CLAUDE.md
+
+   All skills and agents are now local — use /ask-questions, /dev-loop, etc. without prefix.
    ```
