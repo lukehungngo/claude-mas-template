@@ -205,6 +205,7 @@ Run in your terminal:
 
 ```bash
 claude --agent orchestrator "Build a complete CRUD API for products"
+claude --dangerously-skip-permissions --agent orchestrator "Build a complete CRUD API for products" # for by pass all permission
 claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
 claude --agent reviewer "Review the changes in src/auth/"
 claude --agent researcher "What are the best options for real-time notifications?"
