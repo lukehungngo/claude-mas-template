@@ -144,66 +144,61 @@ claude-mas-template/
 
 ## All Commands
 
-### Slash Commands (entry points)
+### Plugin Commands (available immediately after install)
 
 ```bash
-# Bootstrap — auto-detect stack, fill placeholders, configure hooks
-/mas:bootstrap
-
-# Full development loop — end-to-end: ask → plan → implement → review → finish
-/mas:dev-loop Add user authentication with JWT
-
-# Scaffold a new feature
-/mas:new-feature rate-limiting middleware
-
-# Release checklist
-/mas:release v1.2.0
+/mas:bootstrap    # Auto-detect stack, fill placeholders, configure hooks
+/mas:dev-loop     # Full development loop — ask → plan → implement → review → finish
+/mas:new-feature  # Scaffold a new feature
+/mas:release      # Release checklist
 ```
 
-### Skills
+### Skills (available after bootstrap)
+
+Once `/mas:bootstrap` copies the MAS into your project's `.claude/`, all skills work without prefix:
 
 ```bash
-/mas:ask-questions            # Clarify requirements before coding
-/mas:writing-plans            # Create a detailed implementation plan
-/mas:subagent-driven-development  # Execute plan with subagents (two-stage review)
-/mas:executing-plans          # Execute plan in batches with human checkpoints
-/mas:test-driven-development  # TDD — RED-GREEN-REFACTOR
-/mas:requesting-code-review   # Dispatch a structured code review
-/mas:receiving-code-review    # Process reviewer feedback and fix issues
-/mas:finishing-branch         # Verify, merge/PR/keep/discard, cleanup
-/mas:verification             # Final checklist before declaring done
-/mas:systematic-debugging     # Debug when root cause is unclear
-/mas:property-based-testing   # Edge-case-heavy testing
-/mas:differential-review      # Stress-test a research proposal
-/mas:se-principles            # Reference for design decisions
+/ask-questions            # Clarify requirements before coding
+/writing-plans            # Create a detailed implementation plan
+/subagent-driven-development  # Execute plan with subagents (two-stage review)
+/executing-plans          # Execute plan in batches with human checkpoints
+/test-driven-development  # TDD — RED-GREEN-REFACTOR
+/requesting-code-review   # Dispatch a structured code review
+/receiving-code-review    # Process reviewer feedback and fix issues
+/finishing-branch         # Verify, merge/PR/keep/discard, cleanup
+/verification             # Final checklist before declaring done
+/systematic-debugging     # Debug when root cause is unclear
+/property-based-testing   # Edge-case-heavy testing
+/differential-review      # Stress-test a research proposal
+/se-principles            # Reference for design decisions
 ```
 
-### Direct Agent Usage
+### Direct Agent Usage (available after bootstrap)
 
 ```bash
-claude --agent mas:orchestrator "Build a complete CRUD API for products"
-claude --agent mas:engineer "Implement TASK-003: Add rate limiting middleware"
-claude --agent mas:reviewer "Review the changes in src/auth/"
-claude --agent mas:researcher "What are the best options for real-time notifications?"
-claude --agent mas:differential-reviewer "Stress-test the Redis caching proposal"
-claude --agent mas:bug-fixer "Fix: login returns 401 when password has special chars"
-claude --agent mas:ui-ux-designer "Design the settings page layout"
+claude --agent orchestrator "Build a complete CRUD API for products"
+claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
+claude --agent reviewer "Review the changes in src/auth/"
+claude --agent researcher "What are the best options for real-time notifications?"
+claude --agent differential-reviewer "Stress-test the Redis caching proposal"
+claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
+claude --agent ui-ux-designer "Design the settings page layout"
 ```
 
 ### Combining Workflows
 
 ```bash
 # Full pipeline: ask → worktree → plan → implement (TDD) → review → finish
-/mas:dev-loop Implement WebSocket support for real-time updates
+/dev-loop Implement WebSocket support for real-time updates
 
 # Plan then execute with subagents
-/mas:writing-plans Plan: add pagination to all list endpoints
-/mas:subagent-driven-development Execute the pagination plan
+/writing-plans Plan: add pagination to all list endpoints
+/subagent-driven-development Execute the pagination plan
 
 # Debug → fix → review
-/mas:systematic-debugging Why are emails not sending?
-claude --agent mas:bug-fixer "Fix: SMTP connection timeout in email service"
-/mas:requesting-code-review Review the email fix
+/systematic-debugging Why are emails not sending?
+claude --agent bug-fixer "Fix: SMTP connection timeout in email service"
+/requesting-code-review Review the email fix
 ```
 
 ## Acknowledgments
