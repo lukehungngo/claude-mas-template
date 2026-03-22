@@ -1,3 +1,7 @@
+---
+description: Scaffold a new feature with the MAS workflow
+---
+
 # New Feature
 
 Scaffold a new feature: $ARGUMENTS

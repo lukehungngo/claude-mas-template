@@ -1,3 +1,7 @@
+---
+description: Bootstrap MAS Template — auto-detect stack, fill placeholders, configure hooks
+---
+
 # Bootstrap MAS Template
 
 Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS

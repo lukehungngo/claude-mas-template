@@ -1,3 +1,7 @@
+---
+description: Full development loop — ask, plan, implement (TDD), review, finish
+---
+
 # Development Loop
 
 Execute the full mandatory workflow for: $ARGUMENTS

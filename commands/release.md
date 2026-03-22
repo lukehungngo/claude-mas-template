@@ -1,3 +1,7 @@
+---
+description: Release checklist — verify tests, changelog, tag, and publish
+---
+
 # Release Checklist
 
 Prepare a release for: $ARGUMENTS
