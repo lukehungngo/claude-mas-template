@@ -4,14 +4,16 @@ A production-grade template for building any project with Claude Code's multi-ag
 
 ## What's Included
 
-| Component | Count | Description |
-|-----------|-------|-------------|
-| **Agents** | 7 | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
-| **Skills** | 13 | 8 core workflow skills + 5 extended engineering skills |
-| **Rules** | 4 | honesty-first, severity-discipline, architecture invariants, meta-rules guide |
-| **Commands** | 4 | bootstrap, dev-loop, new-feature, release |
-| **Hooks** | 2 | PostToolUse lint, Stop quality gate |
-| **Templates** | 2 | task-spec, review-report |
+
+| Component     | Count | Description                                                                                                  |
+| ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
+| **Agents**    | 7     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
+| **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
+| **Rules**     | 4     | honesty-first, severity-discipline, architecture invariants, meta-rules guide                                |
+| **Commands**  | 4     | bootstrap, dev-loop, new-feature, release                                                                    |
+| **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
+| **Templates** | 2     | task-spec, review-report                                                                                     |
+
 
 ## Install
 
@@ -39,10 +41,12 @@ claude plugin update claude-mas-template
 ### Option B: Git Clone
 
 ```bash
-git clone https://github.com/lukehungngo/claude-mas-template /tmp/claude-mas-template
-cp -r /tmp/claude-mas-template/.claude .
-cp /tmp/claude-mas-template/CLAUDE.md .
-rm -rf /tmp/claude-mas-template
+git clone https://github.com/lukehungngo/claude-mas-template /tmp/mas
+mkdir -p .claude
+cp -r /tmp/mas/agents /tmp/mas/commands /tmp/mas/skills /tmp/mas/hooks /tmp/mas/rules /tmp/mas/templates .claude/
+cp /tmp/mas/.claude/settings.json .claude/
+cp /tmp/mas/CLAUDE.md .
+rm -rf /tmp/mas
 
 claude "/bootstrap"
 ```
@@ -87,54 +91,57 @@ claude "/bootstrap"
 ## File Structure
 
 ```
-your-project/
-├── CLAUDE.md                              # Project context (customize)
+claude-mas-template/
+├── .claude-plugin/
+│   ├── plugin.json                        # Plugin metadata
+│   └── marketplace.json                   # Self-hosted marketplace manifest
 ├── .claude/
-│   ├── settings.json                      # Permissions + hooks
-│   ├── agents/
-│   │   ├── orchestrator/CLAUDE.md         # Routes tasks to agents
-│   │   ├── engineer/CLAUDE.md             # Implements with TDD
-│   │   ├── reviewer/CLAUDE.md             # Two-phase code review
-│   │   ├── researcher/CLAUDE.md           # Explores approaches
-│   │   ├── differential-reviewer/CLAUDE.md # Stress-tests proposals
-│   │   ├── bug-fixer/CLAUDE.md            # TDD bug fixes
-│   │   └── ui-ux-designer/CLAUDE.md       # Component specs & a11y (has_ui: true)
-│   ├── commands/
-│   │   ├── bootstrap.md                   # Auto-detect stack, fill placeholders
-│   │   ├── dev-loop.md                    # Full development workflow
-│   │   ├── new-feature.md                 # Scaffold new feature
-│   │   └── release.md                     # Release checklist
-│   ├── hooks/
-│   │   ├── lint.sh                        # Auto-lint on file edit
-│   │   └── pre-stop-gate.sh              # Quality summary on stop
-│   ├── rules/
-│   │   ├── honesty-first.md               # Metrics integrity
-│   │   ├── severity-discipline.md         # Severity classification
-│   │   ├── architecture.md                # Architecture invariants
-│   │   └── meta-rules-guide.md            # How to write new rules
-│   ├── skills/
-│   │   ├── ask-questions/SKILL.md
-│   │   ├── writing-plans/SKILL.md
-│   │   ├── executing-plans/SKILL.md
-│   │   ├── subagent-driven-development/
-│   │   │   ├── SKILL.md
-│   │   │   ├── implementer-prompt.md
-│   │   │   ├── spec-reviewer-prompt.md
-│   │   │   └── code-quality-reviewer-prompt.md
-│   │   ├── test-driven-development/SKILL.md
-│   │   ├── requesting-code-review/
-│   │   │   ├── SKILL.md
-│   │   │   └── code-reviewer.md
-│   │   ├── receiving-code-review/SKILL.md
-│   │   ├── finishing-branch/SKILL.md
-│   │   ├── verification/SKILL.md
-│   │   ├── systematic-debugging/SKILL.md
-│   │   ├── property-based-testing/SKILL.md
-│   │   ├── se-principles/SKILL.md
-│   │   └── differential-review/SKILL.md
-│   └── templates/
-│       ├── task-spec.md
-│       └── review-report.md
+│   └── settings.json                      # Permissions + hooks (for git clone)
+├── CLAUDE.md                              # Project context template (customize)
+├── agents/
+│   ├── orchestrator/CLAUDE.md             # Routes tasks to agents
+│   ├── engineer/CLAUDE.md                 # Implements with TDD
+│   ├── reviewer/CLAUDE.md                 # Two-phase code review
+│   ├── researcher/CLAUDE.md               # Explores approaches
+│   ├── differential-reviewer/CLAUDE.md    # Stress-tests proposals
+│   ├── bug-fixer/CLAUDE.md                # TDD bug fixes
+│   └── ui-ux-designer/CLAUDE.md           # Component specs & a11y (has_ui: true)
+├── commands/
+│   ├── bootstrap.md                       # Auto-detect stack, fill placeholders
+│   ├── dev-loop.md                        # Full development workflow
+│   ├── new-feature.md                     # Scaffold new feature
+│   └── release.md                         # Release checklist
+├── hooks/
+│   ├── lint.sh                            # Auto-lint on file edit
+│   └── pre-stop-gate.sh                   # Quality summary on stop
+├── rules/
+│   ├── honesty-first.md                   # Metrics integrity
+│   ├── severity-discipline.md             # Severity classification
+│   ├── architecture.md                    # Architecture invariants
+│   └── meta-rules-guide.md               # How to write new rules
+├── skills/
+│   ├── ask-questions/SKILL.md
+│   ├── writing-plans/SKILL.md
+│   ├── executing-plans/SKILL.md
+│   ├── subagent-driven-development/
+│   │   ├── SKILL.md
+│   │   ├── implementer-prompt.md
+│   │   ├── spec-reviewer-prompt.md
+│   │   └── code-quality-reviewer-prompt.md
+│   ├── test-driven-development/SKILL.md
+│   ├── requesting-code-review/
+│   │   ├── SKILL.md
+│   │   └── code-reviewer.md
+│   ├── receiving-code-review/SKILL.md
+│   ├── finishing-branch/SKILL.md
+│   ├── verification/SKILL.md
+│   ├── systematic-debugging/SKILL.md
+│   ├── property-based-testing/SKILL.md
+│   ├── se-principles/SKILL.md
+│   └── differential-review/SKILL.md
+└── templates/
+    ├── task-spec.md
+    └── review-report.md
 ```
 
 ## All Commands
