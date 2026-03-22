@@ -154,52 +154,42 @@ claude-mas-template/
 
 ## Usage
 
-> **Where to type what:**
->
-> - `terminal` = your normal shell (bash/zsh) — for install, update, and launching Claude
-> - `claude >` = inside a running Claude Code session — for slash commands
-
 ### Plugin Commands (available immediately after install)
 
-These 4 commands work right after plugin install. Run from **terminal**:
+Run in your terminal:
 
 ```bash
-# Start Claude with a command directly
 claude "/mas:bootstrap"
 claude "/mas:dev-loop Add user authentication with JWT"
 claude "/mas:new-feature rate-limiting middleware"
 claude "/mas:release v1.2.0"
 ```
 
-Or start Claude first (`claude`), then type inside the session:
-
-```
-claude > /mas:bootstrap
-```
-
 ### Skills (available after bootstrap)
 
-After `/mas:bootstrap` copies files into your `.claude/`, all 13 skills work inside Claude **without prefix**. Start Claude (`claude`), then:
+After `/mas:bootstrap` copies files into your `.claude/`, all 13 skills work **without prefix**.
+
+Open Claude Code (`claude` in terminal), then type these inside the chat:
 
 ```
-claude > /ask-questions I need to add OAuth2 support
-claude > /writing-plans Plan: migrate database to PostgreSQL
-claude > /subagent-driven-development Execute the migration plan
-claude > /executing-plans Execute the migration plan
-claude > /test-driven-development Implement the rate limiter module
-claude > /requesting-code-review Review the auth middleware changes
-claude > /receiving-code-review Fix issues from the review report
-claude > /finishing-branch
-claude > /verification
-claude > /systematic-debugging Users get 500 on /api/payments
-claude > /property-based-testing Test the URL parser
-claude > /differential-review Review the caching strategy proposal
-claude > /se-principles Should I use inheritance or composition here?
+/ask-questions I need to add OAuth2 support
+/writing-plans Plan: migrate database to PostgreSQL
+/subagent-driven-development Execute the migration plan
+/executing-plans Execute the migration plan
+/test-driven-development Implement the rate limiter module
+/requesting-code-review Review the auth middleware changes
+/receiving-code-review Fix issues from the review report
+/finishing-branch
+/verification
+/systematic-debugging Users get 500 on /api/payments
+/property-based-testing Test the URL parser
+/differential-review Review the caching strategy proposal
+/se-principles Should I use inheritance or composition here?
 ```
 
 ### Direct Agent Usage (available after bootstrap)
 
-Launch a specific agent from **terminal**:
+Run in your terminal:
 
 ```bash
 claude --agent orchestrator "Build a complete CRUD API for products"
@@ -213,25 +203,25 @@ claude --agent ui-ux-designer "Design the settings page layout"
 
 ### Example Workflows
 
-**1. Full pipeline (one terminal command does everything):**
+**1. Full pipeline — run in terminal, one command does everything:**
 
 ```bash
 claude "/mas:dev-loop Implement WebSocket support for real-time updates"
 ```
 
-**2. Plan then execute (inside Claude CLI):**
+**2. Plan then execute — open Claude Code, type in chat:**
 
 ```
-claude > /writing-plans Plan: add pagination to all list endpoints
-claude > /subagent-driven-development Execute the pagination plan
+/writing-plans Plan: add pagination to all list endpoints
+/subagent-driven-development Execute the pagination plan
 ```
 
-**3. Debug, fix, review (inside Claude CLI):**
+**3. Debug, fix, review — open Claude Code, type in chat:**
 
 ```
-claude > /systematic-debugging Why are emails not sending?
-claude > Tell the bug-fixer agent to fix the SMTP timeout
-claude > /requesting-code-review Review the email fix
+/systematic-debugging Why are emails not sending?
+Tell the bug-fixer agent to fix the SMTP timeout
+/requesting-code-review Review the email fix
 ```
 
 ## Acknowledgments
