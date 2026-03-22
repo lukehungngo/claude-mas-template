@@ -17,22 +17,23 @@ A production-grade template for building any project with Claude Code's multi-ag
 
 ### Option A: Claude Code Plugin (recommended)
 
-Install as a plugin — one command, auto-updates:
+Add the marketplace and install — two commands:
 
 ```bash
-claude plugin install https://github.com/lukehungngo/claude-mas-template.git
-```
-
-This installs globally. To install for a specific project only:
-
-```bash
-claude plugin install https://github.com/lukehungngo/claude-mas-template.git --scope project
+claude plugin marketplace add lukehungngo/claude-mas-template
+claude plugin install claude-mas-template@luke-plugins
 ```
 
 Then bootstrap your project:
 
 ```bash
 claude "/bootstrap"
+```
+
+Update later:
+
+```bash
+claude plugin update claude-mas-template
 ```
 
 ### Option B: Git Clone
@@ -44,20 +45,6 @@ cp /tmp/claude-mas-template/CLAUDE.md .
 rm -rf /tmp/claude-mas-template
 
 claude "/bootstrap"
-```
-
-### Option C: Manual Setup
-
-```bash
-# Copy files into your project
-cp -r claude-mas-template/.claude /path/to/your-project/
-cp claude-mas-template/CLAUDE.md /path/to/your-project/
-
-# Fill in placeholders
-grep -r '{{' .claude/ CLAUDE.md
-
-# Make hooks executable
-chmod +x .claude/hooks/*.sh
 ```
 
 ## Agent Architecture

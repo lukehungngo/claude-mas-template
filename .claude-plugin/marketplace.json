@@ -1,0 +1,17 @@
+{
+  "name": "luke-plugins",
+  "metadata": {
+    "description": "Claude Code plugins by Luke Hung Ngo"
+  },
+  "owner": {
+    "name": "Luke Hung Ngo"
+  },
+  "plugins": [
+    {
+      "name": "claude-mas-template",
+      "source": "./",
+      "description": "7-agent multi-agent system with auto-bootstrap, TDD, and conditional UI/UX designer",
+      "version": "1.0.0"
+    }
+  ]
+}
