@@ -10,18 +10,13 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
 
 0. **Copy MAS files into project** — Copy agents, skills, commands, rules, hooks, and templates from the plugin into the project's `.claude/` directory. Also copy CLAUDE.md to the project root if it doesn't exist.
    - Find the plugin cache directory at `~/.claude/plugins/cache/luke-plugins/mas/` (use the latest version subdirectory)
-   - Copy these directories into `.claude/`:
-     ```bash
-     mkdir -p .claude
-     PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ | sort -V | tail -1)
-     cp -r "$PLUGIN_DIR/agents" .claude/
-     cp -r "$PLUGIN_DIR/commands" .claude/
-     cp -r "$PLUGIN_DIR/skills" .claude/
-     cp -r "$PLUGIN_DIR/hooks" .claude/
-     cp -r "$PLUGIN_DIR/rules" .claude/
-     cp -r "$PLUGIN_DIR/templates" .claude/
-     cp -n "$PLUGIN_DIR/.claude/settings.json" .claude/settings.json 2>/dev/null || true
-     ```
+   - Find the plugin cache: `PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ | sort -V | tail -1)`
+   - Create `.claude/` if needed: `mkdir -p .claude`
+   - For each directory (`agents`, `commands`, `skills`, `hooks`, `rules`, `templates`):
+     - If the directory does NOT exist in `.claude/` → copy it entirely
+     - If the directory already exists → copy only items (subdirs/files) that don't already exist. **Never overwrite existing files.** For example, if `.claude/agents/engineer/` already exists, skip it. If `.claude/agents/reviewer/` does not exist, copy it.
+   - For `settings.json`: only copy if `.claude/settings.json` does not exist
+   - Log what was copied and what was skipped so the user knows
    - **Handle CLAUDE.md:**
      - If `CLAUDE.md` does NOT exist → copy the template as-is
      - If `CLAUDE.md` already exists → do NOT overwrite. Instead, read the existing file and append the **Mandatory Workflow** and **Project Type** sections from the template (the `## Mandatory Workflow` and `## Project Type` blocks) at the end, only if those sections are not already present. Preserve all existing content.
