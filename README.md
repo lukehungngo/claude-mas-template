@@ -219,7 +219,11 @@ claude --agent ui-ux-designer "Design the settings page layout"
 **1. Full pipeline — run in terminal, one command does everything:**
 
 ```bash
-claude "/mas:dev-loop Implement WebSocket support for real-time updates"
+claude "/mas:dev-loop --auto Implement WebSocket support for real-time updates" # Run from plugin
+
+or
+
+claude "/dev-loop --auto Implement WebSocket support for real-time updates" # Run from local project
 ```
 
 **2. Plan then execute — open Claude Code, type in chat:**

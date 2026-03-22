@@ -59,7 +59,34 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
    ```
    If any non-intentional placeholders remain, fill them.
 
-6. **Report** — Print a summary:
+6. **Critical: Verify testing framework** — Check if a testing framework was detected (test command is not empty/placeholder). If NO testing framework is found:
+
+   ```
+   ⚠️  WARNING: NO TESTING FRAMEWORK DETECTED
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TDD is non-negotiable in this workflow. Without a testing
+   framework, the following WILL NOT WORK:
+
+     - /dev-loop (TDD enforced at every task)
+     - /test-driven-development
+     - /subagent-driven-development (two-stage review requires tests)
+     - Engineer agent (refuses to implement without tests)
+     - Reviewer agent (blocks on missing test coverage)
+
+   ACTION REQUIRED: Install a testing framework before using
+   any MAS workflow. Examples:
+     - Node.js:  npm install -D vitest (or jest)
+     - Python:   pip install pytest
+     - Go:       (built-in, check go.mod exists)
+     - Rust:     (built-in, check Cargo.toml exists)
+
+   Then re-run /bootstrap to update the test command.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ```
+
+   **Do NOT suppress this warning.** Display it prominently before the summary.
+
+7. **Report** — Print a summary:
    ```
    MAS Template bootstrapped for: {project name}
    Stack: {language} + {framework}

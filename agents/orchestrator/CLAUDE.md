@@ -63,6 +63,14 @@ You are orchestrating **{{PROJECT_NAME}}**: {{one-line description}}.
 
 ### Phase 1 — Decompose
 
+**If an approved implementation plan is provided:**
+1. Read the approved plan (already contains TASK-{id}s, file paths, approaches, dependencies)
+2. Convert each plan task into a full task spec using the template at `.claude/templates/task-spec.md`
+3. Identify the correct agent and task type from the routing table for each task (respecting Phase 0 gate)
+4. Fill in any missing fields (acceptance criteria as runnable commands, business context, do_not_touch)
+5. Write task specs to `tasks/pending/`
+
+**If no approved plan is provided (raw requirement):**
 1. Read the incoming requirement (PRD, feature request, bug report)
 2. Identify the task type from the routing table (respecting Phase 0 gate)
 3. Break into discrete task specs using the template at `.claude/templates/task-spec.md`
