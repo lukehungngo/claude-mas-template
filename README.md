@@ -1,6 +1,8 @@
 # Claude Code Multi-Agent System Template
 
-A production-grade template for building any project with Claude Code's multi-agent system. Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tested configuration.
+Install this plugin and Claude Code becomes a team of 7 AI agents that plan, code, review, and ship for you — with built-in TDD, code review, and quality gates.
+
+Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tested configuration.
 
 ## What's Included
 
@@ -13,11 +15,15 @@ A production-grade template for building any project with Claude Code's multi-ag
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
 | **Templates** | 2     | task-spec, review-report                                                                                     |
 
+## Prerequisites
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and logged in
+
 ## Install
 
 ### Option A: Claude Code Plugin (recommended)
 
-Add the marketplace and install — two commands:
+Add the marketplace and install — two commands in your terminal:
 
 ```bash
 claude plugin marketplace add lukehungngo/claude-mas-template
@@ -46,7 +52,8 @@ claude plugin uninstall mas
 claude plugin marketplace remove luke-plugins
 ```
 
-### Option B: Clone Multi Agent System into your current Repository
+<details>
+<summary><strong>Option B: Manual install (git clone)</strong></summary>
 
 ```bash
 git clone https://github.com/lukehungngo/claude-mas-template /tmp/mas
@@ -58,6 +65,8 @@ rm -rf /tmp/mas
 
 claude "/bootstrap"
 ```
+
+</details>
 
 ## Agent Architecture
 
