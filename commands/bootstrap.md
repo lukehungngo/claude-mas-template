@@ -14,7 +14,7 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
    - Create `.claude/` if needed: `mkdir -p .claude`
    - For each directory (`agents`, `commands`, `skills`, `hooks`, `rules`, `templates`):
      - If the directory does NOT exist in `.claude/` → copy it entirely
-     - If the directory already exists → copy only items (subdirs/files) that don't already exist. **Never overwrite existing files.** For example, if `.claude/agents/engineer/` already exists, skip it. If `.claude/agents/reviewer/` does not exist, copy it.
+     - If the directory already exists → copy only items (subdirs/files) that don't already exist. For items that DO already exist, list them and ask the user: "These already exist — overwrite with MAS versions? (y/n/pick individually)". Only overwrite if the user confirms.
    - For `settings.json`: only copy if `.claude/settings.json` does not exist
    - Log what was copied and what was skipped so the user knows
    - **Handle CLAUDE.md:**
