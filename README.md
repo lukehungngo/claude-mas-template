@@ -15,39 +15,49 @@ A production-grade template for building any project with Claude Code's multi-ag
 
 ## Install
 
-### Option A: One command (recommended)
+### Option A: Claude Code Plugin (recommended)
 
-From your project root:
+Install as a plugin — one command, auto-updates:
 
 ```bash
-# 1. Copy the template into your repo
-git clone https://github.com/anthropics/claude-mas-template /tmp/claude-mas-template
-cp -r /tmp/claude-mas-template/.claude .
-cp /tmp/claude-mas-template/CLAUDE.md .
-cp /tmp/claude-mas-template/.gitignore .gitignore.mas
-rm -rf /tmp/claude-mas-template
+claude plugin install https://github.com/lukehungngo/claude-mas-template.git
+```
 
-# 2. Let Claude do the rest
+This installs globally. To install for a specific project only:
+
+```bash
+claude plugin install https://github.com/lukehungngo/claude-mas-template.git --scope project
+```
+
+Then bootstrap your project:
+
+```bash
 claude "/bootstrap"
 ```
 
-That's it. The `/bootstrap` command auto-detects your stack, fills in all placeholders, configures hooks, and reports what's left for you to customize.
-
-### Option B: Manual setup
+### Option B: Git Clone
 
 ```bash
-# Copy files
+git clone https://github.com/lukehungngo/claude-mas-template /tmp/claude-mas-template
+cp -r /tmp/claude-mas-template/.claude .
+cp /tmp/claude-mas-template/CLAUDE.md .
+rm -rf /tmp/claude-mas-template
+
+claude "/bootstrap"
+```
+
+### Option C: Manual Setup
+
+```bash
+# Copy files into your project
 cp -r claude-mas-template/.claude /path/to/your-project/
 cp claude-mas-template/CLAUDE.md /path/to/your-project/
 
-# Find and replace all placeholders
+# Fill in placeholders
 grep -r '{{' .claude/ CLAUDE.md
 
 # Make hooks executable
 chmod +x .claude/hooks/*.sh
-
-# Validate
-claude "/dev-loop Add a hello world function"
 ```
 
 ## Agent Architecture
@@ -140,24 +150,111 @@ your-project/
 │       └── review-report.md
 ```
 
-## Example Commands
+## All Commands
+
+### Slash Commands (entry points)
 
 ```bash
-# Full development loop
+# Bootstrap — auto-detect stack, fill placeholders, configure hooks
+claude "/bootstrap"
+
+# Full development loop — end-to-end: ask → plan → implement → review → finish
 claude "/dev-loop Add user authentication with JWT"
 
 # Scaffold a new feature
 claude "/new-feature rate-limiting middleware"
 
-# Use a specific agent
-claude --agent engineer "Implement TASK-003: Add rate limiting"
-
-# Use a skill directly
-claude "Use the writing-plans skill to plan: migrate to PostgreSQL"
-
-# Release
+# Release checklist
 claude "/release v1.2.0"
 ```
+
+### Skills (invoked via natural language or slash syntax)
+
+```bash
+# Clarify requirements before coding
+claude "/ask-questions I need to add OAuth2 support"
+
+# Create a detailed implementation plan
+claude "/writing-plans Plan: migrate database from SQLite to PostgreSQL"
+
+# Execute a plan with subagents (one agent per task, two-stage review)
+claude "/subagent-driven-development Execute the migration plan"
+
+# Execute a plan in batches with human checkpoints
+claude "/executing-plans Execute the migration plan"
+
+# TDD workflow — RED-GREEN-REFACTOR
+claude "/test-driven-development Implement the rate limiter module"
+
+# Request a structured code review
+claude "/requesting-code-review Review the auth middleware changes"
+
+# Process reviewer feedback and fix issues
+claude "/receiving-code-review Fix issues from the review report"
+
+# Finish a branch — verify tests, merge/PR/keep/discard, cleanup
+claude "/finishing-branch"
+
+# Final verification checklist before declaring done
+claude "/verification"
+
+# Debug a bug systematically when root cause is unclear
+claude "/systematic-debugging Users get 500 on /api/payments"
+
+# Property-based testing for edge-case-heavy code
+claude "/property-based-testing Test the URL parser"
+
+# Stress-test a research proposal before committing
+claude "/differential-review Review the caching strategy proposal"
+
+# Reference software engineering principles for design decisions
+claude "/se-principles Should I use inheritance or composition here?"
+```
+
+### Direct Agent Usage
+
+```bash
+# Orchestrator — decomposes tasks, dispatches to other agents, verifies outcomes
+claude --agent orchestrator "Build a complete CRUD API for products"
+
+# Engineer — implements features with TDD, writes minimal code
+claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
+
+# Reviewer — two-phase review (business alignment + technical audit)
+claude --agent reviewer "Review the changes in src/auth/"
+
+# Researcher — explores approaches, analyzes trade-offs, produces proposals
+claude --agent researcher "What are the best options for real-time notifications?"
+
+# Differential Reviewer — adversarial second opinion on proposals
+claude --agent differential-reviewer "Stress-test the Redis caching proposal"
+
+# Bug Fixer — TDD-focused, fixes exactly what's reported
+claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
+
+# UI/UX Designer — component specs, interaction flows, accessibility (requires has_ui: true)
+claude --agent ui-ux-designer "Design the settings page layout"
+```
+
+### Combining Workflows
+
+```bash
+# Full pipeline: ask → worktree → plan → implement (TDD) → review → finish
+claude "/dev-loop Implement WebSocket support for real-time updates"
+
+# Plan then execute with subagents
+claude "/writing-plans Plan: add pagination to all list endpoints"
+claude "/subagent-driven-development Execute the pagination plan"
+
+# Debug → fix → review
+claude "/systematic-debugging Why are emails not sending?"
+claude --agent bug-fixer "Fix: SMTP connection timeout in email service"
+claude "/requesting-code-review Review the email fix"
+```
+
+## Acknowledgments
+
+Includes skills adapted from [Obra Superpowers](https://github.com/obra/superpowers) (MIT License).
 
 ## License
 
