@@ -36,6 +36,12 @@ Then bootstrap your project:
 claude "/mas:bootstrap"
 ```
 
+> **One-shot prompt (bypass all permissions):**
+>
+> ```bash
+> claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
+> ```
+
 Update plugin:
 
 ```bash
@@ -52,12 +58,6 @@ The `--update` flag smart-merges the new plugin version into your project:
 - **Asks before overwriting** hooks if you've made custom changes
 - **Skips customized rules** by default (no placeholders = user-owned). Use `--force-rules` to override per file
 - **Adds** any new agents or skills introduced in the update
-
-## One short prompt (bypass all permissions):
-
-```bash
-claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
-```
 
 Uninstall:
 
