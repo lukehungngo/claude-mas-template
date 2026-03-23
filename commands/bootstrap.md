@@ -47,10 +47,14 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
 
 3. **Fix hooks** — Update `lint.sh` and `pre-stop-gate.sh` with the detected lint/test commands. Run `chmod +x .claude/hooks/*.sh`.
 
-4. **Create output directories:**
+4. **Create output directories and update .gitignore:**
    ```bash
    mkdir -p docs/mas
    mkdir -p tasks/{pending,in-progress,done,blocked}
+   ```
+   Ensure `.worktrees/` is in `.gitignore` (dev-loop creates worktrees there). If not already present, append it:
+   ```bash
+   grep -qxF '.worktrees/' .gitignore 2>/dev/null || echo '.worktrees/' >> .gitignore
    ```
 
 5. **Verify** — Run:
