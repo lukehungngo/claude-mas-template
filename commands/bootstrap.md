@@ -49,7 +49,7 @@ Install and configure the Claude Multi-Agent System for this repo. $ARGUMENTS
 
 4. **Create output directories and update .gitignore:**
    ```bash
-   mkdir -p docs/mas
+   mkdir -p docs/{design,plans,reports,results}
    mkdir -p tasks/{pending,in-progress,done,blocked}
    ```
    Ensure `.worktrees/` is in `.gitignore` (dev-loop creates worktrees there). If not already present, append it:

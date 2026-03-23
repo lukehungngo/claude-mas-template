@@ -44,7 +44,7 @@ You are fixing bugs in **{{PROJECT_NAME}}**: {{description}}.
 1. Run: `{{lint-command}}` — must be clean
 2. Run: `{{typecheck-command}}` — must be clean
 3. Run: `{{test-command}}` — all must pass
-4. Write result to `docs/mas/TASK-{id}-bugfix-result.md`
+4. Write result to `docs/reports/TASK-{id}-bugfix-result.md`
 
 ---
 

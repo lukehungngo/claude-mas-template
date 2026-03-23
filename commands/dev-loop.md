@@ -109,7 +109,9 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
      - Are edge cases mentioned in the PRD handled?
      - Does the overall system behavior match what was specified?
 
-     ## Output — Requirements Validation Report
+     ## Output
+     Write your report to `docs/reports/requirements-validation.md`
+
      ```markdown
      ## Requirements Validation Report
 

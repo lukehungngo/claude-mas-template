@@ -91,7 +91,7 @@ Use the research proposal structure:
 
 ### Step 4 — Write Output
 
-Write to `docs/mas/TASK-{id}-research-r{round}.md`
+Write to `docs/plans/TASK-{id}-research-r{round}.md`
 
 ---
 

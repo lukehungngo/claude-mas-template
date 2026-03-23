@@ -25,6 +25,28 @@ You are orchestrating **{{PROJECT_NAME}}**: {{one-line description}}.
 
 ---
 
+## Output Directory Convention
+
+All agent outputs follow a structured directory layout. When dispatching an agent, tell it where to write. When dispatching a downstream agent, tell it where to **read** its upstream input.
+
+| Directory | What Goes Here | Written By | Read By |
+|-----------|---------------|------------|---------|
+| `docs/design/` | UI/UX design specs (`TASK-{id}-design.md`), HTML mockups | UI/UX Designer | Engineer (implements against spec) |
+| `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
+| `docs/reports/` | Review reports, differential reviews (`TASK-{id}-differential-r{round}.md`), bugfix results (`TASK-{id}-bugfix-result.md`), requirements validation reports | Reviewer, Differential Reviewer, Bug-Fixer | Orchestrator, Bug-Fixer, Engineer |
+| `docs/results/` | Implementation results (`TASK-{id}-result.md`) | Engineer | Reviewer, Orchestrator |
+| `tasks/pending/` | Task specs awaiting dispatch | Orchestrator | All agents (their assigned task) |
+| `tasks/in-progress/` | Task specs currently being worked | Orchestrator | — |
+| `tasks/done/` | Completed task specs | Orchestrator | — |
+| `tasks/blocked/` | Blocked task specs | Orchestrator | — |
+
+**When dispatching an agent, always include:**
+- Where to **write** its output (e.g., "Write your design spec to `docs/design/TASK-001-design.md`")
+- Where to **read** upstream inputs (e.g., "Read the research proposal at `docs/plans/TASK-001-research-r1.md`")
+- Where to **read** the design spec (e.g., "Read the design spec at `docs/design/TASK-001-design.md`")
+
+---
+
 ## Available Agents
 
 | Agent | Subagent Type | When to Use |

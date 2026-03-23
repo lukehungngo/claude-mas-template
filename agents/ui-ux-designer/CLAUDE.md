@@ -108,7 +108,13 @@ User lands on page
 ```
 
 ### Phase 3 — Write Output
-Write to `docs/mas/TASK-{id}-design.md` with the full spec above.
+
+1. Write the design spec to `docs/design/TASK-{id}-design.md` with the full spec above.
+2. Write an HTML mockup to `docs/design/TASK-{id}-mockup.html` — a self-contained, single-file HTML page that visually demonstrates the layout, states, and responsive behavior. Use inline CSS only. This is NOT production code — it's a visual reference for the Engineer.
+   - Include all component states (loading, empty, error, populated)
+   - Show responsive layout at mobile/tablet/desktop widths
+   - Use placeholder content (lorem ipsum, sample data)
+   - Keep it simple — no JavaScript frameworks, no build tools
 
 ## Output Format
 
