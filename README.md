@@ -10,8 +10,8 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | **Agents**    | 7     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
 | **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
-| **Rules**     | 4     | honesty-first, severity-discipline, architecture invariants, meta-rules guide                                |
-| **Commands**  | 4     | bootstrap, dev-loop, new-feature, release                                                                    |
+| **Rules**     | 5     | honesty-first, severity-discipline, architecture invariants, meta-rules guide, agent workflow lessons         |
+| **Commands**  | 3     | bootstrap, dev-loop, release                                                                                 |
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
 | **Templates** | 2     | task-spec, review-report                                                                                     |
 
@@ -36,7 +36,7 @@ claude plugin install mas@luke-plugins
 claude "/mas:bootstrap"
 ```
 
-3. Continue to fill the remaining suggested TODOs (Architecture Invariants, Core Flow, Key Gotchas in `CLAUDE.md` and `.claude\rules\*` to complete the setup.
+3. Continue to fill the remaining suggested TODOs (Architecture Invariants, Core Flow, Key Gotchas) in `CLAUDE.md` and `.claude/rules/*` to complete the setup.
 
 > **Try one-shot prompt (bypass all permissions):**
 >
@@ -142,7 +142,6 @@ claude-mas-template/
 ├── commands/
 │   ├── bootstrap.md                       # Auto-detect stack, fill placeholders
 │   ├── dev-loop.md                        # Full development workflow
-│   ├── new-feature.md                     # Scaffold new feature
 │   └── release.md                         # Release checklist
 ├── hooks/
 │   ├── lint.sh                            # Auto-lint on file edit
@@ -151,7 +150,8 @@ claude-mas-template/
 │   ├── honesty-first.md                   # Metrics integrity
 │   ├── severity-discipline.md             # Severity classification
 │   ├── architecture.md                    # Architecture invariants
-│   └── meta-rules-guide.md               # How to write new rules
+│   ├── meta-rules-guide.md                # How to write new rules
+│   └── agent-workflow.md                  # Lessons learned from battle testing
 ├── skills/
 │   ├── ask-questions/SKILL.md
 │   ├── writing-plans/SKILL.md
@@ -186,7 +186,6 @@ Run in your terminal:
 ```bash
 claude "/mas:bootstrap"
 claude "/mas:dev-loop Add user authentication with JWT"
-claude "/mas:new-feature rate-limiting middleware"
 claude "/mas:release v1.2.0"
 
 # Non-stop autonomous mode — skips all human checkpoints
@@ -217,18 +216,57 @@ Open Claude Code (`claude` in terminal), then type these inside the chat:
 
 ### Direct Agent Usage (available after bootstrap)
 
-Run in your terminal:
+You don't always need the full `dev-loop` pipeline. You can bypass the Orchestrator and directly "hire" specific specialized agents from your terminal for targeted tasks.
 
-```bash
-claude --agent orchestrator "Build a complete CRUD API for products"
-claude --dangerously-skip-permissions --agent orchestrator "Build a complete CRUD API for products" # for by pass all permission
-claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
-claude --agent reviewer "Review the changes in src/auth/"
-claude --agent researcher "What are the best options for real-time notifications?"
-claude --agent differential-reviewer "Stress-test the Redis caching proposal"
-claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
-claude --agent ui-ux-designer "Design the settings page layout"
-```
+**When to use which agent:**
+
+*   **👨‍💻 The Engineer (TDD Implementation)**
+    Use when you have a clear task and want it built with strict Test-Driven Development.
+    ```bash
+    claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
+    ```
+
+*   **🕵️ The Bug-Fixer (Surgical Fixes)**
+    Use when you have a specific bug. It will write a failing test to reproduce it, then fix the code without touching adjacent features.
+    ```bash
+    claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
+    ```
+
+*   **🧐 The Reviewer (Harsh Code Review)**
+    Use before opening a PR. It performs a two-phase review (business alignment + technical audit) and flags P0/P1 blockers.
+    ```bash
+    claude --agent reviewer "Review the recent changes in src/auth/"
+    ```
+
+*   **🔬 The Researcher (Exploration & Trade-offs)**
+    Use when you need to figure out *how* to build something before actually writing code.
+    ```bash
+    claude --agent researcher "What are the best options for real-time notifications in our stack?"
+    ```
+
+*   **⚖️ The Differential Reviewer (Adversarial Stress-Test)**
+    Use to stress-test a proposed architecture or research plan. It actively tries to find reasons why your idea will fail in production.
+    ```bash
+    claude --agent differential-reviewer "Stress-test the Redis caching proposal in docs/plans/TASK-001.md"
+    ```
+
+*   **🎨 The UI/UX Designer (Component Specs & A11y)**
+    Use when you need a structured design spec, state mapping, and accessibility checklist before building a frontend component.
+    ```bash
+    claude --agent ui-ux-designer "Design the settings page layout and interaction flow"
+    ```
+
+*   **👔 The Orchestrator (Project Manager)**
+    Use when you want to delegate a large epic. It will break it down and dispatch the agents above.
+    ```bash
+    claude --agent orchestrator "Build a complete CRUD API for products"
+    ```
+
+> **Pro-tip for uninterrupted runs:**
+> If you trust the agent and want to grab a coffee while it works, append `--dangerously-skip-permissions` to bypass the prompts asking for permission to run tests or edit files.
+> ```bash
+> claude --dangerously-skip-permissions --agent engineer "Refactor the database pool"
+> ```
 
 ### Example Workflows
 

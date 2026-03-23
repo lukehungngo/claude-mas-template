@@ -22,7 +22,7 @@
 
 ## Project Type
 
-- **has_ui:** {{true | false}}  <!-- Set to true if this project has a user interface (web, mobile, desktop). When true, the UI/UX Designer agent is activated in the pipeline. When false, all UI routing is skipped. -->
+- **has_ui:** {{true | false}} <!-- Set to true if this project has a user interface (web, mobile, desktop). When true, the UI/UX Designer agent is activated in the pipeline. When false, all UI routing is skipped. -->
 
 ## Architecture Invariants
 

@@ -26,7 +26,7 @@ dev-loop (this command)
   │       │
   │       ├─ Researcher ↔ Differential Reviewer (novel tasks, max 3 rounds)
   │       ├─ Engineer (TDD implementation per task)
-  │       ├─ Reviewer (two-stage: spec compliance + code quality)`
+  │       ├─ Reviewer (two-stage: spec compliance + code quality)
   │       └─ Bug-Fixer (if Reviewer blocks, max 2 cycles)
   │
   ├─ 7. Validate ─── Agent(subagent_type: "reviewer")
@@ -82,7 +82,7 @@ Agent(
 
   Working directory: {worktree path}
 
-  Return a structured summary with:
+  Return a structured summary containing:
   - Relevant files and their purpose
   - Existing patterns to reuse
   - Potential integration challenges
