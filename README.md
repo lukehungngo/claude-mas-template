@@ -23,22 +23,22 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 
 ### Option A: Claude Code Plugin (recommended)
 
-Add the marketplace and install — two commands in your terminal:
+1. Add the marketplace and install — two commands in your terminal:
 
 ```bash
 claude plugin marketplace add lukehungngo/claude-mas-template
 claude plugin install mas@luke-plugins
 ```
 
-Then bootstrap your project:
+2. Then bootstrap your project:
 
 ```bash
 claude "/mas:bootstrap"
 ```
 
-Continue to fill the remaining suggested TODOs (Architecture Invariants, Core Flow, Key Gotchas in `CLAUDE.md`) to complete the setup.
+3. Continue to fill the remaining suggested TODOs (Architecture Invariants, Core Flow, Key Gotchas in `CLAUDE.md` and `.claude\rules\*` to complete the setup.
 
-> **Then try one-shot prompt (bypass all permissions):**
+> **Try one-shot prompt (bypass all permissions):**
 >
 > ```bash
 > claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
