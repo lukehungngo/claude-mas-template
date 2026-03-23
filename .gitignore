@@ -1,6 +1,7 @@
 # Claude Code local
 .claude/settings.local.json
 .claude/worktrees/
+.worktrees/
 
 # Task tracking (ephemeral, per-session)
 tasks/

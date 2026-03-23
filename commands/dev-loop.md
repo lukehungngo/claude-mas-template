@@ -17,8 +17,8 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
 
 2. **Branch** — Create an isolated workspace:
    ```bash
-   git worktree add -b feature/{{name}} ../worktrees/{{name}}
-   cd ../worktrees/{{name}}
+   git worktree add -b feature/{{name}} .worktrees/{{name}}
+   cd .worktrees/{{name}}
    ```
    Verify clean baseline: `{{test-command}}` must pass.
 
