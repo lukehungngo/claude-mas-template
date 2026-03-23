@@ -41,7 +41,7 @@ claude "/mas:bootstrap"
 > **Try one-shot prompt (bypass all permissions):**
 >
 > ```bash
-> claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
+> claude --dangerously-skip-permissions "/dev-loop --auto Build a complete CRUD API for products"
 > ```
 
 Update plugin:

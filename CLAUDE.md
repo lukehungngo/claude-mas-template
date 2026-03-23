@@ -53,11 +53,12 @@ Before any implementation, you MUST follow this workflow. No code changes until 
 
 ### The Pipeline
 
-1. **Brainstorm first** (`/ask-questions`) — Refine rough ideas through questions, explore alternatives, present design for validation.
-2. **Create isolated workspace** (git worktree) — Create isolated workspace on a new branch, run project setup, verify clean test baseline.
-3. **Write the plan** (`/writing-plans`) — Break work into bite-sized tasks (2-5 min each). Every task has exact file paths, complete code, verification steps.
-4. **Design first (if `has_ui: true`)** — For UI tasks, the UI/UX Designer produces component specs, state mapping, interaction flows, and accessibility checklist before any code is written.
-5. **Execute the plan** (`/subagent-driven-development`) — Dispatch fresh subagent per task with two-stage review (spec compliance, then code quality).
-6. **TDD during implementation** (`/test-driven-development`) — Enforce RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit.
-7. **Review between tasks** (`/requesting-code-review`) — Review against plan, report issues by severity. Critical issues block progress.
-8. **Finish the branch** (`/finishing-branch`) — Verify tests pass, present options (merge/PR/keep/discard), clean up worktree.
+1. **Brainstorm first** — `Skill(skill: "ask-questions")` — Refine rough ideas through questions, explore alternatives, present design for validation.
+2. **Create isolated workspace** — git worktree on a new branch, run project setup, verify clean test baseline.
+3. **Explore the codebase** — `Agent(subagent_type: "Explore")` — Scan for relevant patterns, existing implementations, integration points before planning.
+4. **Write the plan** — `Skill(skill: "writing-plans")` — Break work into bite-sized tasks (2-5 min each). Do NOT use EnterPlanMode.
+5. **Design first (if `has_ui: true`)** — `Agent(subagent_type: "ui-ux-designer")` — Component specs, state mapping, interaction flows, accessibility checklist.
+6. **Orchestrate** — `Agent(subagent_type: "orchestrator")` — PM dispatches Researcher, Engineer, Reviewer, Bug-Fixer. Orchestrator has no Bash — it can only read and dispatch agents.
+7. **Validate requirements** — `Agent(subagent_type: "reviewer")` — Holistic PRD check. Loops back to step 6 on GAPS FOUND (max 3 cycles).
+8. **Verify** — `Skill(skill: "verification")` — All tests pass, lint clean, typecheck clean, no debug artifacts.
+9. **Finish the branch** — `Skill(skill: "finishing-branch")` — Verify tests pass, present options (merge/PR/keep/discard), clean up worktree.

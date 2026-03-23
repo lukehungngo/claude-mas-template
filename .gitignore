@@ -3,8 +3,13 @@
 .claude/worktrees/
 .worktrees/
 
-# Task tracking (ephemeral, per-session)
+# Agent outputs (ephemeral, per-session)
 docs/tasks/
+docs/design/
+docs/plans/
+docs/reports/
+docs/results/
+docs/bugs/
 
 # OS
 .DS_Store

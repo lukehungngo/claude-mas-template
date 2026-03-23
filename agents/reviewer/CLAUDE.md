@@ -56,6 +56,10 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 ---
 
+## Output Directory
+
+Write all review reports to `docs/reports/TASK-{id}-review.md`.
+
 ## Output Format
 
 Use the template at `.claude/templates/review-report.md`:
