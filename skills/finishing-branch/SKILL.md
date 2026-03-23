@@ -53,6 +53,14 @@ Check:
 - Typecheck: PASS
 - Tests: PASS ({total})
 
+### Requirements Coverage
+| # | Requirement | Status |
+|---|-------------|--------|
+| 1 | {from PRD}  | MET / PARTIAL / MISSING |
+
+{Include the Requirements Validation Report from the validation step if available.
+If no validation was run, explicitly note: "Requirements validation was not performed."}
+
 ### Options
 1. **Merge** — `git checkout main && git merge {branch}`
 2. **Create PR** — `gh pr create --title "{title}" --body "{body}"`
