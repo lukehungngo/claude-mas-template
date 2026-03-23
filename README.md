@@ -41,9 +41,15 @@ Update plugin:
 ```bash
 claude plugin marketplace update luke-plugins     # refresh marketplace cache
 claude plugin update mas@luke-plugins             # update to latest version
+claude "/mas:bootstrap --update"                  # sync new agents/skills into your project
 ```
 
-After updating, run `/mas:bootstrap` again to sync new agents/skills into your project's `.claude/`. Existing files won't be overwritten without confirmation.
+The `--update` flag smart-merges the new plugin version into your project:
+- **Overwrites** framework files (agents, skills, commands, templates) with new versions
+- **Re-applies** your project's placeholder values (test commands, project name, etc.)
+- **Never touches** your `CLAUDE.md`, `settings.json`, or other user-owned files
+- **Asks before overwriting** hooks and rules if you've made custom changes
+- **Adds** any new agents or skills introduced in the update
 
 Uninstall:
 
