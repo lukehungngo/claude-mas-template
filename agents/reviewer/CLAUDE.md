@@ -40,7 +40,7 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 ### Phase A — Business Alignment
 
-1. Read original task spec (from `tasks/` directory)
+1. Read original task spec (from `docs/tasks/` directory)
 2. Verify implementation matches the approved approach
 3. Run acceptance criteria commands from the task spec
 4. Cross-check against business intent — does this solve the actual problem?

@@ -4,7 +4,7 @@
 .worktrees/
 
 # Task tracking (ephemeral, per-session)
-tasks/
+docs/tasks/
 
 # OS
 .DS_Store

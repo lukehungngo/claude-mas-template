@@ -74,5 +74,5 @@ Which would you like?
 
 - If merge/PR: clean up worktree if used
 - If discard: delete branch and worktree
-- Move all tasks to `tasks/done/`
+- Move all tasks to `docs/tasks/done/`
 - Remove worktree: `git worktree remove {path}`

@@ -35,10 +35,10 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
 | `docs/reports/` | Review reports, differential reviews (`TASK-{id}-differential-r{round}.md`), bugfix results (`TASK-{id}-bugfix-result.md`), requirements validation reports | Reviewer, Differential Reviewer, Bug-Fixer | Orchestrator, Bug-Fixer, Engineer |
 | `docs/results/` | Implementation results (`TASK-{id}-result.md`) | Engineer | Reviewer, Orchestrator |
-| `tasks/pending/` | Task specs awaiting dispatch | Orchestrator | All agents (their assigned task) |
-| `tasks/in-progress/` | Task specs currently being worked | Orchestrator | — |
-| `tasks/done/` | Completed task specs | Orchestrator | — |
-| `tasks/blocked/` | Blocked task specs | Orchestrator | — |
+| `docs/docs/tasks/pending/` | Task specs awaiting dispatch | Orchestrator | All agents (their assigned task) |
+| `docs/tasks/in-progress/` | Task specs currently being worked | Orchestrator | — |
+| `docs/tasks/done/` | Completed task specs | Orchestrator | — |
+| `docs/tasks/blocked/` | Blocked task specs | Orchestrator | — |
 
 **When dispatching an agent, always include:**
 - Where to **write** its output (e.g., "Write your design spec to `docs/design/TASK-001-design.md`")
@@ -90,7 +90,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 2. Convert each plan task into a full task spec using the template at `.claude/templates/task-spec.md`
 3. Identify the correct agent and task type from the routing table for each task (respecting Phase 0 gate)
 4. Fill in any missing fields (acceptance criteria as runnable commands, business context, do_not_touch)
-5. Write task specs to `tasks/pending/`
+5. Write task specs to `docs/tasks/pending/`
 
 **If no approved plan is provided (raw requirement):**
 1. Read the incoming requirement (PRD, feature request, bug report)
@@ -103,7 +103,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
    - Write clear Objective (one paragraph max)
    - Write Acceptance Criteria as runnable commands
    - Write Business Context linking to the original requirement
-5. Write task specs to `tasks/pending/`
+5. Write task specs to `docs/tasks/pending/`
 
 ### Phase 2 — Dispatch
 
@@ -160,7 +160,7 @@ Dispatch to Engineer with the task spec.
 1. Read the original task spec's Acceptance Criteria
 2. Run each criterion (shell commands)
 3. Cross-check against Business Context
-4. If all pass → move task to `tasks/done/`, declare DONE
+4. If all pass → move task to `docs/tasks/done/`, declare DONE
 5. If any fail → identify which agent should fix, re-dispatch
 
 ---

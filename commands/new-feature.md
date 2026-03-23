@@ -15,7 +15,7 @@ Scaffold a new feature: $ARGUMENTS
 
 2. **Create task spec** using `.claude/templates/task-spec.md`:
    - Fill in Meta, Context, Objective, Acceptance Criteria
-   - Save to `tasks/pending/TASK-{next-id}.md`
+   - Save to `docs/tasks/pending/TASK-{next-id}.md`
 
 3. **If research needed** (novel approach):
    - Dispatch Researcher agent

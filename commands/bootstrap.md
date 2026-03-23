@@ -117,7 +117,7 @@ Update `lint.sh` and `pre-stop-gate.sh` with the detected lint/test commands. Ru
 
 ```bash
 mkdir -p docs/{design,plans,reports,results}
-mkdir -p tasks/{pending,in-progress,done,blocked}
+mkdir -p docs/tasks/{pending,in-progress,done,blocked}
 ```
 Ensure `.worktrees/` is in `.gitignore` (dev-loop creates worktrees there). If not already present, append it:
 ```bash
@@ -258,7 +258,7 @@ Same as Full Bootstrap Step 3. Update `lint.sh` and `pre-stop-gate.sh` with the 
 
 ```bash
 mkdir -p docs/{design,plans,reports,results}
-mkdir -p tasks/{pending,in-progress,done,blocked}
+mkdir -p docs/tasks/{pending,in-progress,done,blocked}
 ```
 (Idempotent — safe to re-run.)
 
