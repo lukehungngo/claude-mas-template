@@ -36,7 +36,9 @@ Then bootstrap your project:
 claude "/mas:bootstrap"
 ```
 
-> **One-shot prompt (bypass all permissions):**
+Continue to fill the remaining suggested TODOs (Architecture Invariants, Core Flow, Key Gotchas in `CLAUDE.md`) to complete the setup.
+
+> **Then try one-shot prompt (bypass all permissions):**
 >
 > ```bash
 > claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
