@@ -183,9 +183,12 @@ placeholders — they won't work for your project.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Remaining TODOs:
-  - Fill Architecture Invariants in CLAUDE.md
-  - Fill Core Flow in CLAUDE.md
-  - Fill Key Gotchas in CLAUDE.md
+{Only show items that still have unfilled placeholders in CLAUDE.md.
+ Check each section — if it contains real content (not just {{placeholder}}), omit it from this list.}
+  - Fill Architecture Invariants in CLAUDE.md    ← only if ## Architecture Invariants still has {{Invariant}} placeholders
+  - Fill Core Flow in CLAUDE.md                  ← only if ## Core Flow still has {{Describe your}} or {{step}} placeholders
+  - Fill Key Gotchas in CLAUDE.md                ← only if ## Key Gotchas still has {{Gotcha}} placeholders
+{If all sections are filled, print: "All sections filled — CLAUDE.md is ready."}
 
 Ready to go? Try one of these:
   /dev-loop <describe your first task>
@@ -293,6 +296,13 @@ HOOKS/RULES:
 
 Your project-specific config (CLAUDE.md, settings.json) was
 NOT modified. Only MAS framework files were updated.
+
+Remaining TODOs:
+{Check CLAUDE.md — only show items that still have unfilled placeholders:}
+  - Fill Architecture Invariants    ← only if still has {{Invariant}} placeholders
+  - Fill Core Flow                  ← only if still has {{Describe your}} or {{step}} placeholders
+  - Fill Key Gotchas                ← only if still has {{Gotcha}} placeholders
+{If all filled: "All CLAUDE.md sections filled — nothing to do."}
 
 Continue using local (unprefixed) commands: /dev-loop, /ask-questions, etc.
 ```
