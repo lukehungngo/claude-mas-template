@@ -45,12 +45,19 @@ claude "/mas:bootstrap --update"                  # sync new agents/skills into 
 ```
 
 The `--update` flag smart-merges the new plugin version into your project:
+
 - **Overwrites** framework files (agents, skills, commands, templates) with new versions
 - **Re-applies** your project's placeholder values (test commands, project name, etc.)
 - **Never touches** your `CLAUDE.md`, `settings.json`, or other user-owned files
 - **Asks before overwriting** hooks if you've made custom changes
 - **Skips customized rules** by default (no placeholders = user-owned). Use `--force-rules` to override per file
 - **Adds** any new agents or skills introduced in the update
+
+## One short prompt (bypass all permissions):
+
+```bash
+claude --dangerously-skip-permissions "/dev-loop Build a complete CRUD API for products"
+```
 
 Uninstall:
 
