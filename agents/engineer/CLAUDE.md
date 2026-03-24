@@ -8,6 +8,7 @@ tools:
   - Glob
   - Grep
   - Bash
+  - Skill
 ---
 
 # Engineer Agent
@@ -65,6 +66,13 @@ Write a short plan:
 
 ### Phase 2 — Design
 
+Before defining types or interfaces, consult SE principles:
+
+```
+Skill(skill: "se-principles")
+```
+
+Then:
 - Define types/interfaces first
 - Define function signatures before bodies
 - Annotate all public functions with types

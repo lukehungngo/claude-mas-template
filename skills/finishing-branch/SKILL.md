@@ -13,15 +13,11 @@ Final verification, present options to human, clean up.
 
 ### Step 1 — Final Verification
 
-Run the full suite one last time:
-
-```bash
-{{lint-command}}        # Must be clean
-{{typecheck-command}}   # Must be clean
-{{test-command}}        # All must pass
+```
+Skill(skill: "verification")
 ```
 
-If anything fails → fix before proceeding.
+If any check fails → fix before proceeding.
 
 ### Step 2 — Review the Diff
 
