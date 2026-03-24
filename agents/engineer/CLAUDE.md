@@ -80,13 +80,10 @@ Then:
 
 ### Phase 3 — Implementation (TDD)
 
-Per logical unit, follow the RED-GREEN-REFACTOR cycle:
+Per logical unit:
 
 ```
-1. Write ONE failing test → run it → confirm it FAILS for the right reason
-2. Write MINIMAL code to pass → run it → confirm ALL tests PASS
-3. Refactor if needed → run tests → confirm still GREEN
-4. Repeat for next unit
+Skill(skill: "test-driven-development")
 ```
 
 **Iron Law:** If you wrote code before the test, delete it. Start over.
