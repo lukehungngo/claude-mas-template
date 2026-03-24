@@ -168,7 +168,7 @@ MAS Template bootstrapped for: {project name}
 Stack: {language} + {framework}
 has_ui: {true/false}
 Agents: 7 (6 active + ui-ux-designer conditional)
-Skills: 13 | Commands: 4 | Rules: 4 | Hooks: 2
+Skills: 13 | Commands: 5 | Rules: 4 | Hooks: 2
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /mas:bootstrap is the ONLY command you need from the plugin.
@@ -192,6 +192,7 @@ Remaining TODOs:
 
 Ready to go? Try one of these:
   /dev-loop <describe your first task>
+  /bug-fix <describe the bug>
   /new-feature <feature name>
   /ask-questions <what you want to build>
 ```
