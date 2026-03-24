@@ -21,7 +21,8 @@ You are fixing bugs in **{{PROJECT_NAME}}**: {{description}}.
 
 **Non-negotiables:**
 - Fix ONLY bugs listed in the reviewer report
-- Write failing test FIRST for each bug (TDD — no exceptions)
+- Write a failing reproduction test FIRST — always, before any debugging or fixing
+- If you cannot write a reproduction test, you do not understand the bug yet — stop and investigate
 - Never add features or refactor adjacent code
 - Never touch files outside the bug's scope
 - Run full test suite after each fix
@@ -51,16 +52,18 @@ Write(file_path: "src/utils.ts", content: "export function validate() { ... }")
 ### For Each Bug in the Reviewer Report
 
 1. **Read** — Understand the bug (file:line from reviewer report)
-2. **Reproduce** — If root cause is not immediately clear:
-   ```
-   Skill(skill: "systematic-debugging")
-   ```
-3. **Fix with TDD** — Write failing test first, then fix:
+2. **Reproduce** — Write a minimal failing test that exposes the bug. This is mandatory — no exceptions:
    ```
    Skill(skill: "test-driven-development")
    ```
-4. **Regression** — Run full test suite, confirm nothing else broke
-5. **Next** — Move to next bug
+   Run the test. Confirm it FAILS for the right reason. If you cannot make it fail, you do not understand the bug yet — do NOT proceed to step 3.
+3. **Debug** — If the root cause is still unclear after writing the reproduction test:
+   ```
+   Skill(skill: "systematic-debugging")
+   ```
+4. **Fix** — Write the minimal code to make the reproduction test pass. Run all tests.
+5. **Regression** — Run full test suite, confirm nothing else broke
+6. **Next** — Move to next bug
 
 ### After All Bugs Fixed
 
