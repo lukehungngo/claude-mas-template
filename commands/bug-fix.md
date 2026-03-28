@@ -12,6 +12,22 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
 
 **`--auto` scope:** Skips human approval gates at Steps 1 and 7 only. It does NOT skip the Bug-Fixer, Reviewer, or verification. The full pipeline runs in both modes.
 
+**What `--auto` does NOT mean:**
+
+❌ **BAD** (what happened in 3/3 audited --auto bug-fix sessions):
+> "The bug is clear. I'll debug and fix it directly — no need to dispatch
+> a bug-fixer agent for something this straightforward."
+> *Result: No bug-fixer dispatched. No reproduction test. No reviewer. No verification.*
+
+✅ **GOOD** (correct --auto behavior):
+> "Bug is clear (`--auto` skips step 1 clarification). Creating worktree...
+> Running systematic-debugging skill (step 3)... Dispatching Bug-Fixer agent (step 4)...
+> Bug-Fixer writes reproduction test first, then minimal fix...
+> Dispatching Reviewer (step 5)... Invoking verification skill (step 6)...
+> Creating PR automatically (`--auto` skips human choice, step 7)."
+
+`--auto` removes 2 human pauses. It does NOT remove 3 agent dispatches.
+
 ## Agent Pipeline
 
 ```
@@ -76,6 +92,23 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 
 **GATE:** Root cause is identified and a failing reproduction test exists. Do NOT dispatch Bug-Fixer without knowing exactly what is broken.
 
+> **CHECKPOINT ASSERTION — Bug-Fixer agent is mandatory**
+>
+> You are about to fix this bug yourself. **STOP.**
+> This happened in 3/3 audited bug-fix sessions — the main session debugged and fixed code directly every time.
+> The Bug-Fixer agent MUST be dispatched via `Agent(subagent_type: "bug-fixer")`.
+> You are the pipeline controller, NOT the implementer.
+> The Bug-Fixer enforces: reproduction test FIRST, minimal fix, scope discipline.
+> If you are about to call Edit or Write on production code — you are violating the pipeline.
+
+> **FALLBACK — If Agent() tool call fails:**
+>
+> If the Bug-Fixer dispatch fails (tool unavailable, error, timeout):
+> 1. Do NOT silently fall back to fixing the bug yourself
+> 2. Report the failure to the human: "Bug-Fixer dispatch failed: {error}"
+> 3. Ask the human: "Should I retry, or proceed with manual fix under your supervision?"
+> 4. If human approves manual fix: document it in the self-audit as a known deviation
+
 ---
 
 ### Step 4 — Fix
@@ -108,6 +141,13 @@ Agent(
 - `--auto`: proceed directly to Step 5.
 
 **GATE:** `docs/reports/bugfix-result.md` exists and reports all tests passing. Do NOT proceed if the Bug-Fixer reports unresolved failures.
+
+> **CHECKPOINT ASSERTION — Reviewer is mandatory after every fix**
+>
+> You are about to skip the review. **STOP.**
+> In audited sessions, only 1/6 implementations got a reviewer dispatch.
+> The Reviewer MUST be dispatched via `Agent(subagent_type: "reviewer")` after the Bug-Fixer completes.
+> If the Reviewer issues BLOCKED, dispatch Bug-Fixer again (max 2 cycles).
 
 ---
 
@@ -151,6 +191,13 @@ Track `review_cycle` starting at 0. After each review:
 
 **GATE:** `docs/reports/bugfix-review.md` exists with verdict APPROVED or APPROVED WITH CHANGES. Do NOT proceed with a BLOCKED verdict.
 
+> **CHECKPOINT ASSERTION — Verification is mandatory**
+>
+> You are about to skip verification. **STOP.**
+> This happened in 5/5 audited sessions — 0 invoked the verification skill.
+> You MUST call `Skill(skill: "verification")` which writes `docs/reports/verification-{branch}.md`.
+> The GATE checks for this file — raw test output alone will not pass.
+
 ---
 
 ### Step 6 — Verify
@@ -162,6 +209,20 @@ Skill(skill: "verification")
 **GATE:** `docs/reports/verification-{branch}.md` exists with verdict PASS. Do NOT proceed to Step 7 without this file.
 
 ---
+
+### PIPELINE SELF-AUDIT (mandatory before finishing)
+
+Before proceeding to Step 7, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
+
+- [ ] **Bug-Fixer dispatched?** — Scroll up and confirm an `Agent(subagent_type: "bug-fixer")` tool call exists in this conversation. If you fixed the bug via Write/Edit yourself, this is a violation.
+- [ ] **Reproduction test written first?** — Check the Bug-Fixer's result file in `docs/reports/` for a reproduction test entry. If no test is listed, the reproduction-test-first requirement was bypassed.
+- [ ] **Reviewer issued verdict?** — Check `docs/reports/` for a review file with a verdict line. If no review file exists, no reviewer was dispatched.
+- [ ] **Bug-Fixer handled blocks?** — If review verdict is BLOCKED, check for a second bugfix-result file. If none exists and you fixed it yourself, this is a violation.
+- [ ] **Verification report exists?** — Run: `test -f docs/reports/verification-{branch}.md && grep "Verdict:" docs/reports/verification-{branch}.md`. File must exist AND contain Build, Code, Spec, Regression sections.
+
+**If any check fails:** You violated the pipeline. Do NOT proceed to Step 7. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
+
+**This is not optional.** In 3/3 audited bug-fix sessions, zero dispatched the bug-fixer agent. You are being explicitly asked to break that pattern.
 
 ### Step 7 — Finish
 

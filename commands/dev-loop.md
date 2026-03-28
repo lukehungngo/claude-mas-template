@@ -12,6 +12,22 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
 
 **`--auto` scope:** Skips human approval gates at Steps 1, 4, 5, and 9 only. It does NOT skip the Orchestrator, Reviewer, or Bug-Fixer. The full agent pipeline runs in both modes — `--auto` only removes the pauses where a human would say "yes, continue".
 
+**What `--auto` does NOT mean:**
+
+❌ **BAD** (what happened in 4/4 audited --auto sessions):
+> "Requirements are clear and changes are well-scoped. I'll implement directly —
+> no need for the orchestrator pipeline for these targeted changes."
+> *Result: Skipped steps 3-9. Only worktree creation survived.*
+
+✅ **GOOD** (correct --auto behavior):
+> "Requirements are clear (`--auto` skips step 1 clarification). Creating worktree...
+> Exploring codebase (step 3)... Writing plan (`--auto` auto-approves, step 4)...
+> Dispatching Orchestrator (step 6) — Orchestrator dispatches Engineer, Reviewer, Bug-Fixer...
+> Running requirements validation (step 7)... Invoking verification skill (step 8)...
+> Creating PR automatically (`--auto` skips human choice, step 9)."
+
+`--auto` removes 4 human pauses. It does NOT remove 5 agent dispatches.
+
 ## Agent Pipeline
 
 ```
@@ -162,6 +178,24 @@ Agent(
 
 ---
 
+> **CHECKPOINT ASSERTION — Step 6 is mandatory**
+>
+> You are about to skip the Orchestrator and implement code yourself. **STOP.**
+> This happened in 5/5 audited sessions (sessions 473a, 933a, e7b5 all self-orchestrated).
+> The Orchestrator MUST be dispatched via `Agent(subagent_type: "orchestrator")`.
+> No exceptions. No rationalizations ("too simple", "well-scoped", "just a few changes").
+> If you are about to write code, call Edit, or call Write — you are violating the pipeline.
+> Your job is to dispatch the Orchestrator and wait for its report.
+
+> **FALLBACK — If Agent() tool call fails:**
+>
+> If the Orchestrator dispatch fails (tool unavailable, error, timeout):
+> 1. Do NOT silently fall back to implementing code yourself
+> 2. Report the failure to the human: "Orchestrator dispatch failed: {error}"
+> 3. Ask the human: "Should I retry, or proceed with manual orchestration under your supervision?"
+> 4. If human approves manual orchestration: document it in the self-audit as a known deviation
+> 5. This happened in this very session — the Orchestrator couldn't dispatch sub-agents and the main session took over silently. That is the failure mode this guidance prevents.
+
 ### Step 6 — Orchestrate
 
 Dispatch the **Orchestrator agent** with the full context. The Orchestrator is the PM — it owns all agent dispatch decisions.
@@ -220,6 +254,13 @@ Agent(
 **GATE:** `docs/tasks/done/` is non-empty (tasks were completed). Orchestrator has reported back with task status. Do NOT proceed if Orchestrator reports unresolved escalations — present them to the human first.
 
 ---
+
+> **CHECKPOINT ASSERTION — Step 7 is mandatory**
+>
+> You are about to skip requirements validation. **STOP.**
+> This happened in 5/5 audited sessions — no session ever dispatched a reviewer for holistic validation.
+> The Reviewer MUST be dispatched via `Agent(subagent_type: "reviewer")` with the requirements validation prompt.
+> Orchestrator per-task reviews are NOT sufficient — this step checks all tasks together deliver the PRD.
 
 ### Step 7 — Validate Requirements
 
@@ -339,6 +380,14 @@ Agent(
 
 ---
 
+> **CHECKPOINT ASSERTION — Step 8 is mandatory**
+>
+> You are about to skip verification. **STOP.**
+> This happened in 5/5 audited sessions — 0 invoked the verification skill.
+> Running tests via raw Bash does NOT satisfy this step.
+> You MUST call `Skill(skill: "verification")` which writes `docs/reports/verification-{branch}.md`.
+> The GATE checks for this file — raw test output alone will not pass.
+
 ### Step 8 — Verify
 
 ```
@@ -355,6 +404,30 @@ Final technical checks:
 **GATE:** `docs/reports/verification-{branch}.md` must exist before proceeding to step 9. `Skill(skill: "verification")` writes this file — raw Bash test output alone does NOT satisfy this gate. Do NOT proceed without the file.
 
 ---
+
+> **CHECKPOINT ASSERTION — Step 9 is mandatory**
+>
+> You are about to skip the finishing-branch skill. **STOP.**
+> This happened in 5/5 audited sessions — all worktrees were manually merged and cleaned.
+> You MUST call `Skill(skill: "finishing-branch")` which presents options to the human.
+> Do not `git merge` or `git worktree remove` manually.
+
+---
+
+### PIPELINE SELF-AUDIT (mandatory before finishing)
+
+Before proceeding to Step 9, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
+
+- [ ] **Orchestrator dispatched?** — Scroll up and confirm an `Agent(subagent_type: "orchestrator")` tool call exists in this conversation. If you wrote production code via Write/Edit yourself, this is a violation.
+- [ ] **Engineer wrote all code?** — Check `docs/results/` for TASK-*-result.md files written by Engineer agents. If no result files exist, engineers were not dispatched.
+- [ ] **Reviewer issued verdict?** — Check `docs/reports/` for review files. Read the verdict line. If no review files exist, no reviewer was dispatched.
+- [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for bugfix-result files in `docs/reports/`. If none exist and the verdict was BLOCKED, this is a violation.
+- [ ] **Verification report exists?** — Run: `test -f docs/reports/verification-{branch}.md && grep "Verdict:" docs/reports/verification-{branch}.md`. File must exist AND contain Build, Code, Spec, Regression sections.
+- [ ] **Requirements validation passed?** — Run: `test -f docs/reports/requirements-validation-r*.md && grep "ALL MET" docs/reports/requirements-validation-r*.md`. Must return a match.
+
+**If any check fails:** You violated the pipeline. Do NOT proceed to Step 9. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
+
+**This is not optional.** In 5/5 audited sessions, zero completed the full pipeline. You are being explicitly asked to break that pattern.
 
 ### Step 9 — Finish
 

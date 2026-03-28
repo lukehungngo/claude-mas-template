@@ -128,6 +128,66 @@ When writing agent instructions:
 
 ---
 
+### 10. Orchestrator never dispatched
+
+**What happened:** In 5/5 audited dev-loop sessions, the main session self-orchestrated — the orchestrator never dispatched. Zero Agent() calls to the orchestrator subagent. The assistant rationalized: "no need for heavyweight orchestration pipeline for well-scoped fixes."
+
+**Root cause:** The main session had enough context and tools to do the work itself. Dispatching the Orchestrator felt like unnecessary overhead, so it was skipped every time.
+
+**Fix:** Added CHECKPOINT ASSERTION before step 6 with anti-bypass language referencing this exact failure.
+
+**Rule:** When a step is consistently skipped because it "feels unnecessary," add a checkpoint that references the exact failure data. "STOP. This happened in 5/5 sessions." is harder to rationalize away than "you MUST do X."
+
+---
+
+### 11. Bug-Fixer never dispatched
+
+**What happened:** In 3/3 audited bug-fix sessions, the main session debugged and fixed code directly. Zero bug-fixer Agent dispatches. The reproduction-test-first requirement was completely bypassed.
+
+**Root cause:** Debugging feels like a single-person activity. The model saw the bug, knew the fix, and applied it directly rather than routing through a specialized agent that enforces reproduction-test-first discipline.
+
+**Fix:** Added CHECKPOINT ASSERTION before step 4 in bug-fix command with anti-bypass language.
+
+**Rule:** Specialized agents exist to enforce discipline (e.g., reproduction test before fix). When the main session bypasses them, it also bypasses the discipline they enforce.
+
+---
+
+### 12. Verification/Finishing-Branch always skipped
+
+**What happened:** 0/5 sessions invoked the verification skill. 0/5 invoked the finishing-branch skill. Worktrees were manually merged and cleaned. No structured checklist was run, no options were presented to the human.
+
+**Root cause:** By the end of a session, the model feels "done" and wants to wrap up quickly. Verification and finishing feel like bureaucracy after the real work is complete.
+
+**Fix:** Added PIPELINE SELF-AUDIT checklist before the finish step — forces an explicit compliance check that the model must complete before declaring done.
+
+**Rule:** End-of-pipeline steps are the most likely to be skipped because the model has "completion momentum." Make them impossible to skip by adding a self-audit gate that must be filled in.
+
+---
+
+### 13. --auto means skip everything
+
+**What happened:** The `--auto` flag was interpreted as "skip entire agent pipeline" not "skip human approval gates." In 4/4 --auto sessions, the orchestrator, reviewer, and verification steps were all skipped. Only worktree creation survived.
+
+**Root cause:** "Auto" is ambiguous. The model interpreted it as "do everything automatically and quickly" which meant "skip the slow parts" — and the slow parts are the structural enforcement steps.
+
+**Fix:** Added BAD/GOOD example pair showing exactly what --auto does vs what it does not skip. --auto skips: human confirmation prompts, approval gates. --auto does NOT skip: orchestrator dispatch, reviewer dispatch, verification skill, finishing-branch skill.
+
+**Rule:** When a flag name is ambiguous, define it with explicit BAD/GOOD examples showing what it includes and excludes. "Auto" without a precise definition will be interpreted as "skip everything possible."
+
+---
+
+### 14. Fix implemented via its own failure mode
+
+**What happened:** The pipeline enforcement fix (entries 10-13) was itself implemented via a partial pipeline bypass. The Orchestrator was dispatched but couldn't dispatch sub-agents (Agent tool unavailable in its context). The main session then dispatched Engineers directly "on behalf of" the Orchestrator.
+
+**Root cause:** The Orchestrator agent's tool list includes Agent, but the runtime environment didn't provide it. No fallback guidance existed, so the main session silently took over orchestration duties.
+
+**Fix:** Added FALLBACK guidance to checkpoint assertions — when Agent() fails, report to human and get explicit approval before proceeding manually. Silent fallback is now explicitly banned.
+
+**Rule:** When a structural constraint fails at runtime (tool unavailable, error, timeout), the correct response is escalation, not silent bypass. Document all known deviations in the self-audit.
+
+---
+
 ## Summary: Structural Fixes > Prose Rules
 
 | Approach | Effectiveness | Example |
@@ -139,5 +199,6 @@ When writing agent instructions:
 | Add file-existence gate | Medium — observable, harder to skip | "GATE: docs/tasks/done/ is non-empty" |
 | BAD/GOOD example pair | Medium — concrete patterns stick better than abstract rules | BAD: `cat <<EOF`  GOOD: `Write(file_path: ...)` |
 | Counter + hard stop | Medium — gives the model a variable to track | `review_cycle >= 2 → STOP` |
+| Checkpoint assertion + audit data | Untested — requires battle testing before rating | "STOP. This happened in 5/5 sessions." with real numbers |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**
