@@ -57,7 +57,12 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
    ```
    Skill(skill: "property-based-testing")
    ```
-8. **Design & hygiene:** No dead code, no TODOs, no debug prints, clean interfaces
+8. **Duplication audit:**
+   - **Code duplication:** Same logic in multiple places? Copy-pasted functions? Extract shared utility.
+   - **Intent duplication:** Multiple implementations solving the same problem differently? Consolidate to one approach.
+   - **Knowledge duplication:** Business rules, config values, or constants hardcoded in multiple locations? Must have single source of truth.
+   - **Cross-file duplication:** Search the codebase for similar patterns — does this new code duplicate something that already exists elsewhere?
+9. **Design & hygiene:** No dead code, no TODOs, no debug prints, clean interfaces
 
 ---
 

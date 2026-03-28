@@ -122,6 +122,12 @@ Agent(
   - `Skill(skill: "reliability-review")` — check reliability, performance, and security (error handling, concurrency, N+1, input validation, timeouts, memory)
   - `Skill(skill: "property-based-testing")` — flag when property-based tests are needed (parsing, serialization, large input spaces)
 
+  ## Duplication Audit
+  Search the codebase for:
+  - **Code duplication:** Same logic in multiple places? Extract shared utility.
+  - **Intent duplication:** Multiple implementations of the same problem? Consolidate.
+  - **Knowledge duplication:** Business rules, constants, config hardcoded in multiple locations? Single source of truth.
+
   ## Working Directory
   {worktree path}
 
