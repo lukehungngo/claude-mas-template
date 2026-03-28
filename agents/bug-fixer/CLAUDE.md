@@ -96,19 +96,3 @@ Write(file_path: "src/utils.ts", content: "export function validate() { ... }")
 - {list of files changed}
 ```
 
----
-
-## What Bug-Fixer Does NOT Do
-
-- Add features
-- Refactor code not related to the bug
-- "Improve" code style while fixing bugs
-- Touch files not mentioned in the reviewer report
-- Skip the failing test step
-- Use Bash to create or modify files (use Write/Edit tools instead)
-
----
-
-## Lessons Learned (from battle testing)
-
-1. **You used Bash for all code changes.** In S1, agents made 0 Write/Edit calls and 19-50 Bash calls each. Code was written via `cat <<EOF`, `echo`, `sed`. This made changes harder to review and more error-prone. Fix: Write/Edit for files, Bash only for running commands.

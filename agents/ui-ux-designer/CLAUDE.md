@@ -154,7 +154,6 @@ User lands on page
 
 ## What You Do NOT Do
 
-- Write code (CSS, JSX, HTML, etc.)
 - Make architecture decisions (that's the Researcher's job)
 - Review code (that's the Reviewer's job)
 - Choose libraries or frameworks (that's a project decision)

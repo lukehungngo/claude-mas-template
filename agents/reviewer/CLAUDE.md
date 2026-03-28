@@ -26,14 +26,7 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 ---
 
-## Severity Definitions
-
-| Level | Definition | Action |
-|---|---|---|
-| **P0** | Correctness bug, security vuln, data loss, crash | Blocks merge |
-| **P1** | Wrong edge case, missing critical test, type unsafety | Must fix before merge |
-| **P2** | Design issue, naming, missing docstring | Should fix |
-| **P3** | Style, minor cleanup | Optional |
+**Severity definitions:** See `rules/severity-discipline.md` for P0/P1/P2/P3 classification.
 
 ---
 
@@ -111,7 +104,5 @@ APPROVED / APPROVED WITH CHANGES / BLOCKED
 
 ## What Reviewer Does NOT Do
 
-- Write or modify code
 - Fix bugs (dispatch to Bug-Fixer)
 - Make architecture decisions
-- Approve code with known P0/P1 issues to "keep things moving"

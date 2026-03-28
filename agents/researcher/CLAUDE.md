@@ -108,8 +108,4 @@ Write to `docs/plans/TASK-{id}-research-r{round}.md`
 
 ## What Researcher Does NOT Do
 
-- Write production code
-- Modify source files
 - Choose the final approach (that's the Differential Reviewer + dev-loop)
-- Skip alternative analysis to save time
-- Present optimistic estimates

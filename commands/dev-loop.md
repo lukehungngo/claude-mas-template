@@ -447,35 +447,13 @@ All agents use **`mas:` plugin prefix**:
 
 ## Rules
 
-- TDD is non-negotiable at every step
 - The dev-loop owns all agent dispatch via flat dispatch — route tasks per the routing table in Step 6, dispatch agents directly. Do NOT write production code yourself.
 - All agents use `mas:` plugin prefix (e.g., `mas:engineer:engineer`)
-- Every task gets reviewed (spec compliance + code quality) via Step 6 Phase 3
-- Requirements validation (step 7) is mandatory — never skip it
-- Stop on P0/P1 issues — do not proceed until fixed (`--auto`: dispatch Bug-Fixer automatically, escalate after 2 failed cycles)
-- Max 2 review cycles per task before escalating
-- Max 3 remediation cycles for requirements gaps before escalating
-- `--auto` still respects TDD, reviews, validation, and quality gates — it only skips human checkpoints
-- `--auto` retries up to 3 remediation cycles on GAPS FOUND before escalating
-- If any task is escalated to docs/tasks/blocked/ or requirements validation finds CRITICAL GAPS, present them to the human before proceeding
-- Do NOT use EnterPlanMode / PlanMode — use Skill(skill: "writing-plans") for structured plans
-- Do NOT dispatch Explorer agents ad-hoc — codebase exploration happens in step 3 only
-- Each step has a GATE — do NOT skip gates
-- Artifact gates are load-bearing enforcement — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` MUST exist before Step 7. These files are only created by dispatched agents, not by the main session. Do NOT create them manually.
+- Do NOT use EnterPlanMode / PlanMode — use `Skill(skill: "writing-plans")` for structured plans
+- Artifact gates are load-bearing enforcement — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` MUST exist before Step 7. These files are only created by dispatched agents. Do NOT create them manually.
 
-## Lessons Learned (from battle testing)
+For battle-tested lessons and enforcement guidance, see `rules/agent-workflow.md`.
 
-These rules exist because every one of these failures happened in real sessions. Do not repeat them.
+## Lessons Learned
 
-| #   | Failure                                         | What happened                                                                                                                                                                | Fix applied                                                                                           |
-| --- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| 1   | **Skills never invoked**                        | 0/5 sessions called Skill tool. Steps said "use X skill" — model skipped them all.                                                                                           | Every step now shows exact `Skill(skill: "X")` call.                                                  |
-| 2   | **Orchestrator did everything inline**          | Orchestrator used Bash (70 calls in S1) instead of dispatching agents. Zero Agent tool calls.                                                                                | Bash removed from Orchestrator's tool list (now deprecated). Flat dispatch eliminates the problem — dev-loop dispatches agents directly. |
-| 3   | **Engineer used Bash for code**                 | 0 Write/Edit calls. All code written via `cat <<EOF`, `echo`, `sed`.                                                                                                         | Engineer CLAUDE.md now bans Bash for file writes with BAD/GOOD examples.                              |
-| 4   | **Researcher/Differential Reviewer never used** | Model always classified tasks as "known pattern" and went straight to Engineer. Researcher used once reactively (agent #17 of 19). Differential Reviewer: 0 dispatches ever. | Orchestrator now requires routing decision log with justification. Novel task criteria made explicit. |
-| 5   | **PlanMode replaced writing-plans**             | 3/5 sessions used EnterPlanMode instead of the skill. PlanMode produces freeform text, not structured TASK-{id} breakdown.                                                   | Explicit ban on PlanMode. Step 4 shows exact Skill call.                                              |
-| 6   | **No cycle limit enforcement**                  | S1 had 6 bug-fix rounds (spec says max 2). No counter, no stop mechanism.                                                                                                    | Orchestrator Phase 3 now tracks `review_cycle` per task with hard stop at 2.                          |
-| 7   | **Explorer agents dispatched ad-hoc**           | 4/5 sessions dispatched Explorer as first step — not in pipeline.                                                                                                            | Formalized as step 3 (Explore). Banned ad-hoc exploration elsewhere.                                  |
-| 8   | **Verification step always skipped**            | 0/5 sessions called verification skill. Tests were run via raw Bash but structured checklist never triggered.                                                                | Step 8 shows exact Skill call with GATE check.                                                        |
-
-**The meta-lesson:** Prose instructions get skipped. Structural constraints (removing tools, requiring exact tool call syntax, adding file-existence gates) are harder to bypass than rules that say "you MUST".
+See `rules/agent-workflow.md` for battle-tested lessons from real sessions. Key meta-lesson: **prose instructions get skipped — structural constraints (tool removal, file-existence gates, exact tool call syntax) are harder to bypass.**

@@ -238,12 +238,9 @@ Skill(skill: "finishing-branch")
 
 ## Rules
 
-- Always reproduce the bug before fixing — a fix without a reproduction test is a guess
-- The Bug-Fixer touches only the files in scope — no opportunistic refactoring
-- Max 2 review cycles before escalating to human
-- `--auto` still runs all agents and skills — it only skips human approval pauses
-- Do NOT skip the Reviewer step — even obvious fixes can introduce regressions
-- Do NOT use this command for feature work — use `/mas:dev-loop` instead
+- Use `/mas:dev-loop` for feature work, not `/mas:bug-fix` — this command is for focused bug fixes only.
+
+For agent-specific rules (TDD, scope discipline, reproduction-test-first), see the agent CLAUDE.md files. For battle-tested lessons, see `rules/agent-workflow.md`.
 
 ## When to Use `/mas:bug-fix` vs `/mas:dev-loop`
 

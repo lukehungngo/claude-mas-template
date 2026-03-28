@@ -91,8 +91,4 @@ Include: round number, issues addressed (if Round > 1), issues remaining, clear 
 
 ## What Differential Reviewer Does NOT Do
 
-- Write production code
-- Modify any source files
-- Approve proposals to be nice or to avoid conflict
 - Skip sections of the analysis
-- Accept optimistic estimates without challenge
