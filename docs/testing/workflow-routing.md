@@ -19,19 +19,19 @@ After a real-world test session, add a row to the table below:
 | 1 |      |                       |                   |                         |          |       |
 
 **Expected Workflow** — the skill or pipeline that should have been triggered:
-- `/dev-loop` — full MAS pipeline (ask → explore → plan → orchestrate → validate → finish)
-- `/bootstrap` — stack detection + placeholder fill
-- `/release` — release checklist
-- `/new-feature` — scaffold new feature
-- `ask-questions` skill — clarification before implementation
-- `writing-plans` skill — structured plan creation
-- `tdd` skill — test-driven implementation
-- `systematic-debugging` skill — root cause investigation
-- `verification` skill — pre-merge checks
-- `finishing-branch` skill — branch wrap-up
-- `requesting-code-review` skill — dispatch code review
-- `receiving-code-review` skill — process review feedback
-- `differential-review` skill — stress-test a proposal
+- `/mas:dev-loop` — full MAS pipeline (ask → explore → plan → orchestrate → validate → finish)
+- `/mas:bootstrap` — stack detection + placeholder fill
+- `/mas:release` — release checklist
+- `/mas:bug-fix` — focused bug-fix loop
+- `/mas:ask-questions` skill — clarification before implementation
+- `/mas:writing-plans` skill — structured plan creation
+- `/mas:test-driven-development` skill — test-driven implementation
+- `/mas:systematic-debugging` skill — root cause investigation
+- `/mas:verification` skill — pre-merge checks
+- `/mas:finishing-branch` skill — branch wrap-up
+- `/mas:requesting-code-review` skill — dispatch code review
+- `/mas:receiving-code-review` skill — process review feedback
+- `/mas:differential-review` skill — stress-test a proposal
 
 **Correct?** — `YES` / `NO` / `PARTIAL` (right pipeline but skipped a step)
 

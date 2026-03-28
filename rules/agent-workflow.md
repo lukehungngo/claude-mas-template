@@ -122,9 +122,9 @@ When writing agent instructions:
 
 **Root cause:** The dev-loop had detailed dispatch instructions for each agent type. The main session, seeing these instructions, dispatched agents itself rather than delegating to the Orchestrator.
 
-**Fix:** Dev-loop now dispatches ONLY the Orchestrator (step 6). All agent routing happens inside the Orchestrator via its dispatch templates. The dev-loop explicitly says: "Do NOT call skills or dispatch agents directly — the Orchestrator handles all routing."
+**Fix:** Dev-loop dispatches all agents directly (flat dispatch). Orchestrator-as-subagent was deprecated due to Agent tool unavailability at Level 1 nesting. The dev-loop owns the dispatch loop and routes to Engineer, Reviewer, and Bug-Fixer agents itself.
 
-**Rule:** If you give the outer loop detailed dispatch instructions, it will use them itself instead of delegating. Keep the outer loop simple: dispatch the Orchestrator and let it handle everything.
+**Rule:** If a subagent cannot dispatch further subagents (tool unavailability at deeper nesting levels), move dispatch responsibility up to the level that has the tools. Flat dispatch from the dev-loop is simpler and more reliable than nested orchestration.
 
 ---
 

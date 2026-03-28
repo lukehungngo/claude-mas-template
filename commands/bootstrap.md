@@ -158,9 +158,9 @@ Check if a testing framework was detected (test command is not empty/placeholder
 TDD is non-negotiable in this workflow. Without a testing
 framework, the following WILL NOT WORK:
 
-  - /dev-loop (TDD enforced at every task)
-  - /test-driven-development
-  - /subagent-driven-development (two-stage review requires tests)
+  - /mas:dev-loop (TDD enforced at every task)
+  - /mas:test-driven-development
+  - /mas:subagent-driven-development (two-stage review requires tests)
   - Engineer agent (refuses to implement without tests)
   - Reviewer agent (blocks on missing test coverage)
 
@@ -172,7 +172,7 @@ any MAS workflow. Examples:
   - Rust:     (built-in, check Cargo.toml exists)
   - Java:     add junit-jupiter to pom.xml or build.gradle
 
-Then re-run /bootstrap to update the test command.
+Then re-run /mas:bootstrap to update the test command.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

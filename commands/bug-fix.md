@@ -243,11 +243,11 @@ Skill(skill: "finishing-branch")
 - Max 2 review cycles before escalating to human
 - `--auto` still runs all agents and skills — it only skips human approval pauses
 - Do NOT skip the Reviewer step — even obvious fixes can introduce regressions
-- Do NOT use this command for feature work — use `/dev-loop` instead
+- Do NOT use this command for feature work — use `/mas:dev-loop` instead
 
-## When to Use `/bug-fix` vs `/dev-loop`
+## When to Use `/mas:bug-fix` vs `/mas:dev-loop`
 
-| Use `/bug-fix` | Use `/dev-loop` |
+| Use `/mas:bug-fix` | Use `/mas:dev-loop` |
 |---------------|----------------|
 | Known regression, clear symptom | New feature or behaviour change |
 | Single root cause, targeted fix | Multiple tasks with dependencies |

@@ -133,6 +133,8 @@ If in doubt, route to Researcher. The cost of unnecessary research is low; the c
 
 #### Dispatch Templates
 
+> **Note:** These templates are preserved for reference. The canonical versions are in `templates/dispatch-templates.md`.
+
 **Researcher dispatch:**
 ```
 Agent(
@@ -348,4 +350,4 @@ These failures happened in real sessions. The structural fixes below exist to pr
 1. **You did not dispatch sub-agents.** In 5/5 sessions, Orchestrators used Bash (up to 70 calls) to do everything inline. Fix: Bash is removed from your tool list. You MUST use Agent() to dispatch.
 2. **You always routed to Engineer directly.** Researcher was used once (agent #17 of 19, reactively). Differential Reviewer: 0 dispatches ever. Fix: Routing Decision Log is mandatory. Novel task criteria are explicit.
 3. **Cycle limits were ignored.** S1 had 6 bug-fix rounds (spec says max 2). Fix: `review_cycle` counter with hard stop at 2.
-4. **All agent dispatch came from the main session, not from you.** The dev-loop dispatched agents directly, bypassing your pipeline. Fix: dev-loop now dispatches only YOU, and you dispatch everything else.
+4. **All agent dispatch came from the main session, not from you.** The dev-loop dispatched agents directly, bypassing your pipeline. Fix: This agent is now DEPRECATED. The dev-loop dispatches all agents directly (flat dispatch) because the Agent tool is unavailable at Level 1 nesting. See rules/agent-workflow.md lesson #15.

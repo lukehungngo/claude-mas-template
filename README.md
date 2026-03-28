@@ -10,10 +10,10 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | **Agents**    | 7     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
 | **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
-| **Rules**     | 5     | honesty-first, severity-discipline, architecture invariants, meta-rules guide, agent workflow lessons         |
-| **Commands**  | 3     | bootstrap, dev-loop, release                                                                                 |
+| **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
+| **Commands**  | 4     | bootstrap, dev-loop, bug-fix, release                                                                        |
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
-| **Templates** | 2     | task-spec, review-report                                                                                     |
+| **Templates** | 3     | task-spec, review-report, dispatch-templates                                                                  |
 
 ## Prerequisites
 
@@ -89,13 +89,13 @@ claude "/bootstrap"
 ## Agent Architecture
 
 ```
-                    ┌─────────────┐
-                    │ Orchestrator │  Decomposes, dispatches, verifies
-                    └──────┬──────┘
-                           │
-     ┌─────────────┬───────┼───────┬─────────────┐
-     │             │       │       │             │
-     ▼             ▼       ▼       ▼             ▼
+                     ┌──────────┐
+                     │ dev-loop │  Flat dispatch — drives the pipeline directly
+                     └────┬─────┘
+                          │
+    ┌────────────┬────────┼────────┬─────────────┐
+    │            │        │        │             │
+    ▼            ▼        ▼        ▼             ▼
 ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐
 │Researcher│ │UI/UX     │ │Engineer  │ │Bug-Fixer │ │Diff.Reviewer │
 │          │ │Designer* │ │          │ │          │ │(adversarial) │
@@ -143,6 +143,7 @@ claude-mas-template/
 │   └── ui-ux-designer/CLAUDE.md           # Component specs & a11y (has_ui: true)
 ├── commands/
 │   ├── bootstrap.md                       # Auto-detect stack, fill placeholders
+│   ├── bug-fix.md                         # Focused bug-fix loop
 │   ├── dev-loop.md                        # Full development workflow
 │   └── release.md                         # Release checklist
 ├── hooks/
@@ -151,7 +152,6 @@ claude-mas-template/
 ├── rules/
 │   ├── honesty-first.md                   # Metrics integrity
 │   ├── severity-discipline.md             # Severity classification
-│   ├── architecture.md                    # Architecture invariants
 │   ├── meta-rules-guide.md                # How to write new rules
 │   └── agent-workflow.md                  # Lessons learned from battle testing
 ├── skills/
@@ -176,7 +176,8 @@ claude-mas-template/
 │   └── differential-review/SKILL.md
 └── templates/
     ├── task-spec.md
-    └── review-report.md
+    ├── review-report.md
+    └── dispatch-templates.md
 ```
 
 ## Usage
@@ -188,6 +189,7 @@ Run in your terminal:
 ```bash
 claude "/mas:bootstrap"
 claude "/mas:dev-loop Add user authentication with JWT"
+claude "/mas:bug-fix Fix: login returns 401 when password has special chars"
 claude "/mas:release v1.2.0"
 
 # Non-stop autonomous mode — skips all human checkpoints
@@ -256,11 +258,7 @@ You don't always need the full `dev-loop` pipeline. You can bypass the Orchestra
     claude --agent mas:ui-ux-designer:ui-ux-designer "Design the settings page layout and interaction flow"
     ```
 
-*   **The Orchestrator (Project Manager)**
-    Use when you want to delegate a large epic. It will break it down and dispatch the agents above.
-    ```bash
-    claude --agent mas:orchestrator:orchestrator "Build a complete CRUD API for products"
-    ```
+> **Note:** The Orchestrator agent is deprecated. For large epics, use `dev-loop` which dispatches agents directly via flat dispatch.
 
 > **Pro-tip for uninterrupted runs:**
 > If you trust the agent and want to grab a coffee while it works, append `--dangerously-skip-permissions` to bypass the prompts asking for permission to run tests or edit files.

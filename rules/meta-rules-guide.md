@@ -57,7 +57,7 @@ Every rule file MUST follow this structure:
 
 | Change | Action |
 |--------|--------|
-| New architecture invariant | Add to `architecture.md` AND `CLAUDE.md` |
+| New architecture invariant | Add to `CLAUDE.md` Architecture Invariants section |
 | New domain knowledge | Create `{domain}-patterns.md` in rules/ |
 | P0 incident | Add P0 Lesson to relevant rule, or create new rule |
 | Deprecated pattern | Update rule with "DEPRECATED" section, don't delete |
