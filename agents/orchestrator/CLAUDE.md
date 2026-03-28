@@ -60,12 +60,12 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 
 | Agent | Subagent Type | When to Use |
 |-------|---------------|-------------|
-| Researcher | `researcher` | Novel algorithms, new approaches, exploration |
-| Differential Reviewer | `differential-reviewer` | Stress-test research proposals before implementation |
-| Engineer | `engineer` | Code implementation (with or without research proposal) |
-| Reviewer | `reviewer` | Business + technical review after implementation |
-| Bug-Fixer | `bug-fixer` | TDD bug fixes from reviewer reports |
-| UI/UX Designer | `ui-ux-designer` | Component specs, interaction flows, accessibility review (**only if `has_ui: true`**) |
+| Researcher | `mas:researcher:researcher` | Novel algorithms, new approaches, exploration |
+| Differential Reviewer | `mas:differential-reviewer:differential-reviewer` | Stress-test research proposals before implementation |
+| Engineer | `mas:engineer:engineer` | Code implementation (with or without research proposal) |
+| Reviewer | `mas:reviewer:reviewer` | Business + technical review after implementation |
+| Bug-Fixer | `mas:bug-fixer:bug-fixer` | TDD bug fixes from reviewer reports |
+| UI/UX Designer | `mas:ui-ux-designer:ui-ux-designer` | Component specs, interaction flows, accessibility review (**only if `has_ui: true`**) |
 
 ---
 
@@ -136,7 +136,7 @@ If in doubt, route to Researcher. The cost of unnecessary research is low; the c
 **Researcher dispatch:**
 ```
 Agent(
-  subagent_type: "researcher",
+  subagent_type: "mas:researcher:researcher",
   prompt: """
   ## Task Spec
   {paste full task spec from docs/tasks/pending/TASK-{id}.md}
@@ -157,7 +157,7 @@ Agent(
 **Differential Reviewer dispatch:**
 ```
 Agent(
-  subagent_type: "differential-reviewer",
+  subagent_type: "mas:differential-reviewer:differential-reviewer",
   prompt: """
   ## Research Proposal
   {paste proposal from docs/plans/TASK-{id}-research-r{N}.md}
@@ -179,7 +179,7 @@ Agent(
 **Engineer dispatch:**
 ```
 Agent(
-  subagent_type: "engineer",
+  subagent_type: "mas:engineer:engineer",
   prompt: """
   ## Task Spec
   {paste full task spec from docs/tasks/pending/TASK-{id}.md}
@@ -202,7 +202,7 @@ Agent(
 **Reviewer dispatch:**
 ```
 Agent(
-  subagent_type: "reviewer",
+  subagent_type: "mas:reviewer:reviewer",
   prompt: """
   ## Task Spec
   {paste full task spec}
@@ -226,7 +226,7 @@ Agent(
 **Bug-Fixer dispatch:**
 ```
 Agent(
-  subagent_type: "bug-fixer",
+  subagent_type: "mas:bug-fixer:bug-fixer",
   prompt: """
   ## Reviewer Report
   {paste from docs/reports/TASK-{id}-review.md}
@@ -246,7 +246,7 @@ Agent(
 **UI/UX Designer dispatch (has_ui: true only):**
 ```
 Agent(
-  subagent_type: "ui-ux-designer",
+  subagent_type: "mas:ui-ux-designer:ui-ux-designer",
   prompt: """
   ## Task Spec
   {paste full task spec}
@@ -287,7 +287,7 @@ Read: src/feature.ts                   ← OK: reading is fine
 
 GOOD — dispatching an Engineer:
 ```
-Agent(subagent_type: "engineer", prompt: "Implement TASK-001...")  ← CORRECT
+Agent(subagent_type: "mas:engineer:engineer", prompt: "Implement TASK-001...")  ← CORRECT
 ```
 
 **Parallel execution:**

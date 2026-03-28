@@ -57,8 +57,8 @@ Before any implementation, you MUST follow this workflow. No code changes until 
 2. **Create isolated workspace** — git worktree on a new branch, run project setup, verify clean test baseline.
 3. **Explore the codebase** — `Agent(subagent_type: "Explore")` — Scan for relevant patterns, existing implementations, integration points before planning.
 4. **Write the plan** — `Skill(skill: "writing-plans")` — Break work into bite-sized tasks (2-5 min each). Do NOT use EnterPlanMode.
-5. **Design first (if `has_ui: true`)** — `Agent(subagent_type: "ui-ux-designer")` — Component specs, state mapping, interaction flows, accessibility checklist.
+5. **Design first (if `has_ui: true`)** — `Agent(subagent_type: "mas:ui-ux-designer:ui-ux-designer")` — Component specs, state mapping, interaction flows, accessibility checklist.
 6. **Orchestrate (flat dispatch)** — Apply routing table, dispatch agents directly via `Agent()`. Route novel tasks through Researcher → Differential Reviewer → Engineer. Known patterns go directly to Engineer. Review each task, dispatch Bug-Fixer if blocked. Templates in `templates/dispatch-templates.md`.
-7. **Validate requirements** — `Agent(subagent_type: "reviewer")` — Holistic PRD check. Loops back to step 6 on GAPS FOUND (max 3 cycles).
+7. **Validate requirements** — `Agent(subagent_type: "mas:reviewer:reviewer")` — Holistic PRD check. Loops back to step 6 on GAPS FOUND (max 3 cycles).
 8. **Verify** — `Skill(skill: "verification")` — All tests pass, lint clean, typecheck clean, no debug artifacts.
 9. **Finish the branch** — `Skill(skill: "finishing-branch")` — Verify tests pass, present options (merge/PR/keep/discard), clean up worktree.

@@ -41,7 +41,7 @@ claude "/mas:bootstrap"
 > **Try one-shot prompt (bypass all permissions):**
 >
 > ```bash
-> claude --dangerously-skip-permissions "/dev-loop --auto Build a complete CRUD API for products"
+> claude --dangerously-skip-permissions "/mas:dev-loop --auto Build a complete CRUD API for products"
 > ```
 
 Update plugin:
@@ -70,6 +70,8 @@ claude plugin marketplace remove luke-plugins
 
 <details>
 <summary><strong>Option B: Manual install (git clone)</strong></summary>
+
+For users who want to customize agents/skills locally. Local install gives **unprefixed** commands (`/dev-loop`, `/bootstrap`, etc.).
 
 ```bash
 git clone https://github.com/lukehungngo/claude-mas-template /tmp/mas
@@ -192,80 +194,78 @@ claude "/mas:release v1.2.0"
 claude "/mas:dev-loop Add user authentication with JWT --auto"
 ```
 
-### Skills (available after bootstrap)
+### Skills
 
-After `/mas:bootstrap` copies files into your `.claude/`, all 13 skills work **without prefix**.
-
-Open Claude Code (`claude` in terminal), then type these inside the chat:
+All 13 skills are available via the `mas:` prefix. Open Claude Code (`claude` in terminal), then type these inside the chat:
 
 ```
-/ask-questions I need to add OAuth2 support
-/writing-plans Plan: migrate database to PostgreSQL
-/subagent-driven-development Execute the migration plan
-/executing-plans Execute the migration plan
-/test-driven-development Implement the rate limiter module
-/requesting-code-review Review the auth middleware changes
-/receiving-code-review Fix issues from the review report
-/finishing-branch
-/verification
-/systematic-debugging Users get 500 on /api/payments
-/property-based-testing Test the URL parser
-/differential-review Review the caching strategy proposal
-/se-principles Should I use inheritance or composition here?
+/mas:ask-questions I need to add OAuth2 support
+/mas:writing-plans Plan: migrate database to PostgreSQL
+/mas:subagent-driven-development Execute the migration plan
+/mas:executing-plans Execute the migration plan
+/mas:test-driven-development Implement the rate limiter module
+/mas:requesting-code-review Review the auth middleware changes
+/mas:receiving-code-review Fix issues from the review report
+/mas:finishing-branch
+/mas:verification
+/mas:systematic-debugging Users get 500 on /api/payments
+/mas:property-based-testing Test the URL parser
+/mas:differential-review Review the caching strategy proposal
+/mas:se-principles Should I use inheritance or composition here?
 ```
 
-### Direct Agent Usage (available after bootstrap)
+### Direct Agent Usage
 
-You don't always need the full `dev-loop` pipeline. You can bypass the Orchestrator and directly "hire" specific specialized agents from your terminal for targeted tasks.
+You don't always need the full `dev-loop` pipeline. You can bypass the Orchestrator and directly "hire" specific specialized plugin agents from your terminal for targeted tasks.
 
 **When to use which agent:**
 
-*   **👨‍💻 The Engineer (TDD Implementation)**
+*   **The Engineer (TDD Implementation)**
     Use when you have a clear task and want it built with strict Test-Driven Development.
     ```bash
-    claude --agent engineer "Implement TASK-003: Add rate limiting middleware"
+    claude --agent mas:engineer:engineer "Implement TASK-003: Add rate limiting middleware"
     ```
 
-*   **🕵️ The Bug-Fixer (Surgical Fixes)**
+*   **The Bug-Fixer (Surgical Fixes)**
     Use when you have a specific bug. It will write a failing test to reproduce it, then fix the code without touching adjacent features.
     ```bash
-    claude --agent bug-fixer "Fix: login returns 401 when password has special chars"
+    claude --agent mas:bug-fixer:bug-fixer "Fix: login returns 401 when password has special chars"
     ```
 
-*   **🧐 The Reviewer (Harsh Code Review)**
+*   **The Reviewer (Harsh Code Review)**
     Use before opening a PR. It performs a two-phase review (business alignment + technical audit) and flags P0/P1 blockers.
     ```bash
-    claude --agent reviewer "Review the recent changes in src/auth/"
+    claude --agent mas:reviewer:reviewer "Review the recent changes in src/auth/"
     ```
 
-*   **🔬 The Researcher (Exploration & Trade-offs)**
+*   **The Researcher (Exploration & Trade-offs)**
     Use when you need to figure out *how* to build something before actually writing code.
     ```bash
-    claude --agent researcher "What are the best options for real-time notifications in our stack?"
+    claude --agent mas:researcher:researcher "What are the best options for real-time notifications in our stack?"
     ```
 
-*   **⚖️ The Differential Reviewer (Adversarial Stress-Test)**
+*   **The Differential Reviewer (Adversarial Stress-Test)**
     Use to stress-test a proposed architecture or research plan. It actively tries to find reasons why your idea will fail in production.
     ```bash
-    claude --agent differential-reviewer "Stress-test the Redis caching proposal in docs/plans/TASK-001.md"
+    claude --agent mas:differential-reviewer:differential-reviewer "Stress-test the Redis caching proposal in docs/plans/TASK-001.md"
     ```
 
-*   **🎨 The UI/UX Designer (Component Specs & A11y)**
+*   **The UI/UX Designer (Component Specs & A11y)**
     Use when you need a structured design spec, state mapping, and accessibility checklist before building a frontend component.
     ```bash
-    claude --agent ui-ux-designer "Design the settings page layout and interaction flow"
+    claude --agent mas:ui-ux-designer:ui-ux-designer "Design the settings page layout and interaction flow"
     ```
 
-*   **👔 The Orchestrator (Project Manager)**
+*   **The Orchestrator (Project Manager)**
     Use when you want to delegate a large epic. It will break it down and dispatch the agents above.
     ```bash
-    claude --agent orchestrator "Build a complete CRUD API for products"
+    claude --agent mas:orchestrator:orchestrator "Build a complete CRUD API for products"
     ```
 
 > **Pro-tip for uninterrupted runs:**
 > If you trust the agent and want to grab a coffee while it works, append `--dangerously-skip-permissions` to bypass the prompts asking for permission to run tests or edit files.
 > ```bash
-> claude --dangerously-skip-permissions --agent engineer "Refactor the database pool"
+> claude --dangerously-skip-permissions --agent mas:engineer:engineer "Refactor the database pool"
 > ```
 
 ### Example Workflows
@@ -273,26 +273,22 @@ You don't always need the full `dev-loop` pipeline. You can bypass the Orchestra
 **1. Full pipeline — run in terminal, one command does everything:**
 
 ```bash
-claude "/mas:dev-loop --auto Implement WebSocket support for real-time updates" # Run from plugin
-
-or
-
-claude "/dev-loop --auto Implement WebSocket support for real-time updates" # Run from local project
+claude "/mas:dev-loop --auto Implement WebSocket support for real-time updates"
 ```
 
 **2. Plan then execute — open Claude Code, type in chat:**
 
 ```
-/writing-plans Plan: add pagination to all list endpoints
-/subagent-driven-development Execute the pagination plan
+/mas:writing-plans Plan: add pagination to all list endpoints
+/mas:subagent-driven-development Execute the pagination plan
 ```
 
 **3. Debug, fix, review — open Claude Code, type in chat:**
 
 ```
-/systematic-debugging Why are emails not sending?
-Tell the bug-fixer agent to fix the SMTP timeout
-/requesting-code-review Review the email fix
+/mas:systematic-debugging Why are emails not sending?
+/mas:bug-fix Fix the SMTP timeout
+/mas:requesting-code-review Review the email fix
 ```
 
 ## Acknowledgments

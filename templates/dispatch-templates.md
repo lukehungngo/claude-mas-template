@@ -27,7 +27,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 
 ```
 Agent(
-  subagent_type: "researcher",
+  subagent_type: "mas:researcher:researcher",
   prompt: """
   ## Task Spec
   {paste full task spec from docs/tasks/pending/TASK-{id}.md}
@@ -51,7 +51,7 @@ Agent(
 
 ```
 Agent(
-  subagent_type: "differential-reviewer",
+  subagent_type: "mas:differential-reviewer:differential-reviewer",
   prompt: """
   ## Research Proposal
   {paste proposal from docs/plans/TASK-{id}-research-r{N}.md}
@@ -76,7 +76,7 @@ Agent(
 
 ```
 Agent(
-  subagent_type: "engineer",
+  subagent_type: "mas:engineer:engineer",
   prompt: """
   ## Task Spec
   {paste full task spec from docs/tasks/pending/TASK-{id}.md}
@@ -102,7 +102,7 @@ Agent(
 
 ```
 Agent(
-  subagent_type: "reviewer",
+  subagent_type: "mas:reviewer:reviewer",
   prompt: """
   ## Task Spec
   {paste full task spec}
@@ -129,7 +129,7 @@ Agent(
 
 ```
 Agent(
-  subagent_type: "bug-fixer",
+  subagent_type: "mas:bug-fixer:bug-fixer",
   prompt: """
   ## Reviewer Report
   {paste from docs/reports/TASK-{id}-review.md}
@@ -154,7 +154,7 @@ Agent(
 
 ```
 Agent(
-  subagent_type: "ui-ux-designer",
+  subagent_type: "mas:ui-ux-designer:ui-ux-designer",
   prompt: """
   ## Task Spec
   {paste full task spec}

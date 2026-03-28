@@ -38,7 +38,7 @@ dev-loop (this command)
   ├─ 3. Explore ─── Agent(subagent_type: "Explore")
   ├─ 4. Plan ─── Skill(skill: "writing-plans")
   │
-  ├─ 5. Design (if has_ui: true) ─── Agent(subagent_type: "ui-ux-designer")
+  ├─ 5. Design (if has_ui: true) ─── Agent(subagent_type: "mas:ui-ux-designer:ui-ux-designer")
   │
   ├─ 6. Orchestrate (flat dispatch — you are the orchestrator)
   │       │
@@ -49,7 +49,7 @@ dev-loop (this command)
   │       ├─ Phase 3: Review each task (Reviewer → Bug-Fixer if BLOCKED, max 2 cycles)
   │       └─ Phase 4: Verify acceptance criteria → move to docs/tasks/done/
   │
-  ├─ 7. Validate ─── Agent(subagent_type: "reviewer")
+  ├─ 7. Validate ─── Agent(subagent_type: "mas:reviewer:reviewer")
   │       └─ GAPS FOUND? ──→ loop back to 6 (max 3 cycles)
   ├─ 8. Verify ─── Skill(skill: "verification")
   └─ 9. Finish ─── Skill(skill: "finishing-branch")
@@ -139,7 +139,7 @@ Before implementation, dispatch the **UI/UX Designer agent** to produce design s
 
 ```
 Agent(
-  subagent_type: "ui-ux-designer",
+  subagent_type: "mas:ui-ux-designer:ui-ux-designer",
   prompt: """
   You are the UI/UX Designer for this development session.
 
@@ -282,7 +282,7 @@ ls docs/reports/TASK-*-review.md
 >
 > You are about to skip requirements validation. **STOP.**
 > This happened in 5/5 audited sessions — no session ever dispatched a reviewer for holistic validation.
-> The Reviewer MUST be dispatched via `Agent(subagent_type: "reviewer")` with the requirements validation prompt.
+> The Reviewer MUST be dispatched via `Agent(subagent_type: "mas:reviewer:reviewer")` with the requirements validation prompt.
 > Step 6 per-task reviews are NOT sufficient — this step checks all tasks together deliver the PRD.
 
 ### Step 7 — Validate Requirements
@@ -291,7 +291,7 @@ Holistic PRD validation. Step 6's per-task reviews checked individual tasks, but
 
 ```
 Agent(
-  subagent_type: "reviewer",
+  subagent_type: "mas:reviewer:reviewer",
   prompt: """
   You are performing a REQUIREMENTS VALIDATION — not a per-task code review.
 
@@ -433,23 +433,23 @@ Skill(skill: "finishing-branch")
 
 ## Agent Reference
 
-All agents use **local subagent_type** (no `mas:` prefix — these are local after bootstrap):
+All agents use **`mas:` plugin prefix**:
 
 | Agent                 | subagent_type           | Role                                                                                             |
 | --------------------- | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| ~~Orchestrator~~      | ~~`orchestrator`~~      | DEPRECATED — routing logic is now inline in Step 6. Agent preserved for future use if nested dispatch becomes reliable. |
-| Engineer              | `engineer`              | TDD implementation, writes to `docs/results/`. Uses Write/Edit for code, Bash only for commands. |
-| Reviewer              | `reviewer`              | Two-stage review, writes to `docs/reports/`                                                      |
-| Researcher            | `researcher`            | Explores approaches, writes to `docs/plans/`                                                     |
-| Differential Reviewer | `differential-reviewer` | Stress-tests proposals, writes to `docs/reports/`                                                |
-| Bug-Fixer             | `bug-fixer`             | TDD fixes from reviewer reports, writes to `docs/reports/`                                       |
-| UI/UX Designer        | `ui-ux-designer`        | Design specs + HTML mockups, writes to `docs/design/`                                            |
+| ~~Orchestrator~~      | ~~`orchestrator`~~                              | DEPRECATED — routing logic is now inline in Step 6. Agent preserved for future use if nested dispatch becomes reliable. |
+| Engineer              | `mas:engineer:engineer`                         | TDD implementation, writes to `docs/results/`. Uses Write/Edit for code, Bash only for commands. |
+| Reviewer              | `mas:reviewer:reviewer`                         | Two-stage review, writes to `docs/reports/`                                                      |
+| Researcher            | `mas:researcher:researcher`                     | Explores approaches, writes to `docs/plans/`                                                     |
+| Differential Reviewer | `mas:differential-reviewer:differential-reviewer` | Stress-tests proposals, writes to `docs/reports/`                                                |
+| Bug-Fixer             | `mas:bug-fixer:bug-fixer`                       | TDD fixes from reviewer reports, writes to `docs/reports/`                                       |
+| UI/UX Designer        | `mas:ui-ux-designer:ui-ux-designer`             | Design specs + HTML mockups, writes to `docs/design/`                                            |
 
 ## Rules
 
 - TDD is non-negotiable at every step
 - The dev-loop owns all agent dispatch via flat dispatch — route tasks per the routing table in Step 6, dispatch agents directly. Do NOT write production code yourself.
-- Always use local subagent_type (no `mas:` prefix)
+- All agents use `mas:` plugin prefix (e.g., `mas:engineer:engineer`)
 - Every task gets reviewed (spec compliance + code quality) via Step 6 Phase 3
 - Requirements validation (step 7) is mandatory — never skip it
 - Stop on P0/P1 issues — do not proceed until fixed (`--auto`: dispatch Bug-Fixer automatically, escalate after 2 failed cycles)

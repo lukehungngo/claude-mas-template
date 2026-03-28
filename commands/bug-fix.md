@@ -36,10 +36,10 @@ bug-fix (this command)
   ├─ 1. Clarify ─── Skill(skill: "ask-questions")
   ├─ 2. Branch ─── git worktree
   ├─ 3. Debug ─── Skill(skill: "systematic-debugging")
-  ├─ 4. Fix ─── Agent(subagent_type: "bug-fixer")
+  ├─ 4. Fix ─── Agent(subagent_type: "mas:bug-fixer:bug-fixer")
   │
-  ├─ 5. Review ─── Agent(subagent_type: "reviewer")
-  │       └─ BLOCKED? ──→ Agent(subagent_type: "bug-fixer") (max 2 cycles)
+  ├─ 5. Review ─── Agent(subagent_type: "mas:reviewer:reviewer")
+  │       └─ BLOCKED? ──→ Agent(subagent_type: "mas:bug-fixer:bug-fixer") (max 2 cycles)
   │
   ├─ 6. Verify ─── Skill(skill: "verification")
   └─ 7. Finish ─── Skill(skill: "finishing-branch")
@@ -96,7 +96,7 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 >
 > You are about to fix this bug yourself. **STOP.**
 > This happened in 3/3 audited bug-fix sessions — the main session debugged and fixed code directly every time.
-> The Bug-Fixer agent MUST be dispatched via `Agent(subagent_type: "bug-fixer")`.
+> The Bug-Fixer agent MUST be dispatched via `Agent(subagent_type: "mas:bug-fixer:bug-fixer")`.
 > You are the pipeline controller, NOT the implementer.
 > The Bug-Fixer enforces: reproduction test FIRST, minimal fix, scope discipline.
 > If you are about to call Edit or Write on production code — you are violating the pipeline.
@@ -117,7 +117,7 @@ Dispatch the Bug-Fixer with the reproduction test and root cause:
 
 ```
 Agent(
-  subagent_type: "bug-fixer",
+  subagent_type: "mas:bug-fixer:bug-fixer",
   prompt: """
   ## Bug Description
   {paste bug description from Step 1}
@@ -146,7 +146,7 @@ Agent(
 >
 > You are about to skip the review. **STOP.**
 > In audited sessions, only 1/6 implementations got a reviewer dispatch.
-> The Reviewer MUST be dispatched via `Agent(subagent_type: "reviewer")` after the Bug-Fixer completes.
+> The Reviewer MUST be dispatched via `Agent(subagent_type: "mas:reviewer:reviewer")` after the Bug-Fixer completes.
 > If the Reviewer issues BLOCKED, dispatch Bug-Fixer again (max 2 cycles).
 
 ---
@@ -157,7 +157,7 @@ Dispatch the Reviewer to verify the fix is correct and doesn't introduce new iss
 
 ```
 Agent(
-  subagent_type: "reviewer",
+  subagent_type: "mas:reviewer:reviewer",
   prompt: """
   ## Bug Description
   {paste bug description}
@@ -214,7 +214,7 @@ Skill(skill: "verification")
 
 Before proceeding to Step 7, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
 
-- [ ] **Bug-Fixer dispatched?** — Scroll up and confirm an `Agent(subagent_type: "bug-fixer")` tool call exists in this conversation. If you fixed the bug via Write/Edit yourself, this is a violation.
+- [ ] **Bug-Fixer dispatched?** — Scroll up and confirm an `Agent(subagent_type: "mas:bug-fixer:bug-fixer")` tool call exists in this conversation. If you fixed the bug via Write/Edit yourself, this is a violation.
 - [ ] **Reproduction test written first?** — Check the Bug-Fixer's result file in `docs/reports/` for a reproduction test entry. If no test is listed, the reproduction-test-first requirement was bypassed.
 - [ ] **Reviewer issued verdict?** — Check `docs/reports/` for a review file with a verdict line. If no review file exists, no reviewer was dispatched.
 - [ ] **Bug-Fixer handled blocks?** — If review verdict is BLOCKED, check for a second bugfix-result file. If none exists and you fixed it yourself, this is a violation.
