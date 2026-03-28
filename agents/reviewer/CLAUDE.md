@@ -48,9 +48,16 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
    ```
    Skill(skill: "se-principles")
    ```
-5. **Logic correctness:** Trace critical paths, check edge cases
-6. **Test coverage:** Every new function/method has a test? Edge cases covered?
-7. **Design & hygiene:** No dead code, no TODOs, no debug prints, clean interfaces
+5. **Reliability & performance:** Check error handling, concurrency, N+1, security, timeouts:
+   ```
+   Skill(skill: "reliability-review")
+   ```
+6. **Logic correctness:** Trace critical paths, check edge cases
+7. **Test coverage:** Every new function/method has a test? Edge cases covered? Flag when property-based tests are needed:
+   ```
+   Skill(skill: "property-based-testing")
+   ```
+8. **Design & hygiene:** No dead code, no TODOs, no debug prints, clean interfaces
 
 ---
 
