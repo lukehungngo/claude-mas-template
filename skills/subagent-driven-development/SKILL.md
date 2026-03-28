@@ -32,7 +32,7 @@ Dispatch a fresh subagent per task with two-stage review. Each subagent gets a c
 
 4. **Proceed** to dispatch the Engineer for the impl task (the design spec becomes input)
 
-> Design tasks do not go through Stage 1/Stage 2 code review — they are reviewed by the Orchestrator for completeness (all sections filled: states, breakpoints, a11y).
+> Design tasks do not go through Stage 1/Stage 2 code review — they are reviewed by the dev-loop for completeness (all sections filled: states, breakpoints, a11y).
 
 ### Per Implementation Task
 

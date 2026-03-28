@@ -10,7 +10,7 @@ Execute the full mandatory workflow for: $ARGUMENTS
 
 Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no human checkpoints, run everything end-to-end). If no → **interactive mode** (pause for approval at key steps).
 
-**`--auto` scope:** Skips human approval gates at Steps 1, 4, 5, and 9 only. It does NOT skip the Orchestrator, Reviewer, or Bug-Fixer. The full agent pipeline runs in both modes — `--auto` only removes the pauses where a human would say "yes, continue".
+**`--auto` scope:** Skips human approval gates at Steps 1, 4, 5, and 9 only. It does NOT skip agent dispatches (Engineer, Reviewer, Bug-Fixer), review cycles, or verification. The full agent pipeline runs in both modes — `--auto` only removes the pauses where a human would say "yes, continue".
 
 **What `--auto` does NOT mean:**
 
@@ -22,7 +22,7 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
 ✅ **GOOD** (correct --auto behavior):
 > "Requirements are clear (`--auto` skips step 1 clarification). Creating worktree...
 > Exploring codebase (step 3)... Writing plan (`--auto` auto-approves, step 4)...
-> Dispatching Orchestrator (step 6) — Orchestrator dispatches Engineer, Reviewer, Bug-Fixer...
+> Routing tasks and dispatching agents (step 6) — Engineer, Reviewer, Bug-Fixer as needed...
 > Running requirements validation (step 7)... Invoking verification skill (step 8)...
 > Creating PR automatically (`--auto` skips human choice, step 9)."
 
@@ -40,12 +40,14 @@ dev-loop (this command)
   │
   ├─ 5. Design (if has_ui: true) ─── Agent(subagent_type: "ui-ux-designer")
   │
-  ├─ 6. Orchestrate ─── Agent(subagent_type: "orchestrator")
+  ├─ 6. Orchestrate (flat dispatch — you are the orchestrator)
   │       │
-  │       ├─ Researcher ↔ Differential Reviewer (novel tasks, max 3 rounds)
-  │       ├─ Engineer (TDD implementation per task)
-  │       ├─ Reviewer (two-stage: spec compliance + code quality)
-  │       └─ Bug-Fixer (if Reviewer blocks, max 2 cycles)
+  │       ├─ Phase 1: Decompose plan → task specs in docs/tasks/pending/
+  │       ├─ Phase 2: Route & dispatch agents directly (templates in templates/dispatch-templates.md)
+  │       │     ├─ Novel tasks → Researcher ↔ Differential Reviewer (max 3 rounds) → Engineer
+  │       │     └─ Known tasks → Engineer directly
+  │       ├─ Phase 3: Review each task (Reviewer → Bug-Fixer if BLOCKED, max 2 cycles)
+  │       └─ Phase 4: Verify acceptance criteria → move to docs/tasks/done/
   │
   ├─ 7. Validate ─── Agent(subagent_type: "reviewer")
   │       └─ GAPS FOUND? ──→ loop back to 6 (max 3 cycles)
@@ -178,80 +180,101 @@ Agent(
 
 ---
 
-> **CHECKPOINT ASSERTION — Step 6 is mandatory**
+> **CHECKPOINT ASSERTION — You are the orchestrator, not the implementer**
 >
-> You are about to skip the Orchestrator and implement code yourself. **STOP.**
-> This happened in 5/5 audited sessions (sessions 473a, 933a, e7b5 all self-orchestrated).
-> The Orchestrator MUST be dispatched via `Agent(subagent_type: "orchestrator")`.
-> No exceptions. No rationalizations ("too simple", "well-scoped", "just a few changes").
-> If you are about to write code, call Edit, or call Write — you are violating the pipeline.
-> Your job is to dispatch the Orchestrator and wait for its report.
-
-> **FALLBACK — If Agent() tool call fails:**
->
-> If the Orchestrator dispatch fails (tool unavailable, error, timeout):
-> 1. Do NOT silently fall back to implementing code yourself
-> 2. Report the failure to the human: "Orchestrator dispatch failed: {error}"
-> 3. Ask the human: "Should I retry, or proceed with manual orchestration under your supervision?"
-> 4. If human approves manual orchestration: document it in the self-audit as a known deviation
-> 5. This happened in this very session — the Orchestrator couldn't dispatch sub-agents and the main session took over silently. That is the failure mode this guidance prevents.
+> You are about to write production code yourself. **STOP.**
+> This happened in 5/5 audited sessions — the main session always implemented directly.
+> For each task in the plan, you MUST dispatch an agent via `Agent()`.
+> Read the dispatch template from `templates/dispatch-templates.md`.
+> If you are about to call Write or Edit on a source file — you are violating the pipeline.
+> Your job: route tasks, dispatch agents, track review cycles, verify results.
 
 ### Step 6 — Orchestrate
 
-Dispatch the **Orchestrator agent** with the full context. The Orchestrator is the PM — it owns all agent dispatch decisions.
+You are the orchestrator. Your job is to **route and dispatch**, not implement. Do NOT use Write/Edit on production code. Only agents write code. For each dispatch, read the relevant template from `templates/dispatch-templates.md` first. Write a routing decision log entry before each dispatch.
 
+#### Phase 1 — Decompose
+
+Read the approved plan from Step 4. For each TASK-{id} entry:
+
+1. Create a task spec in `docs/tasks/pending/TASK-{id}.md` using the template at `.claude/templates/task-spec.md`
+2. Determine routing using the routing table below
+3. Write a `routing:` decision log line in the task spec (e.g., `routing: "novel — no existing pattern for X"` or `routing: "known — reuses pattern from src/X.ts"`)
+
+#### Routing Table
+
+| Task Type | Route |
+|-----------|-------|
+| Novel approach needed | Researcher -> Differential Reviewer (max 3 rounds) -> Engineer |
+| Known pattern exists | Engineer directly |
+| Bug fix from review | Bug-Fixer |
+| UI component (`has_ui: true`) | UI/UX Designer -> Engineer |
+| Refactor / cleanup | Engineer directly |
+
+**Novel task criteria** (if ANY apply, route to Researcher):
+1. No existing implementation of this pattern in the codebase
+2. Algorithm/approach not yet used in this project
+3. New system boundary the codebase hasn't interfaced with before
+4. Competing approaches with non-obvious trade-offs
+5. Similar task failed in a prior session (check `docs/reports/`)
+
+If in doubt, route to Researcher. The cost of unnecessary research is low; the cost of skipping research is 6 bug-fix rounds (observed in S1).
+
+#### Phase 2 — Route & Dispatch
+
+For each task, dispatch the appropriate agent directly using templates from `templates/dispatch-templates.md`.
+
+1. Read the relevant dispatch template from `templates/dispatch-templates.md`
+2. Fill in all `{placeholder}` values with actual content
+3. Dispatch via `Agent()`
+4. For novel tasks, follow the **Research Convergence Protocol** (template #7 in dispatch-templates.md)
+
+**Parallel execution:** Check `relevant_files` across tasks. No overlap -> dispatch simultaneously. Overlap -> sequential in dependency order.
+
+#### Phase 3 — Review
+
+Track `review_cycle` per task, starting at 0.
+
+After each Engineer completes:
+1. Dispatch Reviewer (use template #4 from `templates/dispatch-templates.md`)
+2. Read verdict from `docs/reports/TASK-{id}-review.md`:
+   - **APPROVED** -> Phase 4
+   - **APPROVED WITH CHANGES** -> Phase 4 (changes are non-blocking)
+   - **BLOCKED** -> increment `review_cycle`, then:
+     - If `review_cycle < 2` -> dispatch Bug-Fixer (template #5), then re-dispatch Reviewer
+     - If `review_cycle >= 2` -> STOP. Write escalation to `docs/reports/TASK-{id}-escalation.md`. Move task to `docs/tasks/blocked/`. Present escalation to human.
+
+#### Phase 4 — Verify & Close
+
+1. Read the task spec's acceptance criteria
+2. Read the Engineer's result file (`docs/results/TASK-{id}-result.md`)
+3. Read the Reviewer's report (`docs/reports/TASK-{id}-review.md`) — verify verdict is APPROVED or APPROVED WITH CHANGES
+4. If all pass -> move task to `docs/tasks/done/`
+5. If any fail -> identify which agent should fix, re-dispatch
+
+**GATE:** `docs/tasks/done/` is non-empty (tasks were completed). All tasks have been routed, dispatched, reviewed, and closed. Do NOT proceed if any tasks are in `docs/tasks/blocked/` — present escalations to the human first.
+
+**Artifact Verification (mandatory — run these commands before Step 7):**
+
+Before proceeding, you MUST run ALL of these commands. If ANY fails, you bypassed the pipeline — go back to Step 6.
+
+```bash
+# 1. Task specs were created (Phase 1 happened)
+ls docs/tasks/done/*.md 2>/dev/null || ls docs/tasks/pending/*.md 2>/dev/null
+
+# 2. Engineer result files exist (agents were dispatched, not main session)
+ls docs/results/TASK-*-result.md
+
+# 3. Review reports exist (reviewer was dispatched after each engineer)
+ls docs/reports/TASK-*-review.md
 ```
-Agent(
-  subagent_type: "orchestrator",
-  prompt: """
-  You are the Orchestrator for this development session.
 
-  ## PRD / Requirement
-  {paste the original requirement}
+**Why this works:** `docs/results/TASK-*-result.md` files are written ONLY by Engineer agents (per `agents/engineer/CLAUDE.md` Phase 5). `docs/reports/TASK-*-review.md` files are written ONLY by Reviewer agents. If the main session implemented code directly without dispatching agents, these files do not exist and the gate fails.
 
-  ## Approved Plan
-  {paste the approved implementation plan from step 4}
-
-  ## Codebase Context
-  {paste the exploration summary from step 3}
-
-  ## Design Specs (if has_ui: true)
-  {paste design spec paths from step 5, or "N/A — has_ui: false"}
-
-  ## Mode
-  {"autonomous" | "interactive"}
-
-  ## Working Directory
-  {worktree path}
-
-  ## Instructions
-  Follow your full Orchestrator process (Phase 0 → Phase 4):
-
-  Phase 1 — Decompose the plan into task specs → write to docs/tasks/pending/
-  Phase 2 — Dispatch agents per routing table:
-    - Novel tasks → Researcher (subagent_type: "researcher")
-      → Differential Reviewer (subagent_type: "differential-reviewer") — max 3 rounds
-      → on PROCEED → Engineer
-    - UI tasks (has_ui: true) → Engineer with design spec from step 5
-      (design specs already exist in docs/design/ — attach them to Engineer's task spec)
-    - Known patterns → Engineer (subagent_type: "engineer") directly
-    - All agents use LOCAL subagent_type (no prefix)
-  Phase 3 — After each Engineer task:
-    → Reviewer (subagent_type: "reviewer") — two-stage review
-    → if BLOCKED → Bug-Fixer (subagent_type: "bug-fixer") — max 2 cycles
-  Phase 4 — Verify acceptance criteria by reading result and review files, move to docs/tasks/done/
-
-  Report back with:
-  1. List of completed tasks and their status
-  2. Any tasks that were escalated or skipped
-  3. Any issues that need human attention
-  """
-)
-```
-
-**Do NOT call skills or dispatch agents directly** — the Orchestrator handles all routing through its agent pipeline.
-
-**GATE:** `docs/tasks/done/` is non-empty (tasks were completed). Orchestrator has reported back with task status. Do NOT proceed if Orchestrator reports unresolved escalations — present them to the human first.
+**If the gate fails:**
+1. Do NOT create these files manually to satisfy the gate — that is fraud
+2. Go back to Step 6 Phase 2 and dispatch the appropriate agents
+3. If Agent() calls genuinely fail, report to the human before proceeding
 
 ---
 
@@ -260,11 +283,11 @@ Agent(
 > You are about to skip requirements validation. **STOP.**
 > This happened in 5/5 audited sessions — no session ever dispatched a reviewer for holistic validation.
 > The Reviewer MUST be dispatched via `Agent(subagent_type: "reviewer")` with the requirements validation prompt.
-> Orchestrator per-task reviews are NOT sufficient — this step checks all tasks together deliver the PRD.
+> Step 6 per-task reviews are NOT sufficient — this step checks all tasks together deliver the PRD.
 
 ### Step 7 — Validate Requirements
 
-Holistic PRD validation. The Orchestrator's per-task reviews checked individual tasks, but this step checks that **all tasks together deliver what the PRD asked for**.
+Holistic PRD validation. Step 6's per-task reviews checked individual tasks, but this step checks that **all tasks together deliver what the PRD asked for**.
 
 ```
 Agent(
@@ -278,8 +301,8 @@ Agent(
   ## Approved Plan
   {paste the approved plan from step 4}
 
-  ## Orchestrator Report
-  {paste the Orchestrator's completion report from step 6}
+  ## Step 6 Completion Report
+  {paste the task completion summary from step 6 — list of tasks, their status, review verdicts}
 
   ## Instructions
   For EACH functional requirement in the PRD:
@@ -323,58 +346,25 @@ Track `remediation_cycle` starting at 0. After each validation:
   1. Increment `remediation_cycle`.
   2. Interactive: present gap list to human, ask "Remediate automatically? (y/n)". If no → escalate.
   3. `--auto`: proceed without asking.
-  4. Re-dispatch Orchestrator with a **remediation prompt** (see below).
-  5. After Orchestrator completes → re-run this Validate step (step 7).
+  4. Perform remediation via flat dispatch (see below).
+  5. After remediation completes → re-run this Validate step (step 7).
 - **GAPS FOUND** (and `remediation_cycle >= 3`) → escalate to human with all validation reports (`r0` through `r3`).
 - **CRITICAL GAPS** → stop and escalate to human immediately, regardless of cycle count.
 
-**Remediation Orchestrator Dispatch (used on GAPS FOUND retry):**
+**Remediation via Flat Dispatch (used on GAPS FOUND retry):**
 
-```
-Agent(
-  subagent_type: "orchestrator",
-  prompt: """
-  You are the Orchestrator performing REMEDIATION CYCLE {remediation_cycle} of 3.
+On GAPS FOUND, perform remediation using the same Step 6 process:
 
-  ## Original PRD / Requirement
-  {paste the original requirement}
+1. **Decompose gaps into tasks:** For each gap in the validation report, create a new task spec (TASK-{next-id}) in `docs/tasks/pending/` targeting the specific gap.
+2. **Route & dispatch:** Apply the routing table from Step 6. Read dispatch templates from `templates/dispatch-templates.md`. Dispatch agents for each remediation task.
+3. **Review:** After each Engineer completes, dispatch Reviewer. Handle BLOCKED verdicts with Bug-Fixer (max 2 cycles).
+4. **Close:** Verify acceptance criteria, move to `docs/tasks/done/`.
 
-  ## Latest Validation Report
-  {paste the full validation report from docs/reports/requirements-validation-r{remediation_cycle - 1}.md}
+Focus ONLY on the gaps listed in the validation report. Do NOT re-implement already-completed tasks.
 
-  ## Gaps to Fix
-  {paste only the ### Gaps section from the validation report}
+This is remediation cycle {remediation_cycle} of 3. If you cannot close a gap, report it so the next validation can track persistent issues.
 
-  ## Previously Completed Tasks
-  {list task IDs and one-line summaries from docs/tasks/done/ — do NOT redo these}
-
-  ## Design Specs (if has_ui: true)
-  {paste design spec paths from step 5, or "N/A — has_ui: false"}
-
-  ## Mode
-  {"autonomous" | "interactive"}
-
-  ## Working Directory
-  {worktree path}
-
-  ## Instructions
-  Focus ONLY on the gaps listed above. Do NOT re-implement already-completed tasks.
-
-  For each gap:
-  1. Create a new task spec (TASK-{next-id}) targeting the specific gap
-  2. Route through your normal pipeline (Phase 2-4)
-  3. Verify the gap is closed before declaring DONE
-
-  This is remediation cycle {remediation_cycle} of 3. If you cannot close a gap,
-  report it explicitly so the next validation can track persistent issues.
-
-  Report back with:
-  1. List of remediation tasks and their status
-  2. Which gaps from the validation report are now addressed
-  3. Any gaps that could NOT be addressed and why
-  """
-)
-```
+After remediation completes → re-run the Validate step (step 7) above.
 
 **GATE:** A validation report exists at `docs/reports/requirements-validation-r*.md` with verdict ALL MET. Do NOT proceed to step 8 without passing validation.
 
@@ -418,14 +408,14 @@ Final technical checks:
 
 Before proceeding to Step 9, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
 
-- [ ] **Orchestrator dispatched?** — Scroll up and confirm an `Agent(subagent_type: "orchestrator")` tool call exists in this conversation. If you wrote production code via Write/Edit yourself, this is a violation.
-- [ ] **Engineer wrote all code?** — Check `docs/results/` for TASK-*-result.md files written by Engineer agents. If no result files exist, engineers were not dispatched.
-- [ ] **Reviewer issued verdict?** — Check `docs/reports/` for review files. Read the verdict line. If no review files exist, no reviewer was dispatched.
-- [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for bugfix-result files in `docs/reports/`. If none exist and the verdict was BLOCKED, this is a violation.
+- [ ] **Routing decision log exists?** — Check `docs/tasks/pending/` or `docs/tasks/done/` for task specs containing `routing:` lines. If no routing decisions were logged, Phase 1 was skipped.
+- [ ] **Engineer agents dispatched?** — Check `docs/results/` for TASK-*-result.md files. These are ONLY written by Engineer agents. If none exist, you implemented code directly — violation.
+- [ ] **Reviewer issued verdict?** — Check `docs/reports/` for TASK-*-review.md files. Read the verdict line. If no review files exist, no reviewer was dispatched.
+- [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for TASK-*-bugfix-result.md in `docs/reports/`. If none exist and you fixed it yourself, this is a violation.
 - [ ] **Verification report exists?** — Run: `test -f docs/reports/verification-{branch}.md && grep "Verdict:" docs/reports/verification-{branch}.md`. File must exist AND contain Build, Code, Spec, Regression sections.
 - [ ] **Requirements validation passed?** — Run: `test -f docs/reports/requirements-validation-r*.md && grep "ALL MET" docs/reports/requirements-validation-r*.md`. Must return a match.
 
-**If any check fails:** You violated the pipeline. Do NOT proceed to Step 9. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
+**If any check fails:** You violated the pipeline. Do NOT proceed to Step 9. Go back to the first failed step and execute it properly.
 
 **This is not optional.** In 5/5 audited sessions, zero completed the full pipeline. You are being explicitly asked to break that pattern.
 
@@ -447,7 +437,7 @@ All agents use **local subagent_type** (no `mas:` prefix — these are local aft
 
 | Agent                 | subagent_type           | Role                                                                                             |
 | --------------------- | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| Orchestrator          | `orchestrator`          | PM — decomposes, dispatches, verifies. No Bash — can only read and dispatch.                     |
+| ~~Orchestrator~~      | ~~`orchestrator`~~      | DEPRECATED — routing logic is now inline in Step 6. Agent preserved for future use if nested dispatch becomes reliable. |
 | Engineer              | `engineer`              | TDD implementation, writes to `docs/results/`. Uses Write/Edit for code, Bash only for commands. |
 | Reviewer              | `reviewer`              | Two-stage review, writes to `docs/reports/`                                                      |
 | Researcher            | `researcher`            | Explores approaches, writes to `docs/plans/`                                                     |
@@ -458,20 +448,20 @@ All agents use **local subagent_type** (no `mas:` prefix — these are local aft
 ## Rules
 
 - TDD is non-negotiable at every step
-- The Orchestrator owns all agent dispatch — never bypass it
-- The Orchestrator does NOT have Bash — it dispatches agents for all implementation and command execution
+- The dev-loop owns all agent dispatch via flat dispatch — route tasks per the routing table in Step 6, dispatch agents directly. Do NOT write production code yourself.
 - Always use local subagent_type (no `mas:` prefix)
-- Every task gets reviewed (spec compliance + code quality) via the Orchestrator's Phase 3
+- Every task gets reviewed (spec compliance + code quality) via Step 6 Phase 3
 - Requirements validation (step 7) is mandatory — never skip it
-- Stop on P0/P1 issues — do not proceed until fixed (`--auto`: Orchestrator auto-dispatches Bug-Fixer, escalates after 2 failed cycles)
+- Stop on P0/P1 issues — do not proceed until fixed (`--auto`: dispatch Bug-Fixer automatically, escalate after 2 failed cycles)
 - Max 2 review cycles per task before escalating
 - Max 3 remediation cycles for requirements gaps before escalating
 - `--auto` still respects TDD, reviews, validation, and quality gates — it only skips human checkpoints
 - `--auto` retries up to 3 remediation cycles on GAPS FOUND before escalating
-- If the Orchestrator reports escalations or requirements validation finds CRITICAL GAPS, present them to the human before proceeding
+- If any task is escalated to docs/tasks/blocked/ or requirements validation finds CRITICAL GAPS, present them to the human before proceeding
 - Do NOT use EnterPlanMode / PlanMode — use Skill(skill: "writing-plans") for structured plans
 - Do NOT dispatch Explorer agents ad-hoc — codebase exploration happens in step 3 only
 - Each step has a GATE — do NOT skip gates
+- Artifact gates are load-bearing enforcement — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` MUST exist before Step 7. These files are only created by dispatched agents, not by the main session. Do NOT create them manually.
 
 ## Lessons Learned (from battle testing)
 
@@ -480,7 +470,7 @@ These rules exist because every one of these failures happened in real sessions.
 | #   | Failure                                         | What happened                                                                                                                                                                | Fix applied                                                                                           |
 | --- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | 1   | **Skills never invoked**                        | 0/5 sessions called Skill tool. Steps said "use X skill" — model skipped them all.                                                                                           | Every step now shows exact `Skill(skill: "X")` call.                                                  |
-| 2   | **Orchestrator did everything inline**          | Orchestrator used Bash (70 calls in S1) instead of dispatching agents. Zero Agent tool calls.                                                                                | Bash removed from Orchestrator's tool list. It physically cannot run commands — must dispatch agents. |
+| 2   | **Orchestrator did everything inline**          | Orchestrator used Bash (70 calls in S1) instead of dispatching agents. Zero Agent tool calls.                                                                                | Bash removed from Orchestrator's tool list (now deprecated). Flat dispatch eliminates the problem — dev-loop dispatches agents directly. |
 | 3   | **Engineer used Bash for code**                 | 0 Write/Edit calls. All code written via `cat <<EOF`, `echo`, `sed`.                                                                                                         | Engineer CLAUDE.md now bans Bash for file writes with BAD/GOOD examples.                              |
 | 4   | **Researcher/Differential Reviewer never used** | Model always classified tasks as "known pattern" and went straight to Engineer. Researcher used once reactively (agent #17 of 19). Differential Reviewer: 0 dispatches ever. | Orchestrator now requires routing decision log with justification. Novel task criteria made explicit. |
 | 5   | **PlanMode replaced writing-plans**             | 3/5 sessions used EnterPlanMode instead of the skill. PlanMode produces freeform text, not structured TASK-{id} breakdown.                                                   | Explicit ban on PlanMode. Step 4 shows exact Skill call.                                              |

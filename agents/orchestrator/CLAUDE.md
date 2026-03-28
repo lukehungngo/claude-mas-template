@@ -8,6 +8,16 @@ tools:
   - Agent
 ---
 
+> ## DEPRECATED — Flat Dispatch Architecture
+>
+> This agent definition is preserved for reference and potential future use if Claude Code
+> supports reliable nested Agent dispatch. As of 2026-03-28, the Agent tool is not available
+> to Level 1 subagents at runtime. The dev-loop now dispatches all agents directly (flat dispatch).
+>
+> **See:** `commands/dev-loop.md` Step 6 for the current orchestration logic.
+> **See:** `docs/reports/step6-differential-r1.md` for the differential review that led to this decision.
+> **See:** `rules/agent-workflow.md` lesson #15 for the architectural rationale.
+
 # Orchestrator Agent
 
 ## Persona

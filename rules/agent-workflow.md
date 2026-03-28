@@ -188,6 +188,18 @@ When writing agent instructions:
 
 ---
 
+### 15. Orchestrator-as-subagent architecture rejected
+
+**What happened:** Differential review (docs/reports/step6-differential-r1.md) found that the Agent tool is not available to Level 1 subagents at runtime. The Orchestrator was dispatched once, could not call Agent(), and the main session silently took over. 9 failure modes enumerated, including the proven showstopper (FM-1: Agent tool unavailable, ~100% probability).
+
+**Root cause:** Claude Code's subagent runtime does not reliably provide the Agent tool to nested subagents. The 3-level nesting model (dev-loop → Orchestrator → Engineer) requires Level 1→2 dispatch that empirically fails.
+
+**Fix:** Flat dispatch — dev-loop dispatches all agents directly at Level 0 where Agent tool access is proven. Orchestrator's routing logic, dispatch templates, review cycles, and task spec workflow preserved inline in dev-loop Step 6. Templates extracted to `templates/dispatch-templates.md`.
+
+**Rule:** Never depend on capabilities that haven't been empirically verified at the required nesting depth. If a tool works at Level 0 but fails at Level 1, redesign to use Level 0 dispatch.
+
+---
+
 ## Summary: Structural Fixes > Prose Rules
 
 | Approach | Effectiveness | Example |
@@ -200,5 +212,6 @@ When writing agent instructions:
 | BAD/GOOD example pair | Medium — concrete patterns stick better than abstract rules | BAD: `cat <<EOF`  GOOD: `Write(file_path: ...)` |
 | Counter + hard stop | Medium — gives the model a variable to track | `review_cycle >= 2 → STOP` |
 | Checkpoint assertion + audit data | Untested — requires battle testing before rating | "STOP. This happened in 5/5 sessions." with real numbers |
+| Eliminate broken nesting layer | High — proven by runtime constraint | Remove Orchestrator subagent, dispatch directly from Level 0 |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**
