@@ -40,7 +40,7 @@ Run ALL of these. Any failure blocks the release.
 
 - [ ] No `.env` files or secrets in the repo
 - [ ] No hardcoded credentials
-- [ ] Dependencies are up to date (`{{dependency-audit-command}}`)
+- [ ] Dependencies are up to date (run your dependency audit tool, e.g. `npm audit`, `pip-audit`, `cargo audit`)
 - [ ] No known vulnerabilities in dependencies
 
 ## Documentation

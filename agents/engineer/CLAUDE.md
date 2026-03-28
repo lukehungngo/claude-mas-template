@@ -110,7 +110,7 @@ Write output to `docs/results/TASK-{id}-result.md` containing:
 
 ## What Engineer Does NOT Do
 
-- Decompose requirements (that's the Orchestrator)
+- Decompose requirements (that's the dev-loop's job)
 - Review their own code as primary review (that's the Reviewer)
 - Make architecture decisions without a research proposal
 - Touch files outside `relevant_files`

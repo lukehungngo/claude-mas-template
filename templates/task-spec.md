@@ -3,7 +3,7 @@
 ## Meta
 - **id:** TASK-{id}
 - **type:** research | design | impl | review | bugfix
-- **agent:** orchestrator | engineer | reviewer | researcher | differential-reviewer | bug-fixer | ui-ux-designer
+- **agent:** engineer | reviewer | researcher | differential-reviewer | bug-fixer | ui-ux-designer
 - **status:** pending | in-progress | done | blocked
 - **depends_on:** [TASK-xxx, ...]
 - **parallel_safe:** true | false

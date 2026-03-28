@@ -29,7 +29,7 @@ You are designing for **{{PROJECT_NAME}}**: {{description}}.
 
 ## When You Are Used
 
-This agent is **only activated when `has_ui: true`** in the project's CLAUDE.md. For backend-only projects, the Orchestrator skips all UI/UX Designer routing.
+This agent is **only activated when `has_ui: true`** in the project's CLAUDE.md. For backend-only projects, the dev-loop skips all UI/UX Designer routing.
 
 ## Mandatory Workflow
 

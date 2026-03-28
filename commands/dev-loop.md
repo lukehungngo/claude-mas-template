@@ -197,7 +197,7 @@ You are the orchestrator. Your job is to **route and dispatch**, not implement. 
 
 Read the approved plan from Step 4. For each TASK-{id} entry:
 
-1. Create a task spec in `docs/tasks/pending/TASK-{id}.md` using the template at `.claude/templates/task-spec.md`
+1. Create a task spec in `docs/tasks/pending/TASK-{id}.md` using the template at `templates/task-spec.md`
 2. Determine routing using the routing table below
 3. Write a `routing:` decision log line in the task spec (e.g., `routing: "novel — no existing pattern for X"` or `routing: "known — reuses pattern from src/X.ts"`)
 

@@ -174,6 +174,9 @@ claude-mas-template/
 │   ├── property-based-testing/SKILL.md
 │   ├── se-principles/SKILL.md
 │   └── differential-review/SKILL.md
+├── docs/
+│   └── testing/
+│       └── workflow-routing.md                # Session tracking for workflow accuracy
 └── templates/
     ├── task-spec.md
     ├── review-report.md
@@ -218,7 +221,7 @@ All 13 skills are available via the `mas:` prefix. Open Claude Code (`claude` in
 
 ### Direct Agent Usage
 
-You don't always need the full `dev-loop` pipeline. You can bypass the Orchestrator and directly "hire" specific specialized plugin agents from your terminal for targeted tasks.
+You don't always need the full `dev-loop` pipeline. You can bypass the agent dispatch pipeline and directly "hire" specific specialized plugin agents from your terminal for targeted tasks.
 
 **When to use which agent:**
 

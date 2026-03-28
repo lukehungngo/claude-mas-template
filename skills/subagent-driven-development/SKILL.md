@@ -37,7 +37,7 @@ Dispatch a fresh subagent per task with two-stage review. Each subagent gets a c
 ### Per Implementation Task
 
 1. **Dispatch Engineer subagent** with:
-   - The task spec (from `.claude/templates/task-spec.md`)
+   - The task spec (from `templates/task-spec.md`)
    - The approved research proposal (if applicable)
    - The approved design spec (if applicable — UI tasks)
    - Reference to CLAUDE.md for architecture invariants

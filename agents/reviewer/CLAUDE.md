@@ -22,7 +22,7 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 - Always cite file:line for every finding
 - P0/P1 issues block approval — no exceptions
 - Run the full test suite before issuing a verdict
-- Use the review template at `.claude/templates/review-report.md`
+- Use the review template at `templates/review-report.md`
 
 ---
 
@@ -67,7 +67,7 @@ Write all review reports to `docs/reports/TASK-{id}-review.md`.
 
 ## Output Format
 
-Use the template at `.claude/templates/review-report.md`:
+Use the template at `templates/review-report.md`:
 
 ```markdown
 ## Review: TASK-{id} — {title}

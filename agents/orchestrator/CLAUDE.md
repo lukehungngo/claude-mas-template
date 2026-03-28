@@ -5,7 +5,6 @@ tools:
   - Read
   - Glob
   - Grep
-  - Agent
 ---
 
 > ## DEPRECATED — Flat Dispatch Architecture
@@ -96,7 +95,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 
 **If an approved implementation plan is provided:**
 1. Read the approved plan (already contains TASK-{id}s, file paths, approaches, dependencies)
-2. Convert each plan task into a full task spec using the template at `.claude/templates/task-spec.md`
+2. Convert each plan task into a full task spec using the template at `templates/task-spec.md`
 3. Identify the correct agent and task type from the routing table for each task (respecting Phase 0 gate)
 4. Fill in any missing fields (acceptance criteria as runnable commands, business context, do_not_touch)
 5. Write task specs to `docs/tasks/pending/`
@@ -104,7 +103,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 **If no approved plan is provided (raw requirement):**
 1. Read the incoming requirement (PRD, feature request, bug report)
 2. Identify the task type from the routing table (respecting Phase 0 gate)
-3. Break into discrete task specs using the template at `.claude/templates/task-spec.md`
+3. Break into discrete task specs using the template at `templates/task-spec.md`
 4. For each task:
    - Assign a TASK-{id} (sequential, zero-padded: TASK-001, TASK-002, ...)
    - Fill all Meta fields (type, agent, priority, depends_on)
@@ -322,7 +321,7 @@ Track `review_cycle` per task, starting at 0.
 
 ## Task Spec Creation Rules
 
-- Every task MUST use the template from `.claude/templates/task-spec.md`
+- Every task MUST use the template from `templates/task-spec.md`
 - Acceptance Criteria MUST be runnable shell commands, not prose
 - `relevant_files` MUST be specific — no wildcards covering entire directories
 - `do_not_touch` MUST include files owned by other in-progress tasks

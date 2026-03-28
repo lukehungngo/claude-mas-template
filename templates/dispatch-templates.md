@@ -16,9 +16,9 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
 | `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports | Reviewer, Differential Reviewer, Bug-Fixer | Dev-loop, Bug-Fixer, Engineer |
 | `docs/results/` | Implementation results (`TASK-{id}-result.md`) | Engineer | Reviewer, Dev-loop |
-| `docs/tasks/pending/` | Task specs awaiting dispatch | Dev-loop (Phase 1) | All agents (their assigned task) |
+| `docs/tasks/pending/` | Task specs awaiting dispatch | Dev-loop | All agents (their assigned task) |
 | `docs/tasks/in-progress/` | Task specs currently being worked | Dev-loop | -- |
-| `docs/tasks/done/` | Completed task specs | Dev-loop (Phase 4) | -- |
+| `docs/tasks/done/` | Completed task specs | Dev-loop | -- |
 | `docs/tasks/blocked/` | Blocked task specs | Dev-loop | -- |
 
 ---
