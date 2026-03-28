@@ -87,6 +87,10 @@ Agent(
   ## Design Spec (if applicable)
   {paste design spec path, or "N/A"}
 
+  ## Skills (use these during implementation)
+  - `Skill(skill: "se-principles")` — consult before designing types/interfaces
+  - `Skill(skill: "test-driven-development")` — follow TDD: failing test first, then minimal code
+
   ## Working Directory
   {worktree path}
 
@@ -113,6 +117,9 @@ Agent(
   ## Research Proposal (if applicable)
   {paste approved proposal, or "N/A"}
 
+  ## Skills (use during review)
+  - `Skill(skill: "se-principles")` — check design quality against SOLID, DRY, KISS
+
   ## Working Directory
   {worktree path}
 
@@ -136,6 +143,10 @@ Agent(
 
   ## Task Spec
   {paste full task spec}
+
+  ## Skills (use during bug fixing)
+  - `Skill(skill: "test-driven-development")` — reproduction test FIRST, then minimal fix
+  - `Skill(skill: "systematic-debugging")` — if root cause unclear after reproduction test
 
   ## Working Directory
   {worktree path}
