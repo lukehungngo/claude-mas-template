@@ -119,6 +119,19 @@ Agent(
 
   ## Skills (use during review)
   - `Skill(skill: "se-principles")` — check design quality against SOLID, DRY, KISS
+  - `Skill(skill: "property-based-testing")` — flag when property-based tests are needed (parsing, serialization, large input spaces)
+
+  ## Reliability & Performance Checklist
+  Check each area. Flag violations as P1 (likely issue) or P2 (potential issue):
+  - **Error handling:** Are errors caught and handled at system boundaries? No swallowed exceptions? Fail-fast on invalid state?
+  - **Resource cleanup:** Are connections, file handles, timers closed/released? Check try/finally or equivalent patterns.
+  - **Concurrency:** Race conditions? Shared mutable state without synchronization? Deadlock potential?
+  - **Unbounded operations:** Any loops/queries without limits? Pagination missing on list endpoints? Unbounded retries?
+  - **N+1 queries:** Database queries inside loops? Missing joins or batch fetches?
+  - **Input validation:** User input validated at system boundary? Size limits? Type checks?
+  - **Security:** Injection risks (SQL, XSS, command)? Auth checks on protected operations? Secrets in code/logs?
+  - **Timeout/retry:** External calls have timeouts? Retry with backoff? Circuit breaker for cascading failures?
+  - **Memory:** Large objects held unnecessarily? Streaming vs loading entire payload? Cache eviction?
 
   ## Working Directory
   {worktree path}
