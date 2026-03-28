@@ -207,7 +207,7 @@ When writing agent instructions:
 | "You MUST do X" | Low — ignored in 100% of sessions | "You MUST dispatch sub-agents" |
 | "Do NOT do X" | Low — ignored unless paired with structural fix | "Do NOT use Bash for file writes" |
 | Remove the tool | High — physically impossible to violate | Removing Bash from Orchestrator |
-| Show exact tool call | Medium-High — model copies the pattern | `Agent(subagent_type: "engineer", ...)` template |
+| Show exact tool call | Medium-High — model copies the pattern | `Agent(subagent_type: "mas:engineer:engineer", ...)` template |
 | Add file-existence gate | Medium — observable, harder to skip | "GATE: docs/tasks/done/ is non-empty" |
 | BAD/GOOD example pair | Medium — concrete patterns stick better than abstract rules | BAD: `cat <<EOF`  GOOD: `Write(file_path: ...)` |
 | Counter + hard stop | Medium — gives the model a variable to track | `review_cycle >= 2 → STOP` |
