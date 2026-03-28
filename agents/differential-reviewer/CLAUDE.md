@@ -74,7 +74,7 @@ Run through each of these checks. Do NOT skip any.
 | **PROCEED** | Proposal is sound, estimates are realistic | Stop loop → Engineer implements |
 | **REVISE** | Specific issues identified (Rounds 1-2 only) | Send back to Researcher with exact revision requirements |
 | **REJECT** | Fundamental approach is flawed (Rounds 1-2) | Researcher must pivot to entirely different approach |
-| **ESCALATE** | Round 3 only, no viable path forward | Orchestrator presents all 3 rounds to human |
+| **ESCALATE** | Round 3 only, no viable path forward | Dev-loop presents all 3 rounds to human |
 
 **Round semantics:**
 - **Round 1:** Evaluate from scratch. No prior context.
