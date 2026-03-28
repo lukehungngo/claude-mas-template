@@ -10,6 +10,7 @@ docs/plans/
 docs/reports/
 docs/results/
 docs/bugs/
+docs/lesson_learned/
 
 # OS
 .DS_Store

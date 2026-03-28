@@ -1,0 +1,53 @@
+# Changelog
+
+## [2.0.0] — 2026-03-29
+
+### Breaking Changes
+
+- **Pipeline reduced from 9 steps to 6** — Removed Clarify (absorbed into Plan), Explore (absorbed into Plan), and Validate Requirements (absorbed into Execute Phase 4). Steps 7/8/9 renumbered to 5/6.
+- **Orchestrator agent deprecated** — Flat dispatch architecture: dev-loop dispatches agents directly at Level 0. Orchestrator-as-subagent failed because Agent tool is unavailable at Level 1 nesting.
+- **Bootstrap no longer copies files locally** — Agents, skills, and commands are provided by the plugin. Bootstrap only detects stack, fills CLAUDE.md, creates hooks and directories.
+- **All agent dispatches use `mas:` plugin prefix** — e.g., `mas:engineer:engineer` instead of `engineer`. Unprefixed commands require local install via git clone.
+
+### Added
+
+- **Flat dispatch in Step 4 (Execute)** — Dev-loop directly routes and dispatches agents using routing table + dispatch templates. Includes Phase 1 (decompose), Phase 2 (route & dispatch), Phase 3 (review cycles), Phase 4 (close + holistic check).
+- **Artifact verification gate** — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` must exist before Step 5. Structurally prevents main session from implementing directly.
+- **`reliability-review` skill** — 9-section checklist: error handling, resource cleanup, concurrency, unbounded operations, N+1 queries, input validation, security, timeout/retry, memory/performance.
+- **Duplication audit in Reviewer Phase B** — Checks for code, intent, and knowledge duplication across the codebase.
+- **Tier 1 static analysis** (`tests/lint.sh`) — 12 automated checks, 15 assertions. Run after every commit.
+- **Tier 2 routing tests** (`tests/routing.md`) — 22 test cases across 6 categories with scoring rubric.
+- **Checkpoint assertions** — Anti-bypass blocks before Steps 4, 5, 6 referencing real audit data.
+- **BAD/GOOD example pairs** — Concrete wrong vs right `--auto` behavior in dev-loop and bug-fix.
+- **Pipeline self-audit checklist** — Evidence-based verification before finishing.
+- **Lessons learned document** (`docs/lesson_learn/2026-03-28.md`) — 12 lessons from audit session.
+
+### Changed
+
+- **Reviewer Phase B expanded to 9 checks** — Added reliability-review skill, property-based-testing skill, and duplication audit.
+- **Dispatch templates include skill references** — Engineer (se-principles, TDD), Reviewer (se-principles, reliability-review, property-based-testing), Bug-Fixer (TDD, systematic-debugging).
+- **Rules reduced 46%** — 191 → ~103 rules. Removed duplicates, restatements, and agent-inherited rules.
+- **agent-workflow.md compressed** — 218 → 57 lines. 15 narratives → summary table.
+- **dev-loop.md reduced 38%** — 492 → 303 lines. Fewer steps, no duplicate rules/lessons.
+- **Bootstrap report** updated to reference `/mas:` prefixed commands.
+
+### Removed
+
+- **`rules/architecture.md`** — Template with placeholders, not universal. Use CLAUDE.md Architecture Invariants section instead.
+- **Orchestrator dispatch templates from orchestrator CLAUDE.md** — Stripped to pointer. Canonical templates in `templates/dispatch-templates.md`.
+- **"Does NOT Do" restatements** — 14 items across 6 agents that just negated their own non-negotiables.
+- **dev-loop Lessons Learned table** — Replaced with reference to `rules/agent-workflow.md`.
+- **dev-loop Rules section bloat** — 15 rules → 4 (11 restated inline gates/checkpoints).
+
+### Fixed
+
+- All stale Orchestrator references across active files
+- Unprefixed `subagent_type` references → `mas:` prefix
+- `.claude/templates/` stale paths → `templates/`
+- README counts (commands: 4, rules: 4, templates: 3)
+- README file tree accuracy
+- Severity table duplication in reviewer → reference to severity-discipline.md
+
+## [1.3.0] — 2026-03-27
+
+- Initial battle-tested release with 7 agents, 13 skills, 9-step pipeline
