@@ -108,7 +108,7 @@ check_lines() {
   fi
 }
 
-check_lines "commands/dev-loop.md" 500
+check_lines "commands/dev-loop.md" 350
 check_lines "commands/bug-fix.md" 300
 check_lines "rules/agent-workflow.md" 100
 check_lines "commands/bootstrap.md" 250

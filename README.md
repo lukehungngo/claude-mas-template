@@ -114,13 +114,12 @@ claude "/bootstrap"
 ## Workflow Pipeline
 
 ```
-1. ASK QUESTIONS  →  Clarify requirements
-2. GIT WORKTREE   →  Isolated branch
-3. WRITE PLAN     →  Bite-sized tasks (2-5 min each)
-4. DESIGN (UI)*   →  Component specs, states, a11y  (* only if has_ui: true)
-5. EXECUTE (TDD)  →  Subagent per task, RED-GREEN-REFACTOR
-6. REVIEW         →  Two-phase (business + technical)
-7. FINISH         →  Verify, merge/PR, cleanup
+1. BRANCH         →  Isolated git worktree, verify clean baseline
+2. PLAN           →  Explore codebase, clarify requirements, bite-sized tasks
+3. DESIGN (UI)*   →  Component specs, states, a11y  (* only if has_ui: true)
+4. EXECUTE (TDD)  →  Flat dispatch to agents, RED-GREEN-REFACTOR
+5. VERIFY         →  Artifact gate, tests pass, lint clean, no debug artifacts
+6. FINISH         →  Present options (merge/PR/keep/discard), cleanup worktree
 ```
 
 ## File Structure
