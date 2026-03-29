@@ -1,8 +1,10 @@
 # Agent Dispatch Templates
 
-This file contains all agent dispatch templates used by **Step 6 (Orchestrate)** in the dev-loop. The dev-loop reads the relevant template, fills in placeholders, and dispatches the agent directly.
+This file contains all agent dispatch templates used by **Step 4 (Execute)** in the dev-loop. The dev-loop reads the relevant template, fills in placeholders, and dispatches the agent directly.
 
 **How to use:** For each task, find the appropriate template below, replace all `{placeholder}` values with actual content, and dispatch via `Agent()`.
+
+**Concurrency limit:** Max **5 concurrent agents** (platform limit). If dispatching more than 5 non-overlapping tasks, batch them in groups of 5 — wait for the current batch to complete before starting the next.
 
 ---
 

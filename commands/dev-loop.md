@@ -180,7 +180,7 @@ For each task, dispatch the appropriate agent directly using templates from `tem
 3. Dispatch via `Agent()`
 4. For novel tasks, follow the **Research Convergence Protocol** (in dispatch-templates.md)
 
-**Parallel execution:** Check `relevant_files` across tasks. No overlap → dispatch simultaneously. Overlap → sequential.
+**Parallel execution:** Check `relevant_files` across tasks. No overlap → dispatch in parallel. Overlap → sequential. **Max 5 concurrent agents** (platform limit). If more than 5 non-overlapping tasks, dispatch in batches of 5 — wait for the current batch to finish before starting the next.
 
 #### Phase 3 — Review
 
