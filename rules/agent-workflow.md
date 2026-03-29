@@ -25,11 +25,11 @@ When writing agent instructions:
 | 1 | Skills never invoked | Model skipped Skill() calls | Show exact `Skill(skill: "X")` syntax at each step | Solved |
 | 2 | Orchestrator did everything inline | Had Bash, used it for 70 calls | Bash removed; Orchestrator now deprecated (flat dispatch) | Solved |
 | 3 | Engineer used Bash for code | 0 Write/Edit, all cat/echo/sed | BAD/GOOD examples in agent CLAUDE.md | Solved |
-| 4 | Researcher/Diff Reviewer never used | Always classified as "known pattern" | Routing decision log + novel task criteria in Step 6 | Solved |
-| 5 | PlanMode replaced writing-plans | EnterPlanMode confusion | Explicit ban + exact Skill() call in Step 4 | Solved |
-| 6 | No cycle limit enforcement | 6 bug-fix rounds (max 2) | Counter + hard stop in Step 6 Phase 3 | Solved |
-| 7 | Explorer agents dispatched ad-hoc | Exploration outside pipeline | Formalized as Step 3 | Solved |
-| 8 | Verification always skipped | 0/5 sessions called skill | Gate + exact Skill() call in Step 8 | Solved |
+| 4 | Researcher/Diff Reviewer never used | Always classified as "known pattern" | Routing decision log + novel task criteria in Phase 1 | Solved |
+| 5 | PlanMode replaced writing-plans | EnterPlanMode confusion | Explicit ban + exact Skill() call in Step 2 | Solved |
+| 6 | No cycle limit enforcement | 6 bug-fix rounds (max 2) | Counter + hard stop in Phase 2 (atomic pair) | Solved |
+| 7 | Explorer agents dispatched ad-hoc | Exploration outside pipeline | Folded into Step 2 (plan explores codebase) | Solved |
+| 8 | Verification always skipped | 0/5 sessions called skill | Gate + exact Skill() call in Step 5 | Solved |
 | 9 | Agents dispatched from main session | Main session bypassed Orchestrator | Flat dispatch -- dev-loop dispatches directly | Solved |
 | 10 | Orchestrator never dispatched | 5/5 sessions self-orchestrated | Checkpoint assertion + flat dispatch | Solved |
 | 11 | Bug-Fixer never dispatched | 3/3 sessions fixed directly | Checkpoint assertion in bug-fix command | Solved |
