@@ -98,7 +98,46 @@ Before declaring done:
 - [ ] Every new function/method has a test
 - [ ] Edge cases covered
 
-### Phase 5 — Write Result
+### Phase 5 — Self-Review
+
+After pre-completion checks pass, perform a structured self-review before writing the result. This is not a replacement for the Reviewer agent — it is a lightweight structural guarantee that every engineer dispatch produces a review artifact.
+
+Write output to `docs/results/TASK-{id}-self-review.md` using this checklist:
+
+```markdown
+## Self-Review: TASK-{id}
+
+### Edge Cases
+- [ ] All boundary conditions identified and handled
+- [ ] Empty/null/zero inputs handled
+- [ ] Error paths tested, not just happy paths
+
+### Test Coverage
+- [ ] Every new function/method has at least one test
+- [ ] Edge cases from above have corresponding tests
+- [ ] No untested branches in new code
+
+### SOLID Principles
+- [ ] Single Responsibility — each module/function does one thing
+- [ ] Open/Closed — extended via abstraction, not modification of existing contracts
+- [ ] Liskov Substitution — subtypes are substitutable without surprises
+- [ ] Interface Segregation — no client forced to depend on methods it does not use
+- [ ] Dependency Inversion — depends on abstractions, not concretions
+
+### Security
+- [ ] No secrets or credentials in code or config
+- [ ] Inputs validated/sanitized at trust boundaries
+- [ ] No injection vectors (SQL, command, path traversal)
+
+### Performance
+- [ ] No unnecessary allocations in hot paths
+- [ ] No N+1 queries or unbounded loops
+- [ ] Resource cleanup (connections, file handles) verified
+```
+
+**Rule:** If any self-review checkbox fails, fix it before proceeding. Do not write the result file with known issues.
+
+### Phase 6 — Write Result
 
 Write output to `docs/results/TASK-{id}-result.md` containing:
 - Summary of changes
@@ -111,5 +150,5 @@ Write output to `docs/results/TASK-{id}-result.md` containing:
 ## What Engineer Does NOT Do
 
 - Decompose requirements (that's the dev-loop's job)
-- Review their own code as primary review (that's the Reviewer)
+- Review their own code as primary review (that's the Reviewer — the self-review in Phase 5 is a structural checklist, not a substitute)
 - Make architecture decisions without a research proposal

@@ -66,7 +66,49 @@ If no validation was run, explicitly note: "Requirements validation was not perf
 Which would you like?
 ```
 
-### Step 4 — Clean Up (after human chooses)
+### Step 4 — Preserve Artifacts
+
+**Only run this step if the human chose merge, PR, or keep.** If the human chose **discard**, skip directly to Step 5.
+
+Before removing the worktree, copy audit and planning artifacts to the main branch so they survive cleanup.
+
+```bash
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+ARCHIVE_DIR="docs/archive/${BRANCH_NAME}"
+
+# Switch to main to write archive files
+git stash --include-untracked 2>/dev/null
+git checkout main
+
+mkdir -p "${ARCHIVE_DIR}"
+
+# Copy each artifact directory if it exists in the branch
+for dir in docs/results docs/reports docs/tasks docs/plans docs/design; do
+  # Restore directory content from the branch
+  git checkout "${BRANCH_NAME}" -- "${dir}" 2>/dev/null && \
+    mkdir -p "${ARCHIVE_DIR}/$(basename ${dir})" && \
+    cp -R "${dir}/." "${ARCHIVE_DIR}/$(basename ${dir})/"
+done
+
+# Clean up: unstage and discard any branch files that leaked outside the archive dir
+git reset HEAD -- docs/results docs/reports docs/tasks docs/plans docs/design 2>/dev/null
+git checkout -- docs/results docs/reports docs/tasks docs/plans docs/design 2>/dev/null
+
+# Stage ONLY the archive directory and commit
+git add "${ARCHIVE_DIR}"
+git commit -m "archive: preserve artifacts from ${BRANCH_NAME}"
+
+# Return to the feature branch
+git checkout "${BRANCH_NAME}"
+git stash pop 2>/dev/null
+```
+
+Check:
+- [ ] `docs/archive/{branch-name}/` exists on main with all available artifact directories
+- [ ] No artifact directories were lost (results, reports, tasks, plans, design)
+- [ ] Main branch has a clean commit with only the archived files
+
+### Step 5 — Clean Up (after human chooses)
 
 - If merge/PR: clean up worktree if used
 - If discard: delete branch and worktree

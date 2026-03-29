@@ -40,11 +40,11 @@ dev-loop (this command)
   ├─ 4. Execute (flat dispatch — you are the orchestrator)
   │       │
   │       ├─ Phase 1: Decompose plan → task specs in docs/tasks/pending/
-  │       ├─ Phase 2: Route & dispatch agents directly (templates in templates/dispatch-templates.md)
-  │       │     ├─ Novel tasks → Researcher ↔ Differential Reviewer (max 3 rounds) → Engineer
-  │       │     └─ Known tasks → Engineer directly
-  │       ├─ Phase 3: Review each task (Reviewer → Bug-Fixer if BLOCKED, max 2 cycles)
-  │       └─ Phase 4: Verify all tasks done + holistic requirements check
+  │       ├─ Phase 2: Atomic Execute & Review (per task: Engineer → Reviewer → Bug-Fixer if BLOCKED)
+  │       │     ├─ Novel tasks → Researcher ↔ Differential Reviewer (max 3 rounds) → [atomic pair]
+  │       │     └─ Known tasks → [atomic pair] directly
+  │       │     └─ atomic pair = Engineer dispatch + Reviewer dispatch (never split)
+  │       └─ Phase 3: Verify all tasks done + holistic requirements check
   │
   ├─ 5. Verify ─── Artifact gate + Skill(skill: "verification")
   └─ 6. Finish ─── Skill(skill: "finishing-branch")
@@ -171,31 +171,44 @@ Read the approved plan from Step 2. For each TASK-{id} entry:
 
 If in doubt, route to Researcher.
 
-#### Phase 2 — Route & Dispatch
+#### Phase 2 — Atomic Execute & Review
 
-For each task, dispatch the appropriate agent directly using templates from `templates/dispatch-templates.md`.
+**Every engineer dispatch MUST be immediately followed by a reviewer dispatch on the same task before proceeding to the next task.** This is not optional. Engineer + Reviewer is one atomic unit — never split them.
+
+**Review count invariant:** Expected reviews = Expected engineer dispatches. Track both counts. If counts diverge at any point, you skipped reviews — STOP and fix before continuing.
+
+```
+Per task, the atomic sequence is:
+  1. Dispatch Engineer (template from templates/dispatch-templates.md)
+  2. Wait for engineer result at docs/results/TASK-{id}-result.md
+  3. Dispatch Reviewer on the SAME task (template from templates/dispatch-templates.md)
+  4. Read verdict from docs/reports/TASK-{id}-review.md
+  5. If BLOCKED → Bug-Fixer cycle (see below)
+  6. Only after verdict is APPROVED or APPROVED WITH CHANGES → move to next task
+```
+
+**The atomic constraint means:** Do NOT batch all engineers first and reviewers second. Do NOT proceed to the next task until the current task has both an engineer result AND a reviewer verdict.
+
+For each task:
 
 1. Read the relevant dispatch template
 2. Fill in all `{placeholder}` values with actual content
-3. Dispatch via `Agent()`
-4. For novel tasks, follow the **Research Convergence Protocol** (in dispatch-templates.md)
-
-**Parallel execution:** Check `relevant_files` across tasks. No overlap → dispatch in parallel. Overlap → sequential. **Max 5 concurrent agents** (platform limit). If more than 5 non-overlapping tasks, dispatch in batches of 5 — wait for the current batch to finish before starting the next.
-
-#### Phase 3 — Review
+3. Dispatch Engineer via `Agent()`
+4. Wait for result, then immediately dispatch Reviewer via `Agent()` on the same task
+5. For novel tasks, complete the **Research Convergence Protocol** (in dispatch-templates.md) BEFORE the atomic engineer+reviewer pair
 
 Track `review_cycle` per task, starting at 0.
 
-After each Engineer completes:
-1. Dispatch Reviewer (use template from `templates/dispatch-templates.md`)
-2. Read verdict from `docs/reports/TASK-{id}-review.md`:
-   - **APPROVED** → Phase 4
-   - **APPROVED WITH CHANGES** → Phase 4 (non-blocking)
-   - **BLOCKED** → increment `review_cycle`, then:
-     - If `review_cycle < 2` → dispatch Bug-Fixer, then re-dispatch Reviewer
-     - If `review_cycle >= 2` → STOP. Write escalation to `docs/reports/TASK-{id}-escalation.md`. Move to `docs/tasks/blocked/`. Present to human.
+After each Reviewer verdict:
+- **APPROVED** → Phase 3
+- **APPROVED WITH CHANGES** → Phase 3 (non-blocking)
+- **BLOCKED** → increment `review_cycle`, then:
+  - If `review_cycle < 2` → dispatch Bug-Fixer, then re-dispatch Reviewer (still within this task's atomic unit)
+  - If `review_cycle >= 2` → STOP. Write escalation to `docs/reports/TASK-{id}-escalation.md`. Move to `docs/tasks/blocked/`. Present to human.
 
-#### Phase 4 — Close & Holistic Check
+**Parallel execution of atomic pairs:** Check `relevant_files` across tasks. No overlap → dispatch atomic pairs in parallel (each pair is still internally sequential: engineer then reviewer). Overlap → fully sequential. **Max 5 concurrent agents** (platform limit) — since each atomic pair uses 1 agent at a time, you can run up to 5 pairs in parallel if files don't overlap. Wait for the current batch to finish before starting the next.
+
+#### Phase 3 — Close & Holistic Check
 
 1. For each task: read acceptance criteria, engineer result, reviewer report. If all pass → move to `docs/tasks/done/`
 2. **Holistic requirements check:** After all tasks are done, verify: do these tasks TOGETHER deliver what was asked? Check for gaps between task boundaries, missed edge cases, integration issues. If gaps found → create new tasks and loop back to Phase 1 (max 2 remediation cycles).
@@ -208,6 +221,8 @@ After each Engineer completes:
 
 Before proceeding, you MUST run ALL of these commands. If ANY fails, you bypassed the pipeline — go back to Step 4.
 
+**Review count check:** Count `docs/results/TASK-*-result.md` files and `docs/reports/TASK-*-review.md` files. Expected reviews = expected engineer dispatches. If counts diverge, you skipped reviews.
+
 ```bash
 # 1. Task specs were created (Phase 1 happened)
 ls docs/tasks/done/*.md 2>/dev/null || ls docs/tasks/pending/*.md 2>/dev/null
@@ -217,6 +232,14 @@ ls docs/results/TASK-*-result.md
 
 # 3. Review reports exist (reviewer was dispatched after each engineer)
 ls docs/reports/TASK-*-review.md
+
+# 4. Atomic pair count check (engineer count must equal reviewer count)
+echo "Engineer results: $(ls docs/results/TASK-*-result.md 2>/dev/null | wc -l | tr -d ' ')"
+echo "Review reports:   $(ls docs/reports/TASK-*-review.md 2>/dev/null | wc -l | tr -d ' ')"
+# If these numbers differ, reviews were skipped — go back to Phase 2.
+
+# 5. Self-review files exist (engineer self-reviewed before submitting)
+ls docs/results/TASK-*-self-review.md
 ```
 
 **Why this works:** `docs/results/TASK-*-result.md` files are written ONLY by Engineer agents. `docs/reports/TASK-*-review.md` files are written ONLY by Reviewer agents. If the main session implemented directly, these files don't exist and the gate fails.
@@ -261,7 +284,9 @@ Before proceeding to Step 6, verify each item with evidence.
 - [ ] **Routing decision log exists?** — Check `docs/tasks/pending/` or `docs/tasks/done/` for task specs with `routing:` lines.
 - [ ] **Engineer agents dispatched?** — Check `docs/results/` for TASK-*-result.md files.
 - [ ] **Reviewer issued verdict?** — Check `docs/reports/` for TASK-*-review.md files.
+- [ ] **Atomic pair count matches?** — Engineer result count = Review report count. If not, reviews were skipped.
 - [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for TASK-*-bugfix-result.md.
+- [ ] **Self-review files exist?** — Check `docs/results/` for TASK-*-self-review.md files.
 - [ ] **Verification report exists?** — `docs/reports/verification-{branch}.md` must exist.
 
 **If any check fails:** Go back to the first failed step.

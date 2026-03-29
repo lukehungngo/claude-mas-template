@@ -18,7 +18,7 @@ When writing agent instructions:
 
 ---
 
-## Battle Test Results (15 sessions audited)
+## Battle Test Results (18 sessions audited)
 
 | # | Failure | Root Cause | Fix | Status |
 |---|---------|-----------|-----|--------|
@@ -37,6 +37,9 @@ When writing agent instructions:
 | 13 | --auto = skip everything | Misinterpreted as "skip pipeline" | BAD/GOOD example pair in commands | Solved |
 | 14 | Fix implemented via own failure mode | Silent fallback on Agent() failure | Fallback guidance: escalate, don't bypass | Solved |
 | 15 | Orchestrator-as-subagent rejected | Agent tool unavailable at Level 1 | Flat dispatch from Level 0 | Solved |
+| 16 | Review coverage 15% | Reviewer dispatch was separate optional step | auto-pair reviewer as atomic operation with engineer | Solved |
+| 17 | Artifacts lost on worktree cleanup | Worktree removal deletes docs/ | Archive artifacts to main before removal | Solved |
+| 18 | Bash gates ignored (4/5 sessions) | Gates are commands the model chooses to run | Replaced with structural enforcement (engineer self-review output requirement) | Solved |
 
 ---
 
@@ -51,7 +54,9 @@ When writing agent instructions:
 | Add file-existence gate | Medium — observable, harder to skip | "GATE: docs/tasks/done/ is non-empty" |
 | BAD/GOOD example pair | Medium — concrete patterns stick better than abstract rules | BAD: `cat <<EOF`  GOOD: `Write(file_path: ...)` |
 | Counter + hard stop | Medium — gives the model a variable to track | `review_cycle >= 2 → STOP` |
-| Checkpoint assertion + audit data | Untested — requires battle testing before rating | "STOP. This happened in 5/5 sessions." with real numbers |
+| Checkpoint assertion + audit data | Low — ignored in 4/5 sessions when model is in completion momentum | "STOP. This happened in 5/5 sessions." with real numbers |
+| Engineer self-review output requirement | Medium-High — structural, engineer can't complete without producing the file | Gate: engineer must emit self-review artifact before task closes |
+| Atomic dispatch pairing | Medium — enforced by template pattern, not by tool removal | Auto-pair reviewer with engineer in dispatch template |
 | Eliminate broken nesting layer | High — proven by runtime constraint | Remove Orchestrator subagent, dispatch directly from Level 0 |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**

@@ -17,7 +17,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 | `docs/design/` | UI/UX design specs (`TASK-{id}-design.md`), HTML mockups | UI/UX Designer | Engineer (implements against spec) |
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
 | `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports | Reviewer, Differential Reviewer, Bug-Fixer | Dev-loop, Bug-Fixer, Engineer |
-| `docs/results/` | Implementation results (`TASK-{id}-result.md`) | Engineer | Reviewer, Dev-loop |
+| `docs/results/` | Implementation results (`TASK-{id}-result.md`), self-reviews (`TASK-{id}-self-review.md`) | Engineer | Reviewer, Dev-loop |
 | `docs/tasks/pending/` | Task specs awaiting dispatch | Dev-loop | All agents (their assigned task) |
 | `docs/tasks/in-progress/` | Task specs currently being worked | Dev-loop | -- |
 | `docs/tasks/done/` | Completed task specs | Dev-loop | -- |
@@ -208,3 +208,93 @@ Round N (N = 1, 2, or 3):
      - REJECT/REVISE (N = 3) -> ESCALATE to human
      - ESCALATE -> present all rounds to human, stop
 ```
+
+---
+
+## 8. Engineer + Reviewer Atomic Dispatch
+
+**This is the preferred dispatch method for all implementation tasks.** Engineer and Reviewer are one atomic unit — never split them. Use individual templates #3 and #4 only for edge cases (e.g., re-reviewing after a bug fix without re-running the engineer).
+
+For each task, copy this entire block, fill in all `{placeholder}` values, and execute sequentially:
+
+### Step 1 — Dispatch Engineer
+
+```
+Agent(
+  subagent_type: "mas:engineer:engineer",
+  prompt: """
+  ## Task Spec
+  {paste full task spec from docs/tasks/pending/TASK-{id}.md}
+
+  ## Research Proposal (if applicable)
+  {paste approved proposal, or "N/A -- known pattern"}
+
+  ## Design Spec (if applicable)
+  {paste design spec path, or "N/A"}
+
+  ## Skills (use these during implementation)
+  - `Skill(skill: "se-principles")` — consult before designing types/interfaces
+  - `Skill(skill: "test-driven-development")` — follow TDD: failing test first, then minimal code
+
+  ## Working Directory
+  {worktree path}
+
+  ## Output
+  Write your result to docs/results/TASK-{id}-result.md
+  """
+)
+```
+
+### Step 2 — Read Engineer Result
+
+Wait for the engineer to finish. Read the result:
+
+```
+Read(file_path: "{worktree path}/docs/results/TASK-{id}-result.md")
+```
+
+If the file does not exist, the engineer dispatch failed — investigate before proceeding.
+
+### Step 3 — Dispatch Reviewer
+
+```
+Agent(
+  subagent_type: "mas:reviewer:reviewer",
+  prompt: """
+  ## Task Spec
+  {paste full task spec}
+
+  ## Engineer Result
+  {paste from docs/results/TASK-{id}-result.md}
+
+  ## Research Proposal (if applicable)
+  {paste approved proposal, or "N/A"}
+
+  ## Skills (use during review)
+  - `Skill(skill: "se-principles")` — check design quality against SOLID, DRY, KISS
+  - `Skill(skill: "reliability-review")` — check reliability, performance, and security (error handling, concurrency, N+1, input validation, timeouts, memory)
+  - `Skill(skill: "property-based-testing")` — flag when property-based tests are needed (parsing, serialization, large input spaces)
+
+  ## Duplication Audit
+  Search the codebase for:
+  - **Code duplication:** Same logic in multiple places? Extract shared utility.
+  - **Intent duplication:** Multiple implementations of the same problem? Consolidate.
+  - **Knowledge duplication:** Business rules, constants, config hardcoded in multiple locations? Single source of truth.
+
+  ## Working Directory
+  {worktree path}
+
+  ## Output
+  Write your review to docs/reports/TASK-{id}-review.md
+  Issue verdict: APPROVED / APPROVED WITH CHANGES / BLOCKED
+  """
+)
+```
+
+### Step 4 — Handle Verdict
+
+Read the reviewer verdict from `docs/reports/TASK-{id}-review.md`:
+
+- **APPROVED** — task is done, move to next task
+- **APPROVED WITH CHANGES** — task is done (non-blocking), move to next task
+- **BLOCKED** — dispatch Bug-Fixer (template #5), then re-run this atomic pair from Step 1
