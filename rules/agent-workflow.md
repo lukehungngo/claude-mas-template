@@ -18,7 +18,7 @@ When writing agent instructions:
 
 ---
 
-## Battle Test Results (19 sessions audited)
+## Battle Test Results (20 sessions audited)
 
 | # | Failure | Root Cause | Fix | Status |
 |---|---------|-----------|-----|--------|
@@ -41,6 +41,7 @@ When writing agent instructions:
 | 17 | Artifacts lost on worktree cleanup | Worktree removal deletes docs/ | Archive artifacts to main before removal | Solved |
 | 18 | Bash gates ignored (4/5 sessions) | Gates are commands the model chooses to run | Replaced with structural enforcement (engineer self-review output requirement) | Solved |
 | 19 | Atomic pairing fought model's natural batching | Model batches EEEEE then R in 6/6 runs, atomic constraint was ignored | batch-then-review with model-aware sizing | In progress |
+| 20 | No whole-delivery alignment check | Per-task reviews pass but no agent checks branch diff vs original requirement | Reflect Agent at Phase 2E — product-architect persona with PROCEED/REVISE/REJECT/ESCALATE verdicts | In progress |
 
 ---
 
@@ -60,5 +61,6 @@ When writing agent instructions:
 | Atomic dispatch pairing | Low — model ignored in 6/6 dev-loop runs, naturally batches instead | Auto-pair reviewer with engineer in dispatch template |
 | Eliminate broken nesting layer | High — proven by runtime constraint | Remove Orchestrator subagent, dispatch directly from Level 0 |
 | Batch-then-review with reviewer scope cap | Untested — aligned with model's natural pattern, needs battle testing | Batch engineers, then dispatch scoped reviewer per batch |
+| Reflect Agent (product-architect persona) | Untested — addresses scope/decision alignment gap, needs battle testing | Phase 2E reflect agent checks branch diff vs original requirement |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**

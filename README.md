@@ -1,6 +1,6 @@
 # Claude Code Multi-Agent System Template
 
-Install this plugin and Claude Code becomes a team of 7 AI agents that plan, code, review, and ship for you — with built-in TDD, code review, and quality gates.
+Install this plugin and Claude Code becomes a team of 8 AI agents that plan, code, review, and ship for you — with built-in TDD, code review, and quality gates.
 
 Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tested configuration.
 
@@ -8,7 +8,7 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 
 | Component     | Count | Description                                                                                                  |
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
-| **Agents**    | 7     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, ui-ux-designer (conditional) |
+| **Agents**    | 8     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer (conditional) |
 | **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
 | **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
 | **Commands**  | 4     | bootstrap, dev-loop, bug-fix, release                                                                        |
@@ -252,6 +252,12 @@ You don't always need the full `dev-loop` pipeline. You can bypass the agent dis
     Use to stress-test a proposed architecture or research plan. It actively tries to find reasons why your idea will fail in production.
     ```bash
     claude --agent mas:differential-reviewer:differential-reviewer "Stress-test the Redis caching proposal in docs/plans/TASK-001.md"
+    ```
+
+*   **The Reflect Agent (Delivery Alignment)**
+    Product-minded architect — evaluates delivery against original intent. Use after execution to verify the branch diff actually satisfies the original requirement before finishing.
+    ```bash
+    claude --agent mas:reflect-agent:reflect-agent "Evaluate branch diff against requirement: Add user authentication with JWT"
     ```
 
 *   **The UI/UX Designer (Component Specs & A11y)**

@@ -60,7 +60,8 @@ dev-loop (this command)
   │       │     ├─ 2A: Batch Engineer dispatch (up to MAX_PARALLEL concurrent)
   │       │     ├─ 2B: Wait for all results, read engineer outputs
   │       │     ├─ 2C: Batch Reviewer dispatch (TASKS_PER_REVIEWER tasks per reviewer)
-  │       │     └─ 2D: Handle verdicts — APPROVED → done, BLOCKED → Bug-Fixer → re-review
+  │       │     ├─ 2D: Handle verdicts — APPROVED → done, BLOCKED → Bug-Fixer → re-review
+  │       │     ├─ 2E: Reflect Agent — evaluate branch against original requirement
   │       │     Novel tasks → Researcher ↔ Differential Reviewer (max 3 rounds) before 2A
   │       └─ Phase 3: Verify all tasks done + holistic requirements check
   │
@@ -223,6 +224,43 @@ Read all review verdicts from `docs/reports/TASK-{id}-review.md`. For each task:
 
 If CROSS_TASK_REVIEW is enabled (see Runtime Configuration), dispatch a cross-task integration reviewer after all individual reviews pass (template #8, Step 5).
 
+##### Phase 2E — Reflect
+
+After all task reviews pass (and cross-task review if applicable), dispatch the **Reflect Agent** to evaluate whether the branch as a whole delivers the original requirement. Use **template #9 (Reflect Agent Dispatch)** from `templates/dispatch-templates.md`. This agent counts toward the 5-agent concurrency cap (1 agent).
+
+```
+Agent(
+  subagent_type: "mas:reflect-agent:reflect-agent",
+  prompt: """
+  ## Original User Requirement
+  {paste the original user requirement VERBATIM — do not paraphrase}
+
+  ## Completed Task Specs
+  {paste all task specs from docs/tasks/done/}
+
+  ## Engineer Results
+  {paste all engineer results from docs/results/TASK-{id}-result.md}
+
+  ## Research Proposals (if applicable)
+  {paste approved research proposals, or "N/A — no research phase"}
+
+  ## Working Directory
+  {worktree path}
+
+  ## Output
+  Write your report to docs/reports/reflect-report.md
+  Issue verdict: PROCEED / REVISE / REJECT / ESCALATE
+  """
+)
+```
+
+Read the verdict from `docs/reports/reflect-report.md`. Handle as follows:
+
+- **PROCEED** → continue to Phase 3.
+- **REVISE** → extract remediation tasks from the reflect report's identified gaps. Create new task specs in `docs/tasks/pending/` for each gap. Loop back to Phase 2A to implement them. **Max 1 remediation cycle** — if the second reflect verdict is still REVISE, escalate to human.
+- **REJECT** → STOP. Present the reflect report to the human. Do not proceed to Phase 3.
+- **ESCALATE** → STOP. Present the reflect report to the human. Do not proceed to Phase 3.
+
 #### Phase 3 — Close & Holistic Check
 
 1. For each task: read acceptance criteria, engineer result, reviewer report. If all pass → move to `docs/tasks/done/`
@@ -255,6 +293,9 @@ echo "Review reports:   $(ls docs/reports/TASK-*-review.md 2>/dev/null | wc -l |
 
 # 5. Self-review files exist (engineer self-reviewed before submitting)
 ls docs/results/TASK-*-self-review.md
+
+# 6. Reflect report exists (Reflect Agent evaluated branch against requirement)
+ls docs/reports/reflect-report.md
 ```
 
 **Why this works:** `docs/results/TASK-*-result.md` files are written ONLY by Engineer agents. `docs/reports/TASK-*-review.md` files are written ONLY by Reviewer agents. If the main session implemented directly, these files don't exist and the gate fails.
@@ -302,6 +343,7 @@ Before proceeding to Step 6, verify each item with evidence.
 - [ ] **Review count matches?** — Engineer result count = Review report count. If not, reviews were skipped.
 - [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for TASK-*-bugfix-result.md.
 - [ ] **Self-review files exist?** — Check `docs/results/` for TASK-*-self-review.md files.
+- [ ] **Reflect report exists?** — `docs/reports/reflect-report.md` must exist with a PROCEED/REVISE/REJECT/ESCALATE verdict.
 - [ ] **Verification report exists?** — `docs/reports/verification-{branch}.md` must exist.
 
 **If any check fails:** Go back to the first failed step.
@@ -336,6 +378,7 @@ For battle-tested lessons, see `rules/agent-workflow.md`.
 | Differential Reviewer | `mas:differential-reviewer:differential-reviewer` | Stress-tests proposals, writes to `docs/reports/` |
 | Bug-Fixer | `mas:bug-fixer:bug-fixer` | TDD fixes from reviewer reports |
 | UI/UX Designer | `mas:ui-ux-designer:ui-ux-designer` | Design specs + HTML mockups (has_ui: true only) |
+| Reflect Agent | `mas:reflect-agent:reflect-agent` | Product-architect evaluation, writes to `docs/reports/` |
 | ~~Orchestrator~~ | ~~`orchestrator`~~ | DEPRECATED — routing logic is inline in Step 4 |
 
 ## Lessons Learned

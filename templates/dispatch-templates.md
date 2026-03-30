@@ -16,7 +16,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 |-----------|---------------|------------|---------|
 | `docs/design/` | UI/UX design specs (`TASK-{id}-design.md`), HTML mockups | UI/UX Designer | Engineer (implements against spec) |
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
-| `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports | Reviewer, Differential Reviewer, Bug-Fixer | Dev-loop, Bug-Fixer, Engineer |
+| `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports, `reflect-report.md` | Reviewer, Differential Reviewer, Bug-Fixer, Reflect Agent | Dev-loop (Phase 3), Bug-Fixer, Engineer |
 | `docs/results/` | Implementation results (`TASK-{id}-result.md`), self-reviews (`TASK-{id}-self-review.md`) | Engineer | Reviewer, Dev-loop |
 | `docs/tasks/pending/` | Task specs awaiting dispatch | Dev-loop | All agents (their assigned task) |
 | `docs/tasks/in-progress/` | Task specs currently being worked | Dev-loop | -- |
@@ -378,6 +378,38 @@ Agent(
   ## Output
   Write your cross-task review to docs/reports/cross-task-review.md
   Flag any issues that individual reviews may have missed.
+  """
+)
+```
+
+---
+
+## 9. Reflect Agent Dispatch
+
+**Dispatch at Phase 2E — after all task reviews (including cross-task review if applicable) are complete.** This agent evaluates whether the branch as a whole solves the original problem. It does not review code quality — that is the Reviewer's job.
+
+```
+Agent(
+  subagent_type: "mas:reflect-agent:reflect-agent",
+  prompt: """
+  ## Original User Requirement
+  {paste the original user requirement VERBATIM — do not paraphrase}
+
+  ## Completed Task Specs
+  {paste all task specs from docs/tasks/done/}
+
+  ## Engineer Results
+  {paste all engineer results from docs/results/TASK-{id}-result.md}
+
+  ## Research Proposals (if applicable)
+  {paste approved research proposals, or "N/A — no research phase"}
+
+  ## Working Directory
+  {worktree path}
+
+  ## Output
+  Write your report to docs/reports/reflect-report.md
+  Issue verdict: PROCEED / REVISE / REJECT / ESCALATE
   """
 )
 ```
