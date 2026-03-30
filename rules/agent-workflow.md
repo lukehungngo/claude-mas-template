@@ -18,7 +18,7 @@ When writing agent instructions:
 
 ---
 
-## Battle Test Results (18 sessions audited)
+## Battle Test Results (19 sessions audited)
 
 | # | Failure | Root Cause | Fix | Status |
 |---|---------|-----------|-----|--------|
@@ -40,6 +40,7 @@ When writing agent instructions:
 | 16 | Review coverage 15% | Reviewer dispatch was separate optional step | auto-pair reviewer as atomic operation with engineer | Solved |
 | 17 | Artifacts lost on worktree cleanup | Worktree removal deletes docs/ | Archive artifacts to main before removal | Solved |
 | 18 | Bash gates ignored (4/5 sessions) | Gates are commands the model chooses to run | Replaced with structural enforcement (engineer self-review output requirement) | Solved |
+| 19 | Atomic pairing fought model's natural batching | Model batches EEEEE then R in 6/6 runs, atomic constraint was ignored | batch-then-review with model-aware sizing | In progress |
 
 ---
 
@@ -56,7 +57,8 @@ When writing agent instructions:
 | Counter + hard stop | Medium — gives the model a variable to track | `review_cycle >= 2 → STOP` |
 | Checkpoint assertion + audit data | Low — ignored in 4/5 sessions when model is in completion momentum | "STOP. This happened in 5/5 sessions." with real numbers |
 | Engineer self-review output requirement | Medium-High — structural, engineer can't complete without producing the file | Gate: engineer must emit self-review artifact before task closes |
-| Atomic dispatch pairing | Medium — enforced by template pattern, not by tool removal | Auto-pair reviewer with engineer in dispatch template |
+| Atomic dispatch pairing | Low — model ignored in 6/6 dev-loop runs, naturally batches instead | Auto-pair reviewer with engineer in dispatch template |
 | Eliminate broken nesting layer | High — proven by runtime constraint | Remove Orchestrator subagent, dispatch directly from Level 0 |
+| Batch-then-review with reviewer scope cap | Untested — aligned with model's natural pattern, needs battle testing | Batch engineers, then dispatch scoped reviewer per batch |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**
