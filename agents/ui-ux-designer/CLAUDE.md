@@ -8,6 +8,7 @@ tools:
   - Glob
   - Grep
   - Bash
+  - Skill
   - WebSearch
   - WebFetch
 ---
@@ -45,6 +46,15 @@ This agent is **only activated when `has_ui: true`** in the project's CLAUDE.md.
 3. If unclear → stop and ask (mark BLOCKED)
 
 ### Phase 2 — Design Spec
+
+Before designing, invoke the frontend design skill for aesthetics guidance:
+
+```
+Skill(skill: "frontend-design")
+```
+
+This provides typography, color, motion, spatial composition, and background guidelines. Use it to make bold, distinctive design choices — not generic AI aesthetics.
+
 Produce a structured spec covering:
 
 #### Component Hierarchy

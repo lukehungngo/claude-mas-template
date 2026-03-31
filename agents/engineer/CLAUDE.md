@@ -86,6 +86,14 @@ Per logical unit:
 Skill(skill: "test-driven-development")
 ```
 
+**Frontend tasks (if has_ui: true):** When implementing UI components, invoke the frontend design skill for aesthetics guidance:
+
+```
+Skill(skill: "frontend-design")
+```
+
+This ensures distinctive, production-grade frontend — not generic AI aesthetics. Follow the design spec from the UI/UX Designer and apply the aesthetics guidelines from this skill.
+
 **Iron Law:** If you wrote code before the test, delete it. Start over.
 
 ### Phase 4 — Pre-completion
