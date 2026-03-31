@@ -11,7 +11,7 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | **Agents**    | 8     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer (conditional) |
 | **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
 | **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
-| **Commands**  | 4     | bootstrap, dev-loop, bug-fix, release                                                                        |
+| **Commands**  | 5     | bootstrap, dev-loop, bug-fix, reflect, release                                                               |
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
 | **Templates** | 3     | task-spec, review-report, dispatch-templates                                                                  |
 
@@ -144,6 +144,7 @@ claude-mas-template/
 │   ├── bootstrap.md                       # Auto-detect stack, fill placeholders
 │   ├── bug-fix.md                         # Focused bug-fix loop
 │   ├── dev-loop.md                        # Full development workflow
+│   ├── reflect.md                         # Standalone delivery-vs-intent evaluation
 │   └── release.md                         # Release checklist
 ├── hooks/
 │   ├── lint.sh                            # Auto-lint on file edit
@@ -192,6 +193,7 @@ Run in your terminal:
 claude "/mas:bootstrap"
 claude "/mas:dev-loop Add user authentication with JWT"
 claude "/mas:bug-fix Fix: login returns 401 when password has special chars"
+claude "/mas:reflect check against docs/specs/auth-spec.md"
 claude "/mas:release v1.2.0"
 
 # Non-stop autonomous mode — skips all human checkpoints
