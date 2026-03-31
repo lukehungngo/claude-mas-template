@@ -83,7 +83,7 @@ Then:
 Per logical unit:
 
 ```
-Skill(skill: "test-driven-development")
+Skill(skill: "superpowers:test-driven-development")
 ```
 
 **Frontend tasks (if has_ui: true):** When implementing UI components, invoke the frontend design skill for aesthetics guidance:

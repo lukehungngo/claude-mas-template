@@ -91,7 +91,7 @@ Agent(
 
   ## Skills (use these during implementation)
   - `Skill(skill: "se-principles")` — consult before designing types/interfaces
-  - `Skill(skill: "test-driven-development")` — follow TDD: failing test first, then minimal code
+  - `Skill(skill: "superpowers:test-driven-development")` — follow TDD: failing test first, then minimal code
 
   ## Working Directory
   {worktree path}
@@ -155,8 +155,8 @@ Agent(
   {paste full task spec}
 
   ## Skills (use during bug fixing)
-  - `Skill(skill: "test-driven-development")` — reproduction test FIRST, then minimal fix
-  - `Skill(skill: "systematic-debugging")` — if root cause unclear after reproduction test
+  - `Skill(skill: "superpowers:test-driven-development")` — reproduction test FIRST, then minimal fix
+  - `Skill(skill: "superpowers:systematic-debugging")` — if root cause unclear after reproduction test
 
   ## Working Directory
   {worktree path}
@@ -240,7 +240,7 @@ Agent(
 
   ## Skills (use these during implementation)
   - `Skill(skill: "se-principles")` — consult before designing types/interfaces
-  - `Skill(skill: "test-driven-development")` — follow TDD: failing test first, then minimal code
+  - `Skill(skill: "superpowers:test-driven-development")` — follow TDD: failing test first, then minimal code
 
   ## Working Directory
   {worktree path}

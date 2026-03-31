@@ -9,7 +9,7 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | Component     | Count | Description                                                                                                  |
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | **Agents**    | 8     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer (conditional) |
-| **Skills**    | 12    | 7 core workflow skills + 5 extended engineering skills (writing-plans via superpowers plugin)                 |
+| **Skills**    | 8 + superpowers | 8 MAS-unique skills + 6 reused from superpowers (writing-plans, TDD, debugging, executing-plans, code review) |
 | **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
 | **Commands**  | 5     | bootstrap, dev-loop, bug-fix, reflect, release                                                               |
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |

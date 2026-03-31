@@ -54,12 +54,12 @@ Write(file_path: "src/utils.ts", content: "export function validate() { ... }")
 1. **Read** — Understand the bug (file:line from reviewer report)
 2. **Reproduce** — Write a minimal failing test that exposes the bug. This is mandatory — no exceptions:
    ```
-   Skill(skill: "test-driven-development")
+   Skill(skill: "superpowers:test-driven-development")
    ```
    Run the test. Confirm it FAILS for the right reason. If you cannot make it fail, you do not understand the bug yet — do NOT proceed to step 3.
 3. **Debug** — If the root cause is still unclear after writing the reproduction test:
    ```
-   Skill(skill: "systematic-debugging")
+   Skill(skill: "superpowers:systematic-debugging")
    ```
 4. **Fix** — Write the minimal code to make the reproduction test pass. Run all tests.
 5. **Regression** — Run full test suite, confirm nothing else broke

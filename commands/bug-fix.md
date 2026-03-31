@@ -35,7 +35,7 @@ bug-fix (this command)
   │
   ├─ 1. Clarify ─── Skill(skill: "ask-questions")
   ├─ 2. Branch ─── git worktree
-  ├─ 3. Debug ─── Skill(skill: "systematic-debugging")
+  ├─ 3. Debug ─── Skill(skill: "superpowers:systematic-debugging")
   ├─ 4. Fix ─── Agent(subagent_type: "mas:bug-fixer:bug-fixer")
   │
   ├─ 5. Review ─── Agent(subagent_type: "mas:reviewer:reviewer")
@@ -85,7 +85,7 @@ Verify clean baseline: `{{test-command}}` must pass.
 If the root cause is not already identified:
 
 ```
-Skill(skill: "systematic-debugging")
+Skill(skill: "superpowers:systematic-debugging")
 ```
 
 This skill produces a confirmed root cause with a reproduction test. Skip only if the caller has already identified the exact file:line and cause.
