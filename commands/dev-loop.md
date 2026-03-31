@@ -49,7 +49,7 @@ Detect the current model from system prompt context and set dispatch parameters 
 dev-loop (this command)
   │
   ├─ 1. Branch ─── git worktree
-  ├─ 2. Plan ─── Skill(skill: "writing-plans")
+  ├─ 2. Plan ─── Skill(skill: "superpowers:writing-plans")
   │
   ├─ 3. Design (if has_ui: true) ─── Agent(subagent_type: "mas:ui-ux-designer:ui-ux-designer")
   │
@@ -89,12 +89,12 @@ Verify clean baseline: `{{test-command}}` must pass.
 ### Step 2 — Plan
 
 ```
-Skill(skill: "writing-plans")
+Skill(skill: "superpowers:writing-plans")
 ```
 
 This produces a structured implementation plan with TASK-{id} entries, exact file paths, verification commands, and dependency graphs. The skill explores the codebase and clarifies requirements as needed — no separate exploration or clarification step.
 
-**Do NOT use EnterPlanMode / PlanMode.** Use the `writing-plans` skill which follows a specific template.
+**Do NOT use EnterPlanMode / PlanMode.** Use the `superpowers:writing-plans` skill which follows a specific template.
 
 - Interactive: present plan to human for approval before proceeding.
 - `--auto`: approve plan automatically and proceed.
@@ -363,7 +363,7 @@ Skill(skill: "finishing-branch")
 
 - The dev-loop owns all agent dispatch via flat dispatch — route tasks per the routing table, dispatch agents directly. Do NOT write production code yourself.
 - All agents use `mas:` plugin prefix (e.g., `mas:engineer:engineer`)
-- Do NOT use EnterPlanMode / PlanMode — use `Skill(skill: "writing-plans")`
+- Do NOT use EnterPlanMode / PlanMode — use `Skill(skill: "superpowers:writing-plans")`
 - Artifact gates are load-bearing enforcement — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` MUST exist before Step 5. Do NOT create them manually.
 
 For battle-tested lessons, see `rules/agent-workflow.md`.

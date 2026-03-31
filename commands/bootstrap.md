@@ -191,7 +191,8 @@ Use /mas: prefixed commands:
 
   /mas:dev-loop       Full development pipeline
   /mas:bug-fix        Focused bug-fix loop
-  /mas:writing-plans  Create implementation plans
+  /mas:reflect        Check delivery against spec
+  superpowers:writing-plans  Create implementation plans
   /mas:ask-questions  Clarify requirements
   /mas:release        Release checklist
 

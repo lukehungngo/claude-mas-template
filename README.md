@@ -9,7 +9,7 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | Component     | Count | Description                                                                                                  |
 | ------------- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | **Agents**    | 8     | orchestrator, engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer (conditional) |
-| **Skills**    | 13    | 8 core workflow skills + 5 extended engineering skills                                                       |
+| **Skills**    | 12    | 7 core workflow skills + 5 extended engineering skills (writing-plans via superpowers plugin)                 |
 | **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
 | **Commands**  | 5     | bootstrap, dev-loop, bug-fix, reflect, release                                                               |
 | **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
@@ -23,11 +23,15 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 
 ### Option A: Claude Code Plugin (recommended)
 
-1. Add the marketplace and install — two commands in your terminal:
+1. Add the marketplace and install — includes required dependencies:
 
 ```bash
 claude plugin marketplace add lukehungngo/claude-mas-template
 claude plugin install mas@luke-plugins
+
+# Required dependencies (writing-plans, frontend-design skills)
+claude plugin install superpowers@claude-plugins-official
+claude plugin install frontend-design@claude-plugins-official
 ```
 
 2. Then bootstrap your project:
@@ -156,7 +160,7 @@ claude-mas-template/
 │   └── agent-workflow.md                  # Lessons learned from battle testing
 ├── skills/
 │   ├── ask-questions/SKILL.md
-│   ├── writing-plans/SKILL.md
+│   ├── (writing-plans → uses superpowers:writing-plans)
 │   ├── executing-plans/SKILL.md
 │   ├── subagent-driven-development/
 │   │   ├── SKILL.md
