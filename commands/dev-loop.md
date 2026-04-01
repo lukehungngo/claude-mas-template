@@ -159,6 +159,22 @@ Agent(
 > If you are about to call Write or Edit on a source file — you are violating the pipeline.
 > Your job: route tasks, dispatch agents, track review cycles, verify results.
 
+> **DISPATCH NAMING — Copy these exactly. Do NOT simplify or abbreviate.**
+>
+> | BAD (will break routing) | GOOD (copy this) |
+> |--------------------------|-------------------|
+> | `Agent(subagent_type: "engineer", ...)` | `Agent(subagent_type: "mas:engineer:engineer", ...)` |
+> | `Agent(subagent_type: "reviewer", ...)` | `Agent(subagent_type: "mas:reviewer:reviewer", ...)` |
+> | `Agent(subagent_type: "bug-fixer", ...)` | `Agent(subagent_type: "mas:bug-fixer:bug-fixer", ...)` |
+> | `Agent(subagent_type: "researcher", ...)` | `Agent(subagent_type: "mas:researcher:researcher", ...)` |
+> | `Agent(subagent_type: "differential-reviewer", ...)` | `Agent(subagent_type: "mas:differential-reviewer:differential-reviewer", ...)` |
+> | `Agent(subagent_type: "ui-ux-designer", ...)` | `Agent(subagent_type: "mas:ui-ux-designer:ui-ux-designer", ...)` |
+> | `Agent(subagent_type: "reflect-agent", ...)` | `Agent(subagent_type: "mas:reflect-agent:reflect-agent", ...)` |
+> | `Skill(skill: "mas:verification")` | `Skill(skill: "verification")` |
+> | `Skill(skill: "mas:finishing-branch")` | `Skill(skill: "finishing-branch")` |
+> | `Skill(skill: "writing-plans")` | `Skill(skill: "superpowers:writing-plans")` |
+> | `Skill(skill: "mas:writing-plans")` | `Skill(skill: "superpowers:writing-plans")` |
+
 ### Step 4 — Execute
 
 You are the orchestrator. Your job is to **route and dispatch**, not implement. Do NOT use Write/Edit on production code. Only agents write code. For each dispatch, read the relevant template from `templates/dispatch-templates.md` first. Write a routing decision log entry before each dispatch.
