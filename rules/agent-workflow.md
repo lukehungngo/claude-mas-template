@@ -42,6 +42,7 @@ When writing agent instructions:
 | 18 | Bash gates ignored (4/5 sessions) | Gates are commands the model chooses to run | Replaced with structural enforcement (engineer self-review output requirement) | Solved |
 | 19 | Atomic pairing fought model's natural batching | Model batches EEEEE then R in 6/6 runs, atomic constraint was ignored | batch-then-review with model-aware sizing | In progress |
 | 20 | No whole-delivery alignment check | Per-task reviews pass but no agent checks branch diff vs original requirement | Reflect Agent at Phase 2E — product-architect persona with PROCEED/REVISE/REJECT/ESCALATE verdicts | In progress |
+| 21 | Agent/skill names drift to bare or wrong prefix | Model simplifies `mas:engineer:engineer` → `engineer`, invents `mas:verification` | BAD/GOOD naming table in dev-loop/bug-fix checkpoint assertions | In progress |
 
 ---
 
@@ -62,5 +63,6 @@ When writing agent instructions:
 | Eliminate broken nesting layer | High — proven by runtime constraint | Remove Orchestrator subagent, dispatch directly from Level 0 |
 | Batch-then-review with reviewer scope cap | Untested — aligned with model's natural pattern, needs battle testing | Batch engineers, then dispatch scoped reviewer per batch |
 | Reflect Agent (product-architect persona) | Untested — addresses scope/decision alignment gap, needs battle testing | Phase 2E reflect agent checks branch diff vs original requirement |
+| BAD/GOOD naming table at dispatch checkpoint | Untested — gives model copy-paste target at the moment of dispatch, needs battle testing | BAD: `Agent(subagent_type: "engineer")` → GOOD: `Agent(subagent_type: "mas:engineer:engineer")` |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**
