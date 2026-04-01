@@ -4,6 +4,8 @@ This file contains all agent dispatch templates used by **Step 4 (Execute)** in 
 
 **How to use:** For each task, find the appropriate template below, replace all `{placeholder}` values with actual content, and dispatch via `Agent()`.
 
+**Naming rule:** All agent `subagent_type` values use the `mas:` plugin prefix: `mas:{slug}:{slug}`. Never use bare names like `"engineer"` — always use `"mas:engineer:engineer"`. The templates below show the correct names; copy them exactly.
+
 **Concurrency limit:** Max **5 concurrent agents** (platform limit). If dispatching more than 5 non-overlapping tasks, batch them in groups of 5 — wait for the current batch to complete before starting the next.
 
 ---
