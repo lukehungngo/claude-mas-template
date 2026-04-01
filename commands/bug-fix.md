@@ -111,6 +111,16 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 
 ---
 
+> **DISPATCH NAMING — Copy these exactly. Do NOT simplify or abbreviate.**
+>
+> | BAD (will break routing) | GOOD (copy this) |
+> |--------------------------|-------------------|
+> | `Agent(subagent_type: "bug-fixer", ...)` | `Agent(subagent_type: "mas:bug-fixer:bug-fixer", ...)` |
+> | `Agent(subagent_type: "reviewer", ...)` | `Agent(subagent_type: "mas:reviewer:reviewer", ...)` |
+> | `Agent(subagent_type: "reflect-agent", ...)` | `Agent(subagent_type: "mas:reflect-agent:reflect-agent", ...)` |
+> | `Skill(skill: "mas:verification")` | `Skill(skill: "verification")` |
+> | `Skill(skill: "mas:finishing-branch")` | `Skill(skill: "finishing-branch")` |
+
 ### Step 4 — Fix
 
 Dispatch the Bug-Fixer with the reproduction test and root cause:
