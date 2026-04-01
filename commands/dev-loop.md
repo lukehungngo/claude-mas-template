@@ -206,6 +206,9 @@ Read the approved plan from Step 2. For each TASK-{id} entry:
 
 If in doubt, route to Researcher.
 
+> **Deprecated agents — do NOT dispatch:**
+> - `mas:orchestrator:orchestrator` — Deprecated since v2.0. The dev-loop (this command) IS the orchestrator. Never dispatch this agent.
+
 #### Phase 2 — Batch Execute & Review
 
 Dispatch engineers in batches, then review in batches. This aligns with the model's natural batching behavior and maximizes throughput. Use **template #8 (Batch Engineer + Batch Review Dispatch)** from `templates/dispatch-templates.md` as the preferred dispatch method.
