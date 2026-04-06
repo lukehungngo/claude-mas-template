@@ -98,13 +98,33 @@ This ensures distinctive, production-grade frontend — not generic AI aesthetic
 
 ### Phase 4 — Pre-completion
 
-Before declaring done:
-- [ ] `{{lint-command}}` clean
-- [ ] `{{typecheck-command}}` clean
-- [ ] `{{test-command}}` all pass
-- [ ] `git diff` — no debug prints, no TODOs, no commented-out code
-- [ ] Every new function/method has a test
-- [ ] Edge cases covered
+Before declaring done, run ALL of these and fix any failures:
+
+```bash
+# 1. Lint — must be clean
+{{lint-command}}
+
+# 2. Type check — must be clean
+{{typecheck-command}}
+
+# 3. Tests — ALL must pass (not just new tests)
+{{test-command}}
+
+# 4. Diff review — check for debug artifacts
+git diff --cached --name-only  # what you're about to commit
+git diff  # uncommitted changes
+```
+
+**Mandatory diff checks (common P0/P1 causes):**
+- [ ] No `console.log`, `print()`, `debugger`, or `TODO` in diff
+- [ ] No commented-out code blocks
+- [ ] No hardcoded secrets, API keys, or credentials
+- [ ] No files modified outside `relevant_files` from task spec
+- [ ] Every new public function has a test
+- [ ] Every error path has explicit handling (no silent swallows)
+- [ ] No N+1 queries or unbounded loops in new code
+
+**If any check fails, fix it now.** Do not proceed to Phase 5 with known issues — this is the #1 cause of bug-fix cycles (25-30% of engineer outputs need bug-fixing).
 
 ### Phase 5 — Self-Review
 

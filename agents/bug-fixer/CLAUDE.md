@@ -79,9 +79,19 @@ Write(file_path: "src/utils.ts", content: "export function validate() { ... }")
 ```markdown
 # Bug Fix Result: TASK-{id}
 
+## Root Cause Category
+<!-- Pick exactly ONE. This data is used to improve engineer prompts. -->
+- [ ] **Spec gap** — task spec was ambiguous or incomplete
+- [ ] **Missing test** — engineer did not test this path
+- [ ] **Logic error** — code was wrong despite having tests
+- [ ] **Integration issue** — works in isolation, fails when combined
+- [ ] **Type/lint error** — caught by tooling the engineer did not run
+- [ ] **Edge case** — boundary condition not considered
+
 ## Bugs Fixed
 ### Bug 1: {description from reviewer}
 - **File:** {file:line}
+- **Root cause:** {one sentence explaining WHY this happened, not just what was wrong}
 - **Test:** {test file:test name}
 - **Fix:** {one-line description of change}
 

@@ -95,6 +95,13 @@ Agent(
   - `Skill(skill: "se-principles")` — consult before designing types/interfaces
   - `Skill(skill: "superpowers:test-driven-development")` — follow TDD: failing test first, then minimal code
 
+  ## Pre-completion Gate (MANDATORY)
+  Before writing your result file, you MUST:
+  1. Run lint, typecheck, and ALL tests (not just new ones)
+  2. Review your own diff for debug artifacts, TODOs, and commented-out code
+  3. Write self-review to docs/results/TASK-{id}-self-review.md
+  Skipping this gate is the #1 cause of review failures.
+
   ## Working Directory
   {worktree path}
 
