@@ -243,9 +243,19 @@ Read all review verdicts from `docs/reports/TASK-{id}-review.md`. For each task:
 
 If CROSS_TASK_REVIEW is enabled (see Runtime Configuration), dispatch a cross-task integration reviewer after all individual reviews pass (template #8, Step 5).
 
-##### Phase 2E — Reflect
+##### Phase 2E — Reflect (DISPATCH EXACTLY ONCE)
 
-After all task reviews pass (and cross-task review if applicable), dispatch the **Reflect Agent** to evaluate whether the branch as a whole delivers the original requirement. Use **template #9 (Reflect Agent Dispatch)** from `templates/dispatch-templates.md`. This agent counts toward the 5-agent concurrency cap (1 agent).
+**This agent runs ONCE per dev-loop execution.** Not once per task, not once per batch — once total, after ALL reviews are complete. In audited sessions, this agent was dispatched 2-14 times. That is wrong.
+
+Trigger condition: ALL of these must be true before dispatching:
+1. Every task in `docs/tasks/` is in `done/` or `blocked/` (no pending/in-progress)
+2. Every `docs/results/TASK-*-result.md` has a corresponding `docs/reports/TASK-*-review.md`
+3. All review verdicts are APPROVED or APPROVED WITH CHANGES (no unresolved BLOCKED)
+4. Cross-task review is complete (if CROSS_TASK_REVIEW is enabled)
+
+If ANY condition is false, you are not ready for reflect. Go back to Phase 2D.
+
+Dispatch the **Reflect Agent** to evaluate whether the branch as a whole delivers the original requirement. Use **template #9 (Reflect Agent Dispatch)** from `templates/dispatch-templates.md`. This agent counts toward the 5-agent concurrency cap (1 agent).
 
 ```
 Agent(
