@@ -113,6 +113,18 @@ Verify clean baseline: `{{test-command}}` must pass.
 
 ### Step 2 — Plan
 
+**Pre-planning brainstorm (if requirement is ambiguous or open-ended):**
+
+If the requirement could be solved multiple ways, or the scope is unclear, brainstorm first:
+
+```
+Skill(skill: "superpowers:brainstorming")
+```
+
+Skip this if the requirement is already specific and scoped (e.g., "fix the login button" or "add pagination to /api/users"). Use it when the requirement is broad (e.g., "improve the auth system" or "add analytics").
+
+**Then write the plan:**
+
 ```
 Skill(skill: "superpowers:writing-plans")
 ```
