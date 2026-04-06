@@ -43,6 +43,31 @@ Detect the current model from system prompt context and set dispatch parameters 
 
 **At no point should more than 5 agents of any type be running simultaneously.** This is a platform limit. It applies across ALL phases — engineers, reviewers, researchers, bug-fixers, designers all count toward this cap.
 
+### Rate Limit Handling
+
+If you receive a rate limit error ("You've hit your limit"):
+1. **STOP dispatching new agents immediately** — do not queue more work
+2. **Note the reset time** from the error message
+3. **Report to human:** "Rate limited. Reset at {time}. {N} tasks pending. Resume then?"
+4. In `--auto` mode: wait for reset, then resume from the last incomplete batch
+
+**Prevention:** Use `model: "haiku"` for Explore agents and simple codebase searches. Reserve Opus/Sonnet tokens for Engineer, Reviewer, and Researcher agents.
+
+```
+Agent(
+  subagent_type: "Explore",
+  model: "haiku",
+  prompt: "..."
+)
+```
+
+### Connection Errors
+
+If you receive connection errors (ConnectionRefused, FailedToOpenSocket):
+1. Wait 30 seconds and retry once
+2. If retry fails, report to human: "API connection failed. Check network."
+3. Do NOT continue dispatching agents during connection failures
+
 ## Agent Pipeline
 
 ```
