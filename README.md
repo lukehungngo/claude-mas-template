@@ -12,7 +12,7 @@ Extracted from [AgentWall](https://github.com/anthropics/agentwall)'s battle-tes
 | **Skills**    | 8 + superpowers | 8 MAS-unique skills + 6 reused from superpowers (writing-plans, TDD, debugging, executing-plans, code review) |
 | **Rules**     | 4     | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons                                 |
 | **Commands**  | 5     | bootstrap, dev-loop, bug-fix, reflect, release                                                               |
-| **Hooks**     | 2     | PostToolUse lint, Stop quality gate                                                                          |
+| **Hooks**     | 4     | PostToolUse lint, PreToolUse compaction suggester, Stop quality gate, Stop pipeline validation |
 | **Templates** | 3     | task-spec, review-report, dispatch-templates                                                                  |
 
 ## Prerequisites
@@ -152,7 +152,9 @@ claude-mas-template/
 │   └── release.md                         # Release checklist
 ├── hooks/
 │   ├── lint.sh                            # Auto-lint on file edit
-│   └── pre-stop-gate.sh                   # Quality summary on stop
+│   ├── pre-stop-gate.sh                   # Quality summary on stop
+│   ├── suggest-compact.sh                 # Suggest /compact at intervals
+│   └── validate-pipeline.sh              # Verify pipeline artifacts on stop
 ├── rules/
 │   ├── honesty-first.md                   # Metrics integrity
 │   ├── severity-discipline.md             # Severity classification
