@@ -52,15 +52,16 @@ Write(file_path: "src/utils.ts", content: "export function validate() { ... }")
 ### For Each Bug in the Reviewer Report
 
 1. **Read** — Understand the bug (file:line from reviewer report)
-2. **Reproduce** — Write a minimal failing test that exposes the bug. This is mandatory — no exceptions:
-   ```
-   Skill(skill: "superpowers:test-driven-development")
-   ```
-   Run the test. Confirm it FAILS for the right reason. If you cannot make it fail, you do not understand the bug yet — do NOT proceed to step 3.
+2. **Reproduce** — Write a minimal failing test that exposes the bug:
+   - Write a test that FAILS because of the bug (not a syntax error — the actual wrong behavior)
+   - Run: `{{test-command}}` — confirm it FAILS for the right reason
+   - If you CANNOT make a test fail for this bug, you do not understand it yet — do NOT proceed to step 3
+   - The reproduction test is NON-NEGOTIABLE. No exceptions. No "the bug is obvious so I'll skip the test."
 3. **Debug** — If the root cause is still unclear after writing the reproduction test:
-   ```
-   Skill(skill: "superpowers:systematic-debugging")
-   ```
+   - **Binary search:** Add logging/assertions to narrow the failure to a single function
+   - **Input tracing:** Trace the failing input through each transformation step
+   - **Diff analysis:** What changed recently? `git log --oneline -10` + `git diff HEAD~1`
+   - **Isolation:** Can you reproduce with a minimal input? Strip away everything non-essential
 4. **Fix** — Write the minimal code to make the reproduction test pass. Run all tests.
 5. **Regression** — Run full test suite, confirm nothing else broke
 6. **Next** — Move to next bug

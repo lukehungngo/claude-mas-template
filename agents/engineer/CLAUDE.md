@@ -80,21 +80,36 @@ Then:
 
 ### Phase 3 — Implementation (TDD)
 
-Per logical unit:
+Per logical unit, follow this cycle strictly:
 
-```
-Skill(skill: "superpowers:test-driven-development")
-```
+**RED -> GREEN -> REFACTOR**
 
-**Frontend tasks (if has_ui: true):** When implementing UI components, invoke the frontend design skill for aesthetics guidance:
+1. **RED:** Write a failing test that describes the desired behavior
+   - Test MUST fail when you run it — if it passes, your test is wrong
+   - Test should fail for the RIGHT reason (missing function, wrong output — not syntax error)
+   - Run: `{{test-command}}` — confirm FAIL
 
+2. **GREEN:** Write the MINIMUM code to make the test pass
+   - Do not write more code than the test requires
+   - Do not add error handling the test doesn't exercise
+   - Do not add features the test doesn't verify
+   - Run: `{{test-command}}` — confirm PASS
+
+3. **REFACTOR:** Clean up while tests stay green
+   - Remove duplication
+   - Improve naming
+   - Extract if needed (but only if tests justify it)
+   - Run: `{{test-command}}` — confirm still PASS
+
+4. **Repeat** for the next logical unit
+
+**Iron Law:** If you wrote production code before writing its test, delete the code. Write the test first. Then write the code.
+
+**Frontend tasks (if has_ui: true):** When implementing UI components, invoke the frontend design skill:
 ```
 Skill(skill: "frontend-design")
 ```
-
-This ensures distinctive, production-grade frontend — not generic AI aesthetics. Follow the design spec from the UI/UX Designer and apply the aesthetics guidelines from this skill.
-
-**Iron Law:** If you wrote code before the test, delete it. Start over.
+This ensures distinctive, production-grade frontend. Follow the design spec from the UI/UX Designer.
 
 ### Phase 4 — Pre-completion
 
