@@ -46,6 +46,7 @@ When writing agent instructions:
 | 22 | Bug-fix rate 25-30% across sessions | Engineer skips pre-completion checks, ships code with common P0/P1 patterns | Expanded Phase 4 checklist + root-cause tracking in bug-fixer output | In progress |
 | 23 | Reflect agent dispatched 2-14 times per session | No "dispatch once" constraint, model re-dispatches on every batch | "DISPATCH EXACTLY ONCE" header + trigger conditions checklist | In progress |
 | 24 | Skill() calls inside subagent prompts never executed | Subagents ignore or lack access to Skill tool references in their prompts | Inline critical skill content (TDD, debugging) directly into agent CLAUDE.md | In progress |
+| 25 | Pipeline enforcement is prose, not structural | Dev-loop artifact gates are bash commands the model is *instructed* to run — same pattern as lesson #18 | Stop hook (`validate-pipeline.sh`) checks artifact file counts on every session end | In progress |
 
 ---
 
@@ -71,5 +72,6 @@ When writing agent instructions:
 | Engineer pre-completion expanded checklist | Untested — addresses 25-30% bug-fix rate by catching common P0/P1 patterns before review | Mandatory diff checks for debug artifacts, missing tests, N+1 queries |
 | Inline TDD workflow in agent prompts | Untested — replaces unreliable Skill() references with concrete in-prompt instructions | RED->GREEN->REFACTOR cycle directly in engineer CLAUDE.md |
 | Dispatch-exactly-once constraint | Untested — structural counter prevents reflect agent over-dispatch | Trigger conditions: all tasks done, all reviews complete, no blocked tasks |
+| Stop hook for pipeline artifact validation | Untested — structural check on session end, warns if task specs exist without corresponding results/reviews | Hook runs automatically, no model cooperation needed — same class of fix as PreToolUse dispatch hook |
 
 **When writing new agents or commands, prefer structural fixes over prose rules. If you catch yourself writing "MUST" or "NEVER", ask: can I remove a tool, add a gate, or show an example instead?**
