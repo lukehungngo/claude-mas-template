@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.6.0] — 2026-04-06
+
+### Added
+
+- **Pipeline validation Stop hook** (`hooks/validate-pipeline.sh`) — Structurally blocks session end without required artifacts (`docs/results/`, `docs/reports/`). Prevents silent skips of the verification gate.
+- **Context compaction suggester hook** (`hooks/suggest-compact.sh`) — Warns when context window exceeds 70% and suggests `/compact` before the model degrades. Addresses context-overflow-induced errors.
+- **Lesson #25: Pipeline enforcement gap** — Documents the root cause of agents bypassing verification: prose rules fail, structural constraints (hooks) work.
+
+### Changed
+
+- **README updated** — Hook count updated from 2 to 4 to reflect new operational hooks.
+
+---
+
 ## [2.0.0] — 2026-03-29
 
 ### Breaking Changes

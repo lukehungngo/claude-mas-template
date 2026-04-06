@@ -1,0 +1,2 @@
+# TODO
+- [ ] generate report after implementation, the goal is to tell user, given a specification, plan, okr, metrics, after the implementation what the progress, how many metrics, okr, feature that we deliver
