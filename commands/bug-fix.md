@@ -120,6 +120,9 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 > | `Agent(subagent_type: "reflect-agent", ...)` | `Agent(subagent_type: "mas:reflect-agent:reflect-agent", ...)` |
 > | `Skill(skill: "mas:verification")` | `Skill(skill: "verification")` |
 > | `Skill(skill: "mas:finishing-branch")` | `Skill(skill: "finishing-branch")` |
+>
+> **Build failure shortcut:** If the bug is a build/type error (not a logic bug), dispatch the build resolver instead:
+> | `everything-claude-code:build-error-resolver` | Fixes build errors with minimal diffs — faster than full bug-fixer for compile/type issues |
 
 ### Step 4 — Fix
 

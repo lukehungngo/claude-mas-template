@@ -209,6 +209,19 @@ If in doubt, route to Researcher.
 > **Deprecated agents — do NOT dispatch:**
 > - `mas:orchestrator:orchestrator` — Deprecated since v2.0. The dev-loop (this command) IS the orchestrator. Never dispatch this agent.
 
+> **Optional ECC escalation agents** — use when MAS agents need language-specific help:
+>
+> | Situation | ECC Agent | When to Use |
+> |-----------|-----------|-------------|
+> | Build fails after engineer dispatch | `everything-claude-code:build-error-resolver` | Engineer result reports build failure, before dispatching bug-fixer |
+> | TypeScript/JS review needed | `everything-claude-code:typescript-reviewer` | Reviewer flags TS-specific issues beyond its expertise |
+> | Python review needed | `everything-claude-code:python-reviewer` | Reviewer flags Python-specific issues |
+> | Go review needed | `everything-claude-code:go-reviewer` | Reviewer flags Go-specific issues |
+> | Rust review needed | `everything-claude-code:rust-reviewer` | Reviewer flags Rust-specific issues |
+> | Security concern found | `everything-claude-code:security-reviewer` | Reviewer flags auth, crypto, or injection patterns |
+>
+> **These are NOT replacements for MAS agents.** They are specialist consultants. The MAS reviewer still owns the verdict.
+
 #### Phase 2 — Batch Execute & Review
 
 Dispatch engineers in batches, then review in batches. This aligns with the model's natural batching behavior and maximizes throughput. Use **template #8 (Batch Engineer + Batch Review Dispatch)** from `templates/dispatch-templates.md` as the preferred dispatch method.
