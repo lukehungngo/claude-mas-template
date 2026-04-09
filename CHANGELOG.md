@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.7.0] — 2026-04-06
+
+### Added
+
+- **`validate-skill.sh` hook** — PreToolUse hook that blocks bare superpowers/MAS skill names. Enforces `superpowers:writing-plans` over `writing-plans`, `mas:verification` over `verification`, etc.
+- **Reflect once-only guard** in `validate-dispatch.sh` — Blocks re-dispatch of `mas:reflect-agent:reflect-agent` when `docs/reports/reflect-report.md` already exists.
+
+### Changed
+
+- **`validate-pipeline.sh` upgraded to blocking** — When a full pipeline ran (results + reviews exist) but `docs/reports/reflect-report.md` is missing, session end is now blocked (exit 2) instead of warned (exit 0).
+- **`commands/bootstrap.md`** — Now installs `validate-dispatch.sh` and `validate-skill.sh` in user projects, fixing naming drift in externally bootstrapped repos.
+
+### Removed
+
+- **`agents/orchestrator/`** removed from plugin distribution — Was deprecated in v2.0, now physically absent from the plugin. Still exists in the template repo for reference.
+
+---
+
 ## [2.6.0] — 2026-04-06
 
 ### Added

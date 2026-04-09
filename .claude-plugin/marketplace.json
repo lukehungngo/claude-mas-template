@@ -11,7 +11,7 @@
       "name": "mas",
       "source": "./",
       "description": "7-agent multi-agent system with auto-bootstrap, TDD, and conditional UI/UX designer",
-      "version": "2.6.0"
+      "version": "2.7.0"
     }
   ]
 }
