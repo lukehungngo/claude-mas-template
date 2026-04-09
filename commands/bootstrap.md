@@ -124,10 +124,79 @@ Write `pre-stop-gate.sh` with the detected test command:
 {detected-test-command}
 ```
 
+Write `validate-dispatch.sh` to block bare agent names at dispatch time:
+```bash
+#!/bin/bash
+# PreToolUse hook: Validate Agent dispatch naming convention
+INPUT=$(cat)
+TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
+if [ "$TOOL_NAME" != "Agent" ]; then exit 0; fi
+SUBAGENT_TYPE=$(echo "$INPUT" | grep -o '"subagent_type"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"subagent_type"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
+if [ -z "$SUBAGENT_TYPE" ]; then exit 0; fi
+BARE_NAMES="engineer reviewer bug-fixer researcher differential-reviewer ui-ux-designer reflect-agent orchestrator"
+for name in $BARE_NAMES; do
+  if [ "$SUBAGENT_TYPE" = "$name" ]; then
+    echo "BLOCKED: Bare agent name '$name'. Use 'mas:${name}:${name}' instead."
+    exit 2
+  fi
+done
+if [ "$SUBAGENT_TYPE" = "mas:orchestrator:orchestrator" ]; then
+  echo "BLOCKED: mas:orchestrator:orchestrator is DEPRECATED. The dev-loop IS the orchestrator."
+  exit 2
+fi
+REFLECT_REPORT="${CLAUDE_PROJECT_DIR}/docs/reports/reflect-report.md"
+if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ] && [ -f "$REFLECT_REPORT" ]; then
+  echo "BLOCKED: Reflect agent already ran (docs/reports/reflect-report.md exists)."
+  echo "Dispatch-exactly-once constraint: reflect must run exactly once per dev-loop session."
+  exit 2
+fi
+exit 0
+```
+
+Write `validate-skill.sh` to block bare skill names at invocation time:
+```bash
+#!/bin/bash
+# PreToolUse hook: Validate Skill invocation naming
+INPUT=$(cat)
+TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
+if [ "$TOOL_NAME" != "Skill" ]; then exit 0; fi
+SKILL=$(echo "$INPUT" | grep -o '"skill"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"skill"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
+if [ -z "$SKILL" ]; then exit 0; fi
+SUPERPOWERS_SKILLS="writing-plans brainstorm brainstorming executing-plans verification verification-before-completion finishing-branch finishing-a-development-branch subagent-driven-development test-driven-development systematic-debugging using-git-worktrees dispatching-parallel-agents requesting-code-review receiving-code-review"
+for s in $SUPERPOWERS_SKILLS; do
+  if [ "$SKILL" = "$s" ]; then
+    echo "BLOCKED: Bare superpowers skill name '$s'. Use 'superpowers:${s}' instead."
+    exit 2
+  fi
+done
+MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development"
+for s in $MAS_SKILLS; do
+  if [ "$SKILL" = "$s" ]; then
+    echo "BLOCKED: Bare MAS skill name '$s'. Use 'mas:${s}' instead."
+    exit 2
+  fi
+done
+exit 0
+```
+
 Make executable:
 ```bash
 chmod +x .claude/hooks/*.sh
 ```
+
+Create or update `.claude/settings.json` to wire the validation hooks as PreToolUse handlers. If `.claude/settings.json` already exists, merge the `hooks` entries; otherwise create it:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Agent", "hooks": [{ "type": "command", "command": ".claude/hooks/validate-dispatch.sh" }] },
+      { "matcher": "Skill",  "hooks": [{ "type": "command", "command": ".claude/hooks/validate-skill.sh"  }] }
+    ]
+  }
+}
+```
+
+> If `.claude/settings.json` already has a `hooks.PreToolUse` array, append the two entries above to it rather than overwriting the existing entries.
 
 ### Step 4 — Create output directories and update .gitignore
 
