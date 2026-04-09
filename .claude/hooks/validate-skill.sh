@@ -1,0 +1,51 @@
+#!/bin/bash
+# PreToolUse hook: Validate Skill tool invocation naming
+# Blocks bare superpowers skill names that should use 'superpowers:' prefix
+# Blocks bare MAS skill names that should use 'mas:' prefix
+
+INPUT=$(cat)
+TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
+
+# Only check Skill tool calls
+if [ "$TOOL_NAME" != "Skill" ]; then
+  exit 0
+fi
+
+# Extract skill name
+SKILL=$(echo "$INPUT" | grep -o '"skill"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"skill"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
+
+if [ -z "$SKILL" ]; then
+  exit 0
+fi
+
+# Superpowers skills that MUST use superpowers: prefix
+SUPERPOWERS_SKILLS="writing-plans brainstorm brainstorming executing-plans verification verification-before-completion finishing-branch finishing-a-development-branch subagent-driven-development test-driven-development systematic-debugging using-git-worktrees dispatching-parallel-agents requesting-code-review receiving-code-review"
+
+for s in $SUPERPOWERS_SKILLS; do
+  if [ "$SKILL" = "$s" ]; then
+    echo "BLOCKED: Bare superpowers skill name '$s' detected."
+    echo "Use 'superpowers:${s}' instead."
+    echo ""
+    echo "Quick reference:"
+    echo "  BAD:  Skill(skill: \"$s\")"
+    echo "  GOOD: Skill(skill: \"superpowers:${s}\")"
+    exit 2
+  fi
+done
+
+# MAS skills that MUST use mas: prefix
+MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development"
+
+for s in $MAS_SKILLS; do
+  if [ "$SKILL" = "$s" ]; then
+    echo "BLOCKED: Bare MAS skill name '$s' detected."
+    echo "Use 'mas:${s}' instead."
+    echo ""
+    echo "Quick reference:"
+    echo "  BAD:  Skill(skill: \"$s\")"
+    echo "  GOOD: Skill(skill: \"mas:${s}\")"
+    exit 2
+  fi
+done
+
+exit 0
