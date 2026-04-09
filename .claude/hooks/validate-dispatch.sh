@@ -42,4 +42,13 @@ if [ "$SUBAGENT_TYPE" = "mas:orchestrator:orchestrator" ]; then
   exit 2
 fi
 
+# Block reflect re-dispatch if report already exists
+REFLECT_REPORT="${CLAUDE_PROJECT_DIR}/docs/reports/reflect-report.md"
+if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ] && [ -f "$REFLECT_REPORT" ]; then
+  echo "BLOCKED: Reflect agent already ran (docs/reports/reflect-report.md exists)."
+  echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
+  echo "To re-run reflect, delete docs/reports/reflect-report.md first."
+  exit 2
+fi
+
 exit 0
