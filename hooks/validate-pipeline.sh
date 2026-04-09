@@ -48,15 +48,20 @@ if [ "$SELF_REVIEWS" = "0" ] && [ "$RESULTS" != "0" ]; then
   WARNINGS="${WARNINGS}\n  ⚠ No self-review files found (docs/results/TASK-*-self-review.md)"
 fi
 
+# Block session end only when a full pipeline ran but reflect was skipped
+# Condition: task specs + results + reviews all present, but NO reflect report
+if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
+  cat <<EOF
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+EOF
+  exit 2
+fi
+
+# Warn only (non-blocking) for partial pipeline issues
 if [ -n "$WARNINGS" ]; then
   cat <<EOF
 {"systemMessage": "Pipeline Validation:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}\n\n  If task specs exist but artifacts don't, the pipeline was likely bypassed."}
 EOF
-else
-  cat <<EOF
-{"systemMessage": "Pipeline Validation: OK (${TASK_SPECS} tasks, ${RESULTS} results, ${REVIEWS} reviews, reflect: yes)"}
-EOF
 fi
 
-# Always exit 0 — informational only
 exit 0
