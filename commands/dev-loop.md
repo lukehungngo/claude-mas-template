@@ -333,6 +333,12 @@ Agent(
 )
 ```
 
+> **Intentional reflect skip:** If reflect is genuinely not needed (e.g., documentation-only changes, exploratory spike with no implementation decisions), create `docs/reports/.reflect-skipped` with a one-line reason before ending the session:
+> ```bash
+> echo "documentation update only — no implementation decisions to evaluate" > docs/reports/.reflect-skipped
+> ```
+> The `validate-pipeline.sh` Stop hook will accept this and exit 0 instead of blocking.
+
 Read the verdict from `docs/reports/reflect-report.md`. Handle as follows:
 
 - **PROCEED** → continue to Phase 3.

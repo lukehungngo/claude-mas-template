@@ -48,6 +48,18 @@ if [ "$SELF_REVIEWS" = "0" ] && [ "$RESULTS" != "0" ]; then
   WARNINGS="${WARNINGS}\n  ⚠ No self-review files found (docs/results/TASK-*-self-review.md)"
 fi
 
+# Sentinel escape hatch: if .reflect-skipped exists with a non-empty reason, skip blocking
+SENTINEL="docs/reports/.reflect-skipped"
+if [ -f "$SENTINEL" ]; then
+  REASON=$(head -1 "$SENTINEL" | tr -d '\n')
+  if [ -n "$REASON" ]; then
+    cat <<EOF
+{"systemMessage": "Pipeline Validation: reflect skipped (intentional).\n  Reason: ${REASON}\n  To require reflect again, delete docs/reports/.reflect-skipped"}
+EOF
+    exit 0
+  fi
+fi
+
 # Block session end only when a full pipeline ran but reflect was skipped
 # Condition: task specs + results + reviews all present, but NO reflect report
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
