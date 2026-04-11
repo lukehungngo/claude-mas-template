@@ -85,6 +85,72 @@ Read `package.json`, `go.mod`, `pyproject.toml`, `Cargo.toml`, `Gemfile`, `pom.x
 - `has_ui: true` if: Thymeleaf, JSP/JSF, Vaadin, or frontend module with `package.json` detected
 - `has_ui: false` if: pure REST API, gRPC service, CLI tool, batch job
 
+### Step 1b — Write language-stack rules
+
+Based on detection from Step 1, determine which language stack template(s) to use:
+
+**Detection rules:**
+- `tsconfig.json` present → TypeScript stack detected
+- `package.json` present (no `tsconfig.json`) → JavaScript stack detected
+- `pyproject.toml` OR `requirements.txt` OR `setup.py` present → Python stack detected
+- `go.mod` present → Go stack detected (no template yet — skip this step)
+- Both Python + TypeScript detected → multi-stack project
+
+**Action based on detection:**
+
+```bash
+PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ 2>/dev/null | sort -V | tail -1)
+mkdir -p rules
+```
+
+**Single-stack TypeScript:**
+```bash
+cp "$PLUGIN_DIR/rules/language-stack-typescript.md" rules/language-stack.md
+```
+
+**Single-stack Python:**
+```bash
+cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
+```
+
+**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` with content:
+
+```markdown
+# Language Stack
+
+This project has multiple language stacks. Each section below defines the rules for that layer.
+
+---
+
+<!-- BEGIN:auto-detected -->
+[Paste the full content of language-stack-python.md here, under "## Backend (Python)" heading]
+[Paste the full content of language-stack-typescript.md here, under "## Frontend (TypeScript)" heading]
+<!-- END:auto-detected -->
+
+## Project-Specific Rules
+
+<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->
+```
+
+**If no template exists for the detected stack** (e.g., Go, Rust):
+- Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
+- Print: `ℹ️  No language-stack template for {language} yet. Created rules/language-stack.md with an empty Project-Specific Rules section.`
+
+**If no language is detected** (e.g., pure config repo): skip this step silently.
+
+**`--update` behavior** (when `$ARGUMENTS` contains `--update` and `rules/language-stack.md` already exists):
+- If the file contains `<!-- BEGIN:auto-detected -->` and `<!-- END:auto-detected -->` markers: regenerate only the content between those markers (overwrite with fresh template); preserve everything outside the markers (especially `## Project-Specific Rules`)
+- If the file has no markers (hand-written): print warning and skip:
+  ```
+  ⚠️  rules/language-stack.md exists without auto-detection markers. Skipping overwrite — edit manually.
+  ```
+
+**Report at end of this step:**
+```
+Language stack: {detected stack(s)}
+rules/language-stack.md: written  (or: skipped — no language detected)
+```
+
 ### Step 2 — Create or update CLAUDE.md
 
 If `CLAUDE.md` does NOT exist at project root:
