@@ -88,7 +88,13 @@ Write all review reports to `docs/reports/TASK-{id}-review.md`.
 
 ## Output Format
 
-Use the template at `templates/review-report.md`:
+Use the template at `templates/review-report.md`. Fill the YAML frontmatter fields:
+- `verdict`: match your final verdict (use underscore form: `APPROVED_WITH_CHANGES`)
+- `depth`: the depth you ran (quick/standard/deep)
+- `model`: write the model name from your system context (e.g., `claude-sonnet-4-6`)
+- `findings.p0/p1/p2/p3`: integer counts of issues at each severity
+- `business_alignment`: PASS/FAIL/SKIP (SKIP for quick depth)
+- `build_status`: PASS/FAIL
 
 ```markdown
 ## Review: TASK-{id} — {title}

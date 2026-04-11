@@ -1,7 +1,22 @@
+---
+task_id: TASK-{id}
+title: "{title}"
+verdict: APPROVED | APPROVED_WITH_CHANGES | BLOCKED
+depth: quick | standard | deep
+model: "{model used — fill from dispatch context}"
+findings:
+  p0: 0
+  p1: 0
+  p2: 0
+  p3: 0
+business_alignment: PASS | FAIL | SKIP
+build_status: PASS | FAIL
+---
+
 ## Review: TASK-{id} — {title}
 
 ### Business Alignment
-- [PASS/FAIL] {requirement} — {evidence}
+<!-- Skip this section for depth: quick -->
 - [PASS/FAIL] {requirement} — {evidence}
 
 ### Build Status
