@@ -100,6 +100,11 @@ Based on detection from Step 1, determine which language stack template(s) to us
 
 ```bash
 PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ 2>/dev/null | sort -V | tail -1)
+```
+
+> If `$PLUGIN_DIR` is empty (plugin cache not found), print: `ERROR: MAS plugin cache not found — skipping language-stack.md generation.` and skip the rest of Step 1b.
+
+```bash
 mkdir -p rules
 ```
 
@@ -113,24 +118,13 @@ cp "$PLUGIN_DIR/rules/language-stack-typescript.md" rules/language-stack.md
 cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
 ```
 
-**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` with content:
-
-```markdown
-# Language Stack
-
-This project has multiple language stacks. Each section below defines the rules for that layer.
-
----
-
-<!-- BEGIN:auto-detected -->
-[Paste the full content of language-stack-python.md here, under "## Backend (Python)" heading]
-[Paste the full content of language-stack-typescript.md here, under "## Frontend (TypeScript)" heading]
-<!-- END:auto-detected -->
-
-## Project-Specific Rules
-
-<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->
-```
+**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` as follows:
+1. Write header: `# Language Stack\n\nThis project has multiple language stacks. Each section below defines the rules for that layer.\n\n---\n`
+2. Write: `<!-- BEGIN:auto-detected -->\n`
+3. Write: `## Backend (Python)\n\n` then append the full contents of `$PLUGIN_DIR/rules/language-stack-python.md` (skip its own `# Language Stack — Python` title line, start from the `<!-- BEGIN:auto-detected -->` line)
+4. Write: `\n## Frontend (TypeScript)\n\n` then append the full contents of `$PLUGIN_DIR/rules/language-stack-typescript.md` (same: skip its own title line)
+5. Write: `\n<!-- END:auto-detected -->\n`
+6. Write: `\n## Project-Specific Rules\n\n<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->\n`
 
 **If no template exists for the detected stack** (e.g., Go, Rust):
 - Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
@@ -139,7 +133,7 @@ This project has multiple language stacks. Each section below defines the rules 
 **If no language is detected** (e.g., pure config repo): skip this step silently.
 
 **`--update` behavior** (when `$ARGUMENTS` contains `--update` and `rules/language-stack.md` already exists):
-- If the file contains `<!-- BEGIN:auto-detected -->` and `<!-- END:auto-detected -->` markers: regenerate only the content between those markers (overwrite with fresh template); preserve everything outside the markers (especially `## Project-Specific Rules`)
+- If the file contains `<!-- BEGIN:auto-detected -->` and `<!-- END:auto-detected -->` markers: regenerate only the content between those markers (overwrite with fresh template); preserve everything outside the markers (especially `## Project-Specific Rules`). For multi-stack projects, rebuild the full inner block using both templates, using the same construction logic as the initial write.
 - If the file has no markers (hand-written): print warning and skip:
   ```
   ⚠️  rules/language-stack.md exists without auto-detection markers. Skipping overwrite — edit manually.
