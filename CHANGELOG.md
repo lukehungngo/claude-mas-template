@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.10.1] — 2026-04-12
+
+### Fixed
+
+- **ESLint v9 compatibility** in `rules/language-stack-typescript.md` — `--ext` flag was removed in ESLint v9 (now default). Template now shows version-aware commands and recommends `npm run lint` when defined.
+- **`{{test-command}}` substitution** — Bootstrap Step 1b now runs a `sed` pass after copying the template, resolving `{{test-command}}` with the detected test command. Mirrors the substitution already done for CLAUDE.md.
+- **Bootstrap Step 7 report** — Now lists `rules/language-stack.md: written` so users know language diagnostics are active.
+
 ## [2.10.0] — 2026-04-12
 
 ### Language-Specific Hardening — Python + TypeScript
