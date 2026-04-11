@@ -93,7 +93,7 @@ Based on detection from Step 1, determine which language stack template(s) to us
 - `tsconfig.json` present → TypeScript stack detected
 - `package.json` present (no `tsconfig.json`) → JavaScript stack detected
 - `pyproject.toml` OR `requirements.txt` OR `setup.py` present → Python stack detected
-- `go.mod` present → Go stack detected (no template yet — skip this step)
+- `go.mod` present → Go stack detected (no template yet — will create file with Project-Specific Rules section only)
 - Both Python + TypeScript detected → multi-stack project
 
 **Action based on detection:**
