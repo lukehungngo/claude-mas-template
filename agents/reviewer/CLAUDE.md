@@ -95,8 +95,27 @@ Use the template at `templates/review-report.md`. Fill the YAML frontmatter fiel
 - `findings.p0/p1/p2/p3`: integer counts of issues at each severity
 - `business_alignment`: PASS/FAIL/SKIP (SKIP for quick depth)
 - `build_status`: PASS/FAIL
+- `reviewed_at`: ISO timestamp when you are writing this report
+- `commit`: run `git rev-parse HEAD` to get the current SHA
 
 ```markdown
+---
+task_id: TASK-{id}
+title: "{title}"
+verdict: APPROVED | APPROVED_WITH_CHANGES | BLOCKED
+depth: quick | standard | deep
+model: "claude-sonnet-4-6"
+findings:
+  p0: 0
+  p1: 0
+  p2: 0
+  p3: 0
+business_alignment: PASS | FAIL | SKIP
+build_status: PASS | FAIL
+reviewed_at: ""  # ISO timestamp, e.g. 2026-04-11T23:00:00
+commit: ""       # git SHA of HEAD when review ran
+---
+
 ## Review: TASK-{id} — {title}
 
 ### Business Alignment
@@ -118,7 +137,7 @@ PASS / FAIL — {summary}
 {file:line — description}
 
 ### Verdict
-APPROVED / APPROVED WITH CHANGES / BLOCKED
+APPROVED / APPROVED_WITH_CHANGES / BLOCKED
 
 ### Summary
 {2-3 sentences on overall code quality and key observations}

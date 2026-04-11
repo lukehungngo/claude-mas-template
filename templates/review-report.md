@@ -11,6 +11,8 @@ findings:
   p3: 0
 business_alignment: PASS | FAIL | SKIP
 build_status: PASS | FAIL
+reviewed_at: ""  # ISO timestamp, e.g. 2026-04-11T23:00:00
+commit: ""       # git SHA of HEAD when review ran
 ---
 
 ## Review: TASK-{id} — {title}
@@ -40,7 +42,7 @@ PASS / FAIL — {one-line summary, e.g., "All 142 tests pass, lint clean, typech
 <!-- Style, minor cleanup -->
 
 ### Verdict
-APPROVED / APPROVED WITH CHANGES / BLOCKED
+APPROVED / APPROVED_WITH_CHANGES / BLOCKED
 
 ### Summary
 {2-3 sentences on overall code quality, key observations, and confidence level}
