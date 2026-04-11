@@ -11,13 +11,13 @@ Run ALL of the following before committing or approving. A failure in any comman
 ```bash
 mypy .          # Zero type errors required (if mypy is installed)
 ruff check .    # Zero lint warnings required (preferred over flake8)
-{{test-command}} # All tests must pass
+{{test-command}} # All tests must pass — resolve this from CLAUDE.md `{{test-command}}`; if not set, run the test command from your project context
 ```
 
 **Fallbacks:**
 - If `mypy` is not installed: `python -m mypy .` or skip with a note in the result
 - If `ruff` is not installed: `flake8 .` or `pylint src/`
-- If neither linter is installed: run `python -m py_compile $(find . -name "*.py" | grep -v __pycache__)` and print a warning
+- If neither linter is installed: run `python -m compileall . -q` and print a warning
 
 ### Engineer Rules — Mandatory Before Committing
 

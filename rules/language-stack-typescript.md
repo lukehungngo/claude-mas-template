@@ -10,11 +10,11 @@ Run ALL of the following before committing or approving. A failure in any comman
 
 ```bash
 tsc --noEmit                            # Zero type errors required
-eslint src/ --ext .ts --max-warnings 0  # Zero lint warnings required
-{{test-command}}                        # All tests must pass
+eslint src/ --ext .ts,.tsx --max-warnings 0  # Zero lint warnings required
+{{test-command}}                        # All tests must pass — resolve this from CLAUDE.md `{{test-command}}`; if not set, run the test command from your project context
 ```
 
-If `eslint` is not installed, fall back to: `npx eslint src/ --ext .ts`
+If `eslint` is not installed, fall back to: `npx eslint src/ --ext .ts,.tsx`
 If `src/` does not exist, use the directory where TypeScript source lives (check `tsconfig.json` → `include` or `rootDir`).
 
 ### Engineer Rules — Mandatory Before Committing
