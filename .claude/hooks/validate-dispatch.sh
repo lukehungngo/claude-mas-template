@@ -59,7 +59,7 @@ fi
 if [ "$SUBAGENT_TYPE" = "mas:reviewer:reviewer" ] && echo "$MODEL" | grep -qi "haiku"; then
   # Extract depth from prompt field to allow quick+haiku
   PROMPT=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('prompt',''))" 2>/dev/null || echo "")
-  DEPTH=$(echo "$PROMPT" | grep -oi 'depth:[[:space:]]*[a-z]*' | head -1 | sed 's/depth:[[:space:]]*//')
+  DEPTH=$(echo "$PROMPT" | grep -oi 'depth:[[:space:]]*[a-z]*' | head -1 | sed 's/depth:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
   if [ "$DEPTH" != "quick" ]; then
     _debug "BLOCKED reviewer on haiku (depth=${DEPTH:-standard}): ${MODEL}"
     cat <<EOF

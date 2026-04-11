@@ -119,6 +119,8 @@ Agent(
 Agent(
   subagent_type: "mas:reviewer:reviewer",
   prompt: """
+  depth: standard
+
   ## Task Spec
   {paste full task spec}
 
@@ -296,6 +298,8 @@ Split tasks into groups of TASKS_PER_REVIEWER (default 3). Dispatch 1 reviewer p
 Agent(
   subagent_type: "mas:reviewer:reviewer",
   prompt: """
+  depth: standard
+
   ## Tasks to Review
   You are reviewing 3 tasks as a batch. Review each independently.
 
@@ -371,6 +375,8 @@ If CROSS_TASK_REVIEW is enabled (see Runtime Configuration in dev-loop — varie
 Agent(
   subagent_type: "mas:reviewer:reviewer",
   prompt: """
+  depth: standard
+
   ## Cross-Task Review
   You are performing a holistic review across all approved task results.
   Check for: duplication across tasks, integration gaps, pattern consistency.
