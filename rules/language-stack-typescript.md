@@ -10,11 +10,14 @@ Run ALL of the following before committing or approving. A failure in any comman
 
 ```bash
 tsc --noEmit                            # Zero type errors required
-eslint src/ --ext .ts,.tsx --max-warnings 0  # Zero lint warnings required
+# Lint — version-aware:
+# ESLint v8: eslint src/ --ext .ts,.tsx --max-warnings 0
+# ESLint v9+ (flat config): eslint src/ --max-warnings 0
+# Auto-detect: npx eslint --version | grep -q "^v9\|^v10" && npx eslint src/ --max-warnings 0 || npx eslint src/ --ext .ts,.tsx --max-warnings 0
 {{test-command}}                        # All tests must pass — resolve this from CLAUDE.md `{{test-command}}`; if not set, run the test command from your project context
 ```
 
-If `eslint` is not installed, fall back to: `npx eslint src/ --ext .ts,.tsx`
+**ESLint version detection:** Run `npx eslint --version` first. ESLint v8 requires `--ext .ts,.tsx`; ESLint v9+ (flat config) does not support `--ext` — omit it. If your project defines `npm run lint` in `package.json`, prefer that over direct eslint invocation.
 If `src/` does not exist, use the directory where TypeScript source lives (check `tsconfig.json` → `include` or `rootDir`).
 
 ### Engineer Rules — Mandatory Before Committing

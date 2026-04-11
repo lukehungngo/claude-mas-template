@@ -118,6 +118,16 @@ cp "$PLUGIN_DIR/rules/language-stack-typescript.md" rules/language-stack.md
 cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
 ```
 
+**After writing rules/language-stack.md** (whether copied or assembled), resolve `{{test-command}}` using the value detected in Step 1:
+
+```bash
+# Resolve {{test-command}} in the generated file
+# Use the test command detected in Step 1
+sed -i '' 's/{{test-command}}/'"${DETECTED_TEST_COMMAND}"'/g' rules/language-stack.md
+```
+
+Replace `${DETECTED_TEST_COMMAND}` with the actual test command from Step 1 (e.g., `npm test`, `pytest`, `go test ./...`). If no test command was detected, leave `{{test-command}}` as-is with a printed warning.
+
 **Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` as follows:
 1. Write header: `# Language Stack\n\nThis project has multiple language stacks. Each section below defines the rules for that layer.\n\n---\n`
 2. Write: `<!-- BEGIN:auto-detected -->\n`
@@ -315,6 +325,8 @@ Then re-run /mas:bootstrap to update the test command.
 MAS Template bootstrapped for: {project name}
 Stack: {language} + {framework}
 has_ui: {true/false}
+rules/language-stack.md: written — language diagnostics will activate in engineer and reviewer agents
+{Omit the rules/language-stack.md line if language detection was skipped.}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 All agents, skills, and commands are provided by the MAS plugin.
