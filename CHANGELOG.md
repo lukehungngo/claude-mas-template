@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.10.0] — 2026-04-12
+
+### Language-Specific Hardening — Python + TypeScript
+
+Bootstrap-injected language context with no new agents. When you run `/mas:bootstrap`, it detects your stack and writes `rules/language-stack.md`. Every subsequent engineer and reviewer dispatch reads it automatically.
+
+#### Bootstrap
+- **Step 1b** — Detects TypeScript (`tsconfig.json`), Python (`pyproject.toml` / `requirements.txt` / `setup.py`), multi-stack (both), or unsupported stacks (Go, Rust). Copies the matching template to `rules/language-stack.md`.
+- **Multi-stack support** — Single `rules/language-stack.md` with `## Backend (Python)` and `## Frontend (TypeScript)` sections, wrapped in `<!-- BEGIN/END:auto-detected -->` markers.
+- **`--update` behavior** — Re-running `bootstrap --update` regenerates the auto-detected section while preserving user-edited `## Project-Specific Rules`.
+
+#### Language Templates
+- **`rules/language-stack-typescript.md`** — Diagnostics: `tsc --noEmit` + `eslint src/ --ext .ts,.tsx`. Anti-patterns: `as any` (P1), `async/forEach` (P1), `eval()` / `innerHTML` / SQL concat (P0). Reviewer P0/P1/P2 checks.
+- **`rules/language-stack-python.md`** — Diagnostics: `mypy .` + `ruff check .`. Anti-patterns: bare `except:` (P1), mutable defaults (P1), f-string SQL (P0), `eval()`/`exec()` (P0). Reviewer P0/P1/P2 checks.
+
+#### Engineer
+- Phase 4 Pre-completion: if `rules/language-stack.md` exists, run all Mandatory Diagnostic Commands before writing the result.
+
+#### Reviewer
+- Phase B Step 1: if `rules/language-stack.md` exists, run all Mandatory Diagnostic Commands — failure is P0 regardless of other findings.
+- Phase B Step 1.5 (new): apply language-specific anti-pattern checks from `rules/language-stack.md`.
+
+---
+
 ## [2.9.0] — 2026-04-11
 
 ### Identity Sharpening — Engineer + Reviewer
