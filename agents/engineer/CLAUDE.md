@@ -159,15 +159,16 @@ git diff  # uncommitted changes
 
   Run these checks (adapt paths to your stack):
   ```bash
-  # Unregistered routes (Fastify/Express pattern)
-  grep -r "router\.\|fastify\.\|app\." src/ --include="*.ts" | grep -v "server\|app\|index" | head -20
+  # Unregistered routes — check route files exist in server/app registration
+  grep -rn "\.route\|\.register\|addRoute" src/ --include="*.ts" | grep -v "spec\|test" | head -20
+  # Manually verify each route file is imported in server.ts / app.ts / index.ts
 
   # Unregistered services (DI container pattern)
   grep -rn "class.*Service\|class.*Repository" src/ --include="*.ts" | head -20
   # Then verify each class appears in container/registry file
 
-  # TODO/FIXME/stub markers in new files
-  grep -rn "TODO\|FIXME\|STUB\|placeholder\|hardcoded" docs/results/ src/ --include="*.ts" --include="*.md" 2>/dev/null
+  # TODO/FIXME/stub markers in new source files only
+  grep -rn "TODO\|FIXME\|STUB\|placeholder\|hardcoded" src/ --include="*.ts" 2>/dev/null
   ```
 
   If you find an unwired component, wire it before writing the result. Document it under "Deviations" if the wiring was not in the original spec.
