@@ -173,6 +173,8 @@ git diff  # uncommitted changes
 
   If you find an unwired component, wire it before writing the result. Document it under "Deviations" if the wiring was not in the original spec.
 
+- [ ] **Language diagnostics:** If `rules/language-stack.md` exists in the project, read it and run ALL commands listed under "Mandatory Diagnostic Commands". All must pass before writing the result. Log any failures under "Deviations" in your result.
+
 **If any check fails, fix it now.** Do not proceed to Phase 5 with known issues — this is the #1 cause of bug-fix cycles (25-30% of engineer outputs need bug-fixing).
 
 ### Phase 5 — Self-Review
