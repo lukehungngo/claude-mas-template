@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.9.0] — 2026-04-11
+
+### Identity Sharpening — Engineer + Reviewer
+
+The MAS template's unique value is structural enforcement over prose guidance. This release closes the gaps real session data exposed (37 reviews, 27 sessions audited).
+
+#### Reviewer
+- **Depth protocol**: Three review depths (quick/standard/deep) with model floor per depth. Controller picks depth; hook enforces floor. Replaces the binary "block haiku" approach with a protocol that mirrors how senior engineers actually delegate review work.
+- **Machine-readable frontmatter**: YAML header in every `docs/reports/TASK-*-review.md` — verdict, depth, model, finding counts, reviewed_at, commit. Enables `mas-audit.py` to measure review quality automatically.
+
+#### Engineer
+- **Deviation taxonomy**: 4-rule protocol for auto-fix vs stop. Rule 1: auto-fix bugs. Rule 2: auto-fix missing safety. Rule 3: stop for ambiguous requirements. Rule 4: stop for architectural changes. Replaces "treat all ambiguity as a blocker."
+- **Analysis paralysis guard**: 5+ reads without a write forces a decision. Eliminates token-burning read loops.
+- **Stub tracker**: Pre-completion scan for unwired components (unregistered routes, unwired services). Catches the "wrote the file but didn't register it" class of error before review.
+
+#### Hook
+- `validate-dispatch.sh`: Reviewer depth enforcement — haiku blocked for standard/deep depth, allowed for quick depth.
+- `templates/dispatch-templates.md`: All reviewer dispatch templates now include `depth: standard` field.
+
+---
+
 ## [2.8.0] — 2026-04-11
 
 ### Added
