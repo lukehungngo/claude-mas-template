@@ -263,7 +263,7 @@ If in doubt, route to Researcher.
 
 Dispatch engineers in batches, then review in batches. This aligns with the model's natural batching behavior and maximizes throughput. Use **template #8 (Batch Engineer + Batch Review Dispatch)** from `templates/dispatch-templates.md` as the preferred dispatch method.
 
-**Review count invariant:** Expected reviews = Expected engineer dispatches. Track both counts. If counts diverge at any point, you skipped reviews — STOP and fix before continuing.
+**Review count invariant:** Expected reviews = Expected engineer dispatches. Track both counts. If counts diverge at any point, you skipped reviews — STOP and fix before continuing. This is enforced by the between-batch gate in Phase 2B — check result/review counts before each new engineer batch, not only at end-of-pipeline.
 
 ##### Phase 2A — Batch Engineer Dispatch
 
@@ -274,6 +274,16 @@ Dispatch engineers in batches, then review in batches. This aligns with the mode
 ##### Phase 2B — Wait and Read Results
 
 Wait for all engineers in the current batch to finish. Read each result file at `docs/results/TASK-{id}-result.md`. If any result file does not exist, that engineer dispatch failed — investigate before proceeding. Do not continue to review until all engineers have succeeded or failures are understood.
+
+**Between-batch gate (BLOCKING):** Before dispatching the next engineer batch, verify all previous tasks are reviewed:
+
+```bash
+BATCH_RESULTS=$(ls docs/results/TASK-*-result.md 2>/dev/null | wc -l | tr -d ' ')
+BATCH_REVIEWS=$(ls docs/reports/TASK-*-review.md 2>/dev/null | wc -l | tr -d ' ')
+echo "Results: $BATCH_RESULTS | Reviews: $BATCH_REVIEWS"
+```
+
+If `BATCH_REVIEWS < BATCH_RESULTS`: **STOP. Do not dispatch the next engineer batch.** Return to Phase 2C and dispatch reviewers for the unreviewed tasks. Only proceed when reviews equal results.
 
 ##### Phase 2C — Batch Reviewer Dispatch
 
@@ -332,6 +342,12 @@ Agent(
   """
 )
 ```
+
+> **Intentional reflect skip:** If reflect is genuinely not needed (e.g., documentation-only changes, exploratory spike with no implementation decisions), create `docs/reports/.reflect-skipped` with a one-line reason before ending the session:
+> ```bash
+> echo "documentation update only — no implementation decisions to evaluate" > docs/reports/.reflect-skipped
+> ```
+> The `validate-pipeline.sh` Stop hook will accept this and exit 0 instead of blocking.
 
 Read the verdict from `docs/reports/reflect-report.md`. Handle as follows:
 

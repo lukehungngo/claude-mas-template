@@ -18,6 +18,12 @@ if [ -z "$SKILL" ]; then
   exit 0
 fi
 
+# Project-local allowlist: if this bare name is explicitly allowed, skip blocking
+ALLOWLIST="${CLAUDE_PROJECT_DIR}/.claude/hooks/allowed-bare-skills.txt"
+if [ -f "$ALLOWLIST" ] && grep -qxF "$SKILL" "$ALLOWLIST" 2>/dev/null; then
+  exit 0
+fi
+
 # Superpowers skills that MUST use superpowers: prefix
 SUPERPOWERS_SKILLS="writing-plans brainstorm brainstorming executing-plans verification verification-before-completion finishing-branch finishing-a-development-branch subagent-driven-development test-driven-development systematic-debugging using-git-worktrees dispatching-parallel-agents requesting-code-review receiving-code-review"
 

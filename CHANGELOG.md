@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.8.0] — 2026-04-11
+
+### Added
+
+- **validate-skill.sh allowlist** — `$CLAUDE_PROJECT_DIR/.claude/hooks/allowed-bare-skills.txt` lets projects exempt custom skill names from blocking. Add bare names one per line.
+- **validate-pipeline.sh sentinel** — `docs/reports/.reflect-skipped` escape hatch for intentional partial sessions. File must contain a non-empty reason; the Stop hook exits 0 with the reason printed instead of blocking.
+- **Between-batch review gate** in `commands/dev-loop.md` Phase 2B — Explicit check before each new engineer batch: `ls docs/reports/TASK-*-review.md | wc -l` must equal `ls docs/results/TASK-*-result.md | wc -l`. If reviews < results, block the next engineer batch. Addresses 52% reviewer rate gap.
+- **Debug logging** in `validate-dispatch.sh` — All hook decisions logged to `~/.claude/hook-debug.log` with timestamps, TOOL_NAME, subagent type, and ALLOWED/BLOCKED decision.
+- **`.claude/scripts/audit-hook-firing.sh`** — Reads debug log, reports allowed/blocked counts, block rate, blocked agent types by frequency, and consecutive-retry patterns (model retrying bare names after block).
+
+### Changed
+
+- `commands/bootstrap.md` — validate-skill.sh write instructions now include allowlist note.
+- `commands/dev-loop.md` — Between-batch gate in Phase 2B; reflect-skip sentinel documented in Phase 2E; review count invariant note updated.
+
+---
+
 ## [2.7.0] — 2026-04-06
 
 ### Added
