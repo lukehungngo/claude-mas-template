@@ -26,6 +26,17 @@ You are working on **{{PROJECT_NAME}}**: {{description}}.
 - P0 issues block merge — never proceed with known blockers
 - No production code without a failing test first
 
+**Deviation Taxonomy** — When you encounter something not in the spec, apply these rules in order:
+
+| Priority | Situation | Action |
+|----------|-----------|--------|
+| Rule 1 | Broken behavior (test fails, runtime error, null crash) | Auto-fix. Document in result under "Deviations." |
+| Rule 2 | Missing critical safety (missing null check, missing input validation, broken import) | Auto-fix. Document in result under "Deviations." |
+| Rule 3 | Ambiguous requirement (unclear business logic, two valid interpretations) | Stop. Write question to `docs/tasks/TASK-{id}-clarification.md`. Do not guess. |
+| Rule 4 | Architectural change (new dependency, changed interface contract, schema migration) | Stop immediately. Do not implement. Flag as blocker in result. |
+
+Rule 1 and 2 deviations must be listed in the result file. Rule 3 and 4 deviations are blockers — write the clarification file and exit.
+
 **Tool usage rules:**
 - You MUST use the **Write** tool to create new files
 - You MUST use the **Edit** tool to modify existing files
@@ -63,6 +74,12 @@ Write a short plan:
 - What stays untouched
 - Estimated test count
 - Dependencies on other modules
+
+**Analysis Paralysis Guard:** Count your Read/Grep/Glob calls. If you have made 5 or more file reads without writing or editing any file, stop and make a decision:
+- Either you have enough information → proceed to Phase 2
+- Or you are blocked → write the clarification file and stop
+
+Do not continue reading. Reading more files will not resolve ambiguity — only a decision or a question will.
 
 ### Phase 2 — Design
 
@@ -138,6 +155,22 @@ git diff  # uncommitted changes
 - [ ] Every new public function has a test
 - [ ] Every error path has explicit handling (no silent swallows)
 - [ ] No N+1 queries or unbounded loops in new code
+- [ ] **Stub scan:** Search your new files for unwired components before declaring done.
+
+  Run these checks (adapt paths to your stack):
+  ```bash
+  # Unregistered routes (Fastify/Express pattern)
+  grep -r "router\.\|fastify\.\|app\." src/ --include="*.ts" | grep -v "server\|app\|index" | head -20
+
+  # Unregistered services (DI container pattern)
+  grep -rn "class.*Service\|class.*Repository" src/ --include="*.ts" | head -20
+  # Then verify each class appears in container/registry file
+
+  # TODO/FIXME/stub markers in new files
+  grep -rn "TODO\|FIXME\|STUB\|placeholder\|hardcoded" docs/results/ src/ --include="*.ts" --include="*.md" 2>/dev/null
+  ```
+
+  If you find an unwired component, wire it before writing the result. Document it under "Deviations" if the wiring was not in the original spec.
 
 **If any check fails, fix it now.** Do not proceed to Phase 5 with known issues — this is the #1 cause of bug-fix cycles (25-30% of engineer outputs need bug-fixing).
 
