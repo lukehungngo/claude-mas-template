@@ -179,6 +179,8 @@ done
 exit 0
 ```
 
+> **Project-local allowlist:** If your project has custom skills whose bare names collide with MAS/superpowers names, add them one per line to `.claude/hooks/allowed-bare-skills.txt`. The hook will pass them through without blocking.
+
 Make executable:
 ```bash
 chmod +x .claude/hooks/*.sh
