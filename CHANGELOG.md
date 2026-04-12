@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.10.2] — 2026-04-12
+
+### Fixed
+- bootstrap: use `|` delimiter in sed to handle test commands containing `/` (e.g. `pytest --cov=src/`)
+- bootstrap: add macOS vs Linux `sed -i` usage note
+- bootstrap: add explicit notice for JavaScript-only stack (no template available)
+- bootstrap: replace `\n` escape notation in multi-stack instructions with explicit prose
+- reviewer: restructure Phase B step 1.5 as sub-bullet under step 1 (cleaner numbering)
+- language-stack-typescript: add `tsc` fallback note and `{{test-command}}` placeholder guard
+- language-stack-python: add `{{test-command}}` placeholder guard and promote P3 → P2 severity
+
 ## [2.10.1] — 2026-04-12
 
 ### Fixed
