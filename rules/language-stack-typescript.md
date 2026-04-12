@@ -17,6 +17,10 @@ tsc --noEmit                            # Zero type errors required
 {{test-command}}                        # All tests must pass — resolve this from CLAUDE.md `{{test-command}}`; if not set, run the test command from your project context
 ```
 
+**Fallbacks:**
+- If `tsc` is not installed locally: run `npx tsc --noEmit` or skip with a note in the result
+- If `{{test-command}}` is still a literal placeholder (not yet substituted by bootstrap): **do NOT run it** — print a warning: `⚠️  test-command placeholder not resolved — skipping test step. Run /mas:bootstrap to fix.` and continue.
+
 **ESLint version detection:** Run `npx eslint --version` first. ESLint v8 requires `--ext .ts,.tsx`; ESLint v9+ (flat config) does not support `--ext` — omit it. If your project defines `npm run lint` in `package.json`, prefer that over direct eslint invocation.
 If `src/` does not exist, use the directory where TypeScript source lives (check `tsconfig.json` → `include` or `rootDir`).
 
