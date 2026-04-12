@@ -139,6 +139,16 @@ Replace `${DETECTED_TEST_COMMAND}` with the actual test command from Step 1 (e.g
 5. Write: `\n<!-- END:auto-detected -->\n`
 6. Write: `\n## Project-Specific Rules\n\n<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->\n`
 
+**Single-stack JavaScript (package.json, no tsconfig.json):**
+- Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
+- Print:
+  ```
+  ℹ️  JavaScript (no TypeScript) detected — no language-stack template available yet.
+      Created rules/language-stack.md with an empty Project-Specific Rules section.
+      Consider adding TypeScript, or populate the Project-Specific Rules section manually
+      with your ESLint and test commands.
+  ```
+
 **If no template exists for the detected stack** (e.g., Go, Rust):
 - Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
 - Print: `ℹ️  No language-stack template for {language} yet. Created rules/language-stack.md with an empty Project-Specific Rules section.`
