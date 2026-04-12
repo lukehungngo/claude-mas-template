@@ -18,6 +18,7 @@ ruff check .    # Zero lint warnings required (preferred over flake8)
 - If `mypy` is not installed: `python -m mypy .` or skip with a note in the result
 - If `ruff` is not installed: `flake8 .` or `pylint src/`
 - If neither linter is installed: run `python -m compileall . -q` and print a warning
+- If `{{test-command}}` is still a literal placeholder (not yet substituted by bootstrap): **do NOT run it** — print a warning: `⚠️  test-command placeholder not resolved — skipping test step. Run /mas:bootstrap to fix.` and continue.
 
 ### Engineer Rules — Mandatory Before Committing
 
@@ -43,7 +44,7 @@ Before writing the result, run the diagnostic commands above. All must pass.
 | `subprocess.shell=True` with user input | P0 | Shell injection — same as above |
 | N+1 queries in loops (ORM) | P1 | Use `select_related`/`prefetch_related` (Django) or `joinedload` (SQLAlchemy) |
 | `print()` in production code | P2 | Use `logging` module |
-| Missing `__all__` on public modules | P3 | Optional — define public API explicitly |
+| Missing `__all__` on public modules | P2 | Optional — define public API explicitly |
 
 ### Reviewer Rules — Language-Specific Checks
 
