@@ -131,13 +131,31 @@ sed -i '' 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' rules/language-sta
 
 Replace `${DETECTED_TEST_COMMAND}` with the actual test command from Step 1 (e.g., `npm test`, `pytest`, `go test ./...`). If no test command was detected, leave `{{test-command}}` as-is with a printed warning.
 
-**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` as follows:
-1. Write header: `# Language Stack\n\nThis project has multiple language stacks. Each section below defines the rules for that layer.\n\n---\n`
-2. Write: `<!-- BEGIN:auto-detected -->\n`
-3. Write: `## Backend (Python)\n\n` then append the full contents of `$PLUGIN_DIR/rules/language-stack-python.md` (skip its own `# Language Stack — Python` title line, start from the `<!-- BEGIN:auto-detected -->` line)
-4. Write: `\n## Frontend (TypeScript)\n\n` then append the full contents of `$PLUGIN_DIR/rules/language-stack-typescript.md` (same: skip its own title line)
-5. Write: `\n<!-- END:auto-detected -->\n`
-6. Write: `\n## Project-Specific Rules\n\n<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->\n`
+**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
+
+```
+# Language Stack
+
+This project has multiple language stacks. Each section below defines the rules for that layer.
+
+---
+
+<!-- BEGIN:auto-detected -->
+
+## Backend (Python)
+
+[full contents of $PLUGIN_DIR/rules/language-stack-python.md, starting from the <!-- BEGIN:auto-detected --> line — skip the # Language Stack — Python title line]
+
+## Frontend (TypeScript)
+
+[full contents of $PLUGIN_DIR/rules/language-stack-typescript.md, starting from the <!-- BEGIN:auto-detected --> line — skip the # Language Stack — TypeScript title line]
+
+<!-- END:auto-detected -->
+
+## Project-Specific Rules
+
+<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->
+```
 
 **Single-stack JavaScript (package.json, no tsconfig.json):**
 - Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
