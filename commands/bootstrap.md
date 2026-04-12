@@ -123,7 +123,10 @@ cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
 ```bash
 # Resolve {{test-command}} in the generated file
 # Use the test command detected in Step 1
-sed -i '' 's/{{test-command}}/'"${DETECTED_TEST_COMMAND}"'/g' rules/language-stack.md
+# Use | as delimiter to handle test commands that contain / (e.g. pytest --cov=src/)
+# macOS/BSD: sed -i ''   Linux: sed -i   — use whichever matches the current OS
+sed -i '' 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' rules/language-stack.md   # macOS
+# sed -i 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' rules/language-stack.md    # Linux (uncomment if needed)
 ```
 
 Replace `${DETECTED_TEST_COMMAND}` with the actual test command from Step 1 (e.g., `npm test`, `pytest`, `go test ./...`). If no test command was detected, leave `{{test-command}}` as-is with a printed warning.
