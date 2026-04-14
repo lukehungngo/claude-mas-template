@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.1] — 2026-04-14
+
+### Fixed
+- README: skill count updated 8 → 9 (obsidian added to list)
+- bootstrap: `obsidian` added to `MAS_SKILLS` in validate-skill.sh template (hook enforcement)
+- language-stack-rust: add `cargo fmt --check` as mandatory diagnostic, with fallback note
+
 ## [2.11.0] — 2026-04-14
 
 ### Added
