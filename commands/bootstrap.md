@@ -305,7 +305,7 @@ for s in $SUPERPOWERS_SKILLS; do
     exit 2
   fi
 done
-MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development"
+MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development obsidian"
 for s in $MAS_SKILLS; do
   if [ "$SKILL" = "$s" ]; then
     echo "BLOCKED: Bare MAS skill name '$s'. Use 'mas:${s}' instead."

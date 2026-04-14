@@ -11,11 +11,13 @@ Run ALL of the following before committing or approving. A failure in any comman
 ```bash
 cargo check                         # Zero compile errors required
 cargo clippy -- -D warnings         # Zero clippy warnings — warnings are errors
+cargo fmt --check                   # Zero formatting drift required
 {{test-command}}                    # All tests must pass — resolve this from CLAUDE.md `{{test-command}}`; if not set, run `cargo test`
 ```
 
 **Fallbacks:**
 - If `cargo clippy` is not available: run `cargo check` twice and note clippy was skipped
+- If `cargo fmt` is not available: skip with a note in the result
 - If `{{test-command}}` is still a literal placeholder (not yet substituted by bootstrap): **do NOT run it** — print a warning: `⚠️  test-command placeholder not resolved — skipping test step. Run /mas:bootstrap to fix.` and continue. Use `cargo test` as fallback.
 
 **Clippy note:** `-- -D warnings` promotes all warnings to errors. If the project uses a custom `clippy.toml` or `#![allow(...)]` attributes in lib.rs, those take precedence. Check `clippy.toml` at project root before running.

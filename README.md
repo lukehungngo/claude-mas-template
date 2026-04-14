@@ -35,7 +35,7 @@ If you use `superpowers:subagent-driven-development`, you can specify `mas:engin
 | Component | Count | Description |
 |-----------|-------|-------------|
 | **Agents** | 7 | engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer |
-| **Skills** | 8 | ask-questions, subagent-driven-development, verification, finishing-branch, se-principles, reliability-review, property-based-testing, differential-review |
+| **Skills** | 9 | ask-questions, subagent-driven-development, verification, finishing-branch, se-principles, reliability-review, property-based-testing, differential-review, obsidian |
 | **Rules** | 4 | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons |
 | **Commands** | 5 | bootstrap, dev-loop, bug-fix, reflect, release |
 | **Hooks** | 6 | lint (PostToolUse), compaction suggester (PreToolUse), quality gate (Stop), pipeline validator (Stop), dispatch name enforcer (PreToolUse:Agent), skill name enforcer (PreToolUse:Skill) |
