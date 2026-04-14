@@ -94,7 +94,9 @@ Based on detection from Step 1, determine which language stack template(s) to us
 - `package.json` present (no `tsconfig.json`) → JavaScript stack detected
 - `pyproject.toml` OR `requirements.txt` OR `setup.py` present → Python stack detected
 - `go.mod` present → Go stack detected (no template yet — will create file with Project-Specific Rules section only)
+- `Cargo.toml` present → Rust stack detected
 - Both Python + TypeScript detected → multi-stack project
+- Rust + TypeScript detected (`Cargo.toml` + `tsconfig.json`) → multi-stack project
 
 **Action based on detection:**
 
@@ -116,6 +118,39 @@ cp "$PLUGIN_DIR/rules/language-stack-typescript.md" rules/language-stack.md
 **Single-stack Python:**
 ```bash
 cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
+```
+
+**Single-stack Rust:**
+```bash
+cp "$PLUGIN_DIR/rules/language-stack-rust.md" rules/language-stack.md
+```
+
+**Multi-stack Rust + TypeScript:**
+
+Create `rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
+
+```
+# Language Stack
+
+This project has multiple language stacks. Each section below defines the rules for that layer.
+
+---
+
+<!-- BEGIN:auto-detected -->
+
+## Backend (Rust)
+
+[full contents of $PLUGIN_DIR/rules/language-stack-rust.md, starting from the <!-- BEGIN:auto-detected --> line — skip the # Language Stack — Rust title line]
+
+## Frontend (TypeScript)
+
+[full contents of $PLUGIN_DIR/rules/language-stack-typescript.md, starting from the <!-- BEGIN:auto-detected --> line — skip the # Language Stack — TypeScript title line]
+
+<!-- END:auto-detected -->
+
+## Project-Specific Rules
+
+<!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->
 ```
 
 **After writing rules/language-stack.md** (whether copied or assembled), resolve `{{test-command}}` using the value detected in Step 1:
@@ -167,7 +202,7 @@ This project has multiple language stacks. Each section below defines the rules 
       with your ESLint and test commands.
   ```
 
-**If no template exists for the detected stack** (e.g., Go, Rust):
+**If no template exists for the detected stack** (e.g., Go):
 - Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
 - Print: `ℹ️  No language-stack template for {language} yet. Created rules/language-stack.md with an empty Project-Specific Rules section.`
 
