@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0] — 2026-04-14
+
+### Added
+- **`rules/language-stack-rust.md`** — Rust language-stack template: `cargo check` + `cargo clippy -- -D warnings` + test diagnostics; engineer non-negotiables (no `.unwrap()` without `// SAFETY:`, no `unsafe` without comment); anti-pattern table with P0/P1/P2 severity; reviewer checks matching severity levels.
+- **Bootstrap Rust detection** — `Cargo.toml` detected in Step 1b. Single-stack Rust copies `language-stack-rust.md`; Rust + TypeScript multi-stack assembles a combined file with Backend (Rust) and Frontend (TypeScript) sections.
+- **`skills/obsidian/SKILL.md`** — Obsidian MCP integration skill: vault selection (`obsidian-main` / `obsidian-eduquest` / `obsidian-vpbank`), note templates (session, plan, ADR), capture workflow for dev-loop sessions, and search.
+
 ## [2.10.2] — 2026-04-12
 
 ### Fixed
