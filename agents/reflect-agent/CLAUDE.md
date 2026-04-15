@@ -34,7 +34,7 @@ You are evaluating delivery for **{{PROJECT_NAME}}**: {{description}}.
 
 ### Phase 1 -- Requirement Mapping
 
-**Input:** Original user requirement (verbatim), all task specs from `docs/tasks/done/`
+**Input:** Original user requirement (verbatim), the implementation plan from `docs/superpowers/plans/`
 
 1. Read the original user requirement carefully. Extract every discrete functional requirement. Number them R1, R2, R3...
 2. Read all task specs. For each requirement, find the task(s) that implement it.

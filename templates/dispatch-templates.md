@@ -20,10 +20,8 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
 | `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports, `reflect-report.md` | Reviewer, Differential Reviewer, Bug-Fixer, Reflect Agent | Dev-loop (Phase 3), Bug-Fixer, Engineer |
 | `docs/results/` | Implementation results (`TASK-{id}-result.md`), self-reviews (`TASK-{id}-self-review.md`) | Engineer | Reviewer, Dev-loop |
-| `docs/tasks/pending/` | Task specs awaiting dispatch | Dev-loop | All agents (their assigned task) |
-| `docs/tasks/in-progress/` | Task specs currently being worked | Dev-loop | -- |
-| `docs/tasks/done/` | Completed task specs | Dev-loop | -- |
-| `docs/tasks/blocked/` | Blocked task specs | Dev-loop | -- |
+| `docs/superpowers/plans/` | Implementation plans | superpowers:writing-plans | All agents |
+| `docs/superpowers/reports/` | Delivery reports | Dev-loop, Bug-fix | Dev-loop |
 
 ---
 
@@ -33,8 +31,8 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 Agent(
   subagent_type: "mas:researcher:researcher",
   prompt: """
-  ## Task Spec
-  {paste full task spec from docs/tasks/pending/TASK-{id}.md}
+  ## Task
+  {paste the task from the plan}
 
   ## Round
   {N} of 3
@@ -82,8 +80,8 @@ Agent(
 Agent(
   subagent_type: "mas:engineer:engineer",
   prompt: """
-  ## Task Spec
-  {paste full task spec from docs/tasks/pending/TASK-{id}.md}
+  ## Task
+  {paste the task from the plan}
 
   ## Research Proposal (if applicable)
   {paste approved proposal, or "N/A -- known pattern"}
@@ -121,8 +119,8 @@ Agent(
   prompt: """
   depth: standard
 
-  ## Task Spec
-  {paste full task spec}
+  ## Task
+  {paste the task from the plan}
 
   ## Engineer Result
   {paste from docs/results/TASK-{id}-result.md}
@@ -162,8 +160,8 @@ Agent(
   ## Reviewer Report
   {paste from docs/reports/TASK-{id}-review.md}
 
-  ## Task Spec
-  {paste full task spec}
+  ## Task
+  {paste the task from the plan}
 
   ## Skills (use during bug fixing)
   - `Skill(skill: "superpowers:test-driven-development")` — reproduction test FIRST, then minimal fix
@@ -188,8 +186,8 @@ Agent(
 Agent(
   subagent_type: "mas:ui-ux-designer:ui-ux-designer",
   prompt: """
-  ## Task Spec
-  {paste full task spec}
+  ## Task
+  {paste the task from the plan}
 
   ## Working Directory
   {worktree path}
@@ -240,8 +238,8 @@ Dispatch up to MAX_PARALLEL engineers in parallel for non-overlapping tasks. If 
 Agent(
   subagent_type: "mas:engineer:engineer",
   prompt: """
-  ## Task Spec
-  {paste full task spec from docs/tasks/pending/TASK-{id1}.md}
+  ## Task
+  {paste the task from the plan}
 
   ## Research Proposal (if applicable)
   {paste approved proposal, or "N/A -- known pattern"}
@@ -264,8 +262,8 @@ Agent(
 Agent(
   subagent_type: "mas:engineer:engineer",
   prompt: """
-  ## Task Spec
-  {paste full task spec from docs/tasks/pending/TASK-{id2}.md}
+  ## Task
+  {paste the task from the plan}
   ... (same structure as above)
 
   ## Output
@@ -290,7 +288,7 @@ If any result file does not exist, that engineer dispatch failed -- investigate 
 
 ### Step 3 — Batch Review Dispatch
 
-Split tasks into groups of TASKS_PER_REVIEWER (default 3). Dispatch 1 reviewer per group. Each reviewer receives the task specs AND engineer results for its group.
+Split tasks into groups of TASKS_PER_REVIEWER (default 3). Dispatch 1 reviewer per group. Each reviewer receives the tasks AND engineer results for its group.
 
 ```
 # Group 1: tasks {id1}, {id2}, {id3}
@@ -304,20 +302,20 @@ Agent(
   You are reviewing 3 tasks as a batch. Review each independently.
 
   ### Task 1: TASK-{id1}
-  #### Task Spec
-  {paste full task spec for TASK-{id1}}
+  #### Task
+  {paste the task from the plan}
   #### Engineer Result
   {paste from docs/results/TASK-{id1}-result.md}
 
   ### Task 2: TASK-{id2}
-  #### Task Spec
-  {paste full task spec for TASK-{id2}}
+  #### Task
+  {paste the task from the plan}
   #### Engineer Result
   {paste from docs/results/TASK-{id2}-result.md}
 
   ### Task 3: TASK-{id3}
-  #### Task Spec
-  {paste full task spec for TASK-{id3}}
+  #### Task
+  {paste the task from the plan}
   #### Engineer Result
   {paste from docs/results/TASK-{id3}-result.md}
 
@@ -384,8 +382,8 @@ Agent(
   ## Approved Results
   {paste all approved TASK-{id}-result.md contents}
 
-  ## Task Specs
-  {paste all task specs for context}
+  ## Tasks
+  {paste all tasks from the plan for context}
 
   ## Working Directory
   {worktree path}
@@ -410,8 +408,8 @@ Agent(
   ## Original User Requirement
   {paste the original user requirement VERBATIM — do not paraphrase}
 
-  ## Completed Task Specs
-  {paste all task specs from docs/tasks/done/}
+  ## Plan
+  {paste the implementation plan from docs/superpowers/plans/}
 
   ## Engineer Results
   {paste all engineer results from docs/results/TASK-{id}-result.md}

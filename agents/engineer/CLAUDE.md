@@ -32,10 +32,10 @@ You are working on **{{PROJECT_NAME}}**: {{description}}.
 |----------|-----------|--------|
 | Rule 1 | Broken behavior (test fails, runtime error, null crash) | Auto-fix. Document in result under "Deviations." |
 | Rule 2 | Missing critical safety (missing null check, missing input validation, broken import) | Auto-fix. Document in result under "Deviations." |
-| Rule 3 | Ambiguous requirement (unclear business logic, two valid interpretations) | Stop. Write question to `docs/tasks/TASK-{id}-clarification.md`. Do not guess. |
+| Rule 3 | Ambiguous requirement (unclear business logic, two valid interpretations) | Stop. Document the question in your result file and raise it as a blocker to the orchestrator. Do not guess. |
 | Rule 4 | Architectural change (new dependency, changed interface contract, schema migration) | Stop immediately. Do not implement. Flag as blocker in result. |
 
-Rule 1 and 2 deviations must be listed in the result file. Rule 3 and 4 deviations are blockers — write the clarification file and exit.
+Rule 1 and 2 deviations must be listed in the result file. Rule 3 and 4 deviations are blockers — document them in your result file and exit.
 
 **Tool usage rules:**
 - You MUST use the **Write** tool to create new files
