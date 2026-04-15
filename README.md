@@ -39,7 +39,8 @@ If you use `superpowers:subagent-driven-development`, you can specify `mas:engin
 | **Rules** | 4 | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons |
 | **Commands** | 5 | bootstrap, dev-loop, bug-fix, reflect, release |
 | **Hooks** | 6 | lint (PostToolUse), compaction suggester (PreToolUse), quality gate (Stop), pipeline validator (Stop), dispatch name enforcer (PreToolUse:Agent), skill name enforcer (PreToolUse:Skill) |
-| **Templates** | 3 | task-spec, review-report (with YAML frontmatter), dispatch-templates |
+| **Templates** | 4 | task-spec, review-report (with YAML frontmatter), dispatch-templates, local-inject |
+| **Scripts** | 2 | mas-audit.py, mas-local-install.sh |
 
 ---
 

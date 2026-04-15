@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.12.0] — 2026-04-15
+
+### Added
+- **`templates/local-inject.md`** — MAS pipeline overlay for team repos. Contains the Mandatory Workflow, Agent Routing Table, and Dispatch Rules without project-specific sections (build commands, code style, invariants). Installed to `~/.claude/projects/<path>/CLAUDE.md` so it loads alongside the team repo's own CLAUDE.md without modifying the shared repo.
+- **`scripts/mas-local-install.sh`** — One-command installer for the local overlay. Usage: `mas-local-install.sh <project-dir> [--has-ui]`. Supports `--list` to show all installed projects and `--uninstall` to remove. Converts project paths to Claude Code's key format and writes to the correct `~/.claude/projects/` directory.
+
+### Context
+Audit of 456 sessions found 5 sessions in the last 2 days that referenced MAS workflows but dispatched all agents as generic `Agent()` without `subagent_type`. Root cause: team repos without CLAUDE.md MAS routing instructions. The local-inject approach fixes this without requiring changes to shared repos.
+
 ## [2.11.1] — 2026-04-14
 
 ### Fixed
