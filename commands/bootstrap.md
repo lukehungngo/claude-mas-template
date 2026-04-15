@@ -522,22 +522,16 @@ Write `validate-pipeline.sh` to validate the MAS pipeline ran at session end:
 
 set -euo pipefail
 
-# Check if we're in a dev-loop session (plan exists)
-PLANS=$( (ls docs/superpowers/plans/*.md 2>/dev/null || true) | wc -l | tr -d ' ')
-
-# No plan = not a dev-loop session, nothing to validate
-if [ "$PLANS" = "0" ]; then
-  exit 0
-fi
-
-# If delivery report exists, pipeline completed — artifacts were cleaned up intentionally
-DELIVERY_REPORT=$( (ls docs/superpowers/reports/*.md 2>/dev/null || true) | wc -l | tr -d ' ')
-if [ "$DELIVERY_REPORT" != "0" ]; then
-  exit 0
-fi
-
+# Check if an active pipeline is in progress (results or reviews exist)
+# Plans persist on main after merge, so their presence alone does NOT mean a pipeline is active.
 RESULTS=$( (ls docs/results/TASK-*-result.md 2>/dev/null || true) | wc -l | tr -d ' ')
 REVIEWS=$( (ls docs/reports/TASK-*-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
+
+# No results AND no reviews = no active pipeline, nothing to validate
+if [ "$RESULTS" = "0" ] && [ "$REVIEWS" = "0" ]; then
+  exit 0
+fi
+
 REFLECT=$( (ls docs/reports/reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
 SELF_REVIEWS=$( (ls docs/results/TASK-*-self-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
 
@@ -579,7 +573,7 @@ fi
 # Condition: plan + results + reviews all present, but NO reflect report
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation BLOCKED:\n  Plans: ${PLANS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
 EOF
   exit 2
 fi
@@ -587,7 +581,7 @@ fi
 # Warn only (non-blocking) for partial pipeline issues
 if [ -n "$WARNINGS" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation:\n  Plans: ${PLANS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}\n\n  If a plan exists but artifacts don't, the pipeline was likely bypassed."}
+{"systemMessage": "Pipeline Validation:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}"}
 EOF
 fi
 
