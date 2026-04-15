@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.13.0] — 2026-04-15
+
+### Plan-Report Contract
+
+User-facing workflow simplified to: **spec → plan → report**. Internal pipeline plumbing (task specs, result files, review files) is no longer visible to the user.
+
+#### dev-loop
+- **Removed:** Phase 1 (Decompose) — no more `docs/tasks/pending/TASK-{id}.md` file management
+- **Removed:** Phase 3 (Close & Holistic Check) — replaced by delivery report
+- **Removed:** Artifact verification block checking for TASK-* files
+- **Added:** Step 5.5 (Delivery Report) — validates delivery against the plan, saved to `docs/superpowers/reports/`
+- **Changed:** Phase 1 is now "Route" — dispatches engineers directly from plan tasks
+- **Changed:** Pipeline Self-Audit simplified to 6 checks (was 8 file-existence checks)
+- **Changed:** Reflect Agent reads plan instead of task specs
+
+#### bug-fix
+- **Added:** Step 6.5 (Bug Fix Report) — structured report with bug, root cause, fix, review verdict, verification
+
+#### finishing-branch
+- **Changed:** Step 4 "Preserve Artifacts" → "Clean Up Internal Artifacts" — removes `docs/results/`, `docs/reports/`, `docs/tasks/`, `docs/design/` before merge. Only `docs/superpowers/plans/` and `docs/superpowers/reports/` persist.
+
+#### bootstrap
+- **Changed:** `docs/tasks/{pending,in-progress,done,blocked}` directories no longer created. `docs/superpowers/{plans,reports}` created instead.
+
+#### dispatch-templates
+- **Changed:** All templates reference plan tasks directly instead of `docs/tasks/pending/TASK-{id}.md` files
+- **Removed:** `docs/tasks/` from Output Directory Convention table
+- **Added:** `docs/superpowers/plans/` and `docs/superpowers/reports/` to Output Directory Convention table
+
 ## [2.12.2] — 2026-04-15
 
 ### Fixed

@@ -7,17 +7,23 @@
 # - docs/reports/TASK-*-review.md   (reviewer agents dispatched)
 # - docs/reports/reflect-report.md  (reflect agent ran)
 #
-# If task specs exist but results/reviews don't, the pipeline was bypassed.
+# If a plan exists but results/reviews don't, the pipeline was bypassed.
 # This is the structural enforcement that dev-loop checkpoint assertions
 # tried to achieve with prose (and failed in 5/5 sessions).
 
 set -euo pipefail
 
-# Check if we're in a dev-loop session (task specs exist)
-TASK_SPECS=$( (find docs/tasks -name "TASK-*.md" 2>/dev/null || true) | wc -l | tr -d ' ')
+# Check if we're in a dev-loop session (plan exists)
+PLANS=$( (ls docs/superpowers/plans/*.md 2>/dev/null || true) | wc -l | tr -d ' ')
 
-# No task specs = not a dev-loop session, nothing to validate
-if [ "$TASK_SPECS" = "0" ]; then
+# No plan = not a dev-loop session, nothing to validate
+if [ "$PLANS" = "0" ]; then
+  exit 0
+fi
+
+# If delivery report exists, pipeline completed — artifacts were cleaned up intentionally
+DELIVERY_REPORT=$( (ls docs/superpowers/reports/*.md 2>/dev/null || true) | wc -l | tr -d ' ')
+if [ "$DELIVERY_REPORT" != "0" ]; then
   exit 0
 fi
 
@@ -61,10 +67,10 @@ EOF
 fi
 
 # Block session end only when a full pipeline ran but reflect was skipped
-# Condition: task specs + results + reviews all present, but NO reflect report
+# Condition: a plan + results + reviews all present, but NO reflect report
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation BLOCKED:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Plans: ${PLANS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
 EOF
   exit 2
 fi
@@ -72,7 +78,7 @@ fi
 # Warn only (non-blocking) for partial pipeline issues
 if [ -n "$WARNINGS" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}\n\n  If task specs exist but artifacts don't, the pipeline was likely bypassed."}
+{"systemMessage": "Pipeline Validation:\n  Plans: ${PLANS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}\n\n  If a plan exists but artifacts don't, the pipeline was likely bypassed."}
 EOF
 fi
 

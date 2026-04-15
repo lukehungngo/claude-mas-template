@@ -1,7 +1,7 @@
 {
   "name": "mas",
   "description": "Production-grade multi-agent system template for Claude Code: 7 agents, 14 skills, 6-step pipeline, flat dispatch, TDD workflows, local-inject for team repos, and battle-tested engineering practices",
-  "version": "2.12.2",
+  "version": "2.13.0",
   "author": {
     "name": "Luke Hung Ngo",
     "email": "qhung.bm0409@gmail.com"

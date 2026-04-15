@@ -46,7 +46,7 @@ git diff main...HEAD --stat
 git diff main...HEAD
 
 # Task artifacts (if they exist from a dev-loop)
-ls docs/tasks/done/*.md 2>/dev/null
+ls docs/superpowers/plans/*.md 2>/dev/null
 ls docs/results/TASK-*-result.md 2>/dev/null
 ```
 
@@ -61,8 +61,8 @@ Agent(
   ## Original User Requirement
   {requirement text — verbatim from step 1}
 
-  ## Completed Task Specs (if available)
-  {paste from docs/tasks/done/ or "N/A — no task specs, this was manual work"}
+  ## Implementation Plan (if available)
+  {paste from docs/superpowers/plans/ or "N/A — no plan, this was manual work"}
 
   ## Engineer Results (if available)
   {paste from docs/results/ or "N/A — no engineer results, this was manual work"}

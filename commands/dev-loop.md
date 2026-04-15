@@ -74,23 +74,19 @@ If you receive connection errors (ConnectionRefused, FailedToOpenSocket):
 dev-loop (this command)
   │
   ├─ 1. Branch ─── git worktree
-  ├─ 2. Plan ─── Skill(skill: "superpowers:writing-plans")
+  ├─ 2. Plan ─── Skill(skill: "superpowers:writing-plans") → docs/superpowers/plans/
   │
   ├─ 3. Design (if has_ui: true) ─── Agent(subagent_type: "mas:ui-ux-designer:ui-ux-designer")
   │
   ├─ 4. Execute (flat dispatch — you are the orchestrator)
-  │       │
-  │       ├─ Phase 1: Decompose plan → task specs in docs/tasks/pending/
-  │       ├─ Phase 2: Batch Execute & Review
-  │       │     ├─ 2A: Batch Engineer dispatch (up to MAX_PARALLEL concurrent)
-  │       │     ├─ 2B: Wait for all results, read engineer outputs
-  │       │     ├─ 2C: Batch Reviewer dispatch (TASKS_PER_REVIEWER tasks per reviewer)
-  │       │     ├─ 2D: Handle verdicts — APPROVED → done, BLOCKED → Bug-Fixer → re-review
-  │       │     ├─ 2E: Reflect Agent — evaluate branch against original requirement
-  │       │     Novel tasks → Researcher ↔ Differential Reviewer (max 3 rounds) before 2A
-  │       └─ Phase 3: Verify all tasks done + holistic requirements check
+  │       ├─ Route tasks from plan → Engineer / Researcher / Bug-Fixer
+  │       ├─ Batch Engineer dispatch (up to MAX_PARALLEL concurrent)
+  │       ├─ Batch Reviewer dispatch (TASKS_PER_REVIEWER per reviewer)
+  │       ├─ Handle verdicts — APPROVED → done, BLOCKED → Bug-Fixer → re-review
+  │       └─ Reflect Agent — evaluate branch against original requirement
   │
-  ├─ 5. Verify ─── Artifact gate + Skill(skill: "verification")
+  ├─ 5. Verify ─── Skill(skill: "verification")
+  ├─ 5.5 Report ─── Delivery report → docs/superpowers/reports/
   └─ 6. Finish ─── Skill(skill: "finishing-branch")
 ```
 
@@ -129,14 +125,14 @@ Skip this if the requirement is already specific and scoped (e.g., "fix the logi
 Skill(skill: "superpowers:writing-plans")
 ```
 
-This produces a structured implementation plan with TASK-{id} entries, exact file paths, verification commands, and dependency graphs. The skill explores the codebase and clarifies requirements as needed — no separate exploration or clarification step.
+This produces a structured implementation plan with tasks, file paths, verification commands, and dependency order. The plan saved to `docs/superpowers/plans/` is the source of truth for execution. The skill explores the codebase and clarifies requirements as needed — no separate exploration or clarification step.
 
 **Do NOT use EnterPlanMode / PlanMode.** Use the `superpowers:writing-plans` skill which follows a specific template.
 
 - Interactive: present plan to human for approval before proceeding.
 - `--auto`: approve plan automatically and proceed.
 
-**GATE:** The plan contains `TASK-` entries with file paths and verification commands. If not, the plan is incomplete — do NOT proceed.
+**GATE:** The plan exists in `docs/superpowers/plans/` with tasks, file paths, and verification commands.
 
 ---
 
@@ -216,13 +212,9 @@ Agent(
 
 You are the orchestrator. Your job is to **route and dispatch**, not implement. Do NOT use Write/Edit on production code. Only agents write code. For each dispatch, read the relevant template from `templates/dispatch-templates.md` first. Write a routing decision log entry before each dispatch.
 
-#### Phase 1 — Decompose
+#### Phase 1 — Route
 
-Read the approved plan from Step 2. For each TASK-{id} entry:
-
-1. Create a task spec in `docs/tasks/pending/TASK-{id}.md` using the template at `templates/task-spec.md`
-2. Determine routing using the routing table below
-3. Write a `routing:` decision log line in the task spec
+Read the approved plan from Step 2. For each task in the plan, determine routing using the routing table below. Dispatch agents with the task content from the plan directly — do NOT create separate task spec files.
 
 #### Routing Table
 
@@ -275,19 +267,11 @@ Dispatch engineers in batches, then review in batches. This aligns with the mode
 
 Wait for all engineers in the current batch to finish. Read each result file at `docs/results/TASK-{id}-result.md`. If any result file does not exist, that engineer dispatch failed — investigate before proceeding. Do not continue to review until all engineers have succeeded or failures are understood.
 
-**Between-batch gate (BLOCKING):** Before dispatching the next engineer batch, verify all previous tasks are reviewed:
-
-```bash
-BATCH_RESULTS=$(ls docs/results/TASK-*-result.md 2>/dev/null | wc -l | tr -d ' ')
-BATCH_REVIEWS=$(ls docs/reports/TASK-*-review.md 2>/dev/null | wc -l | tr -d ' ')
-echo "Results: $BATCH_RESULTS | Reviews: $BATCH_REVIEWS"
-```
-
-If `BATCH_REVIEWS < BATCH_RESULTS`: **STOP. Do not dispatch the next engineer batch.** Return to Phase 2C and dispatch reviewers for the unreviewed tasks. Only proceed when reviews equal results.
+**Between-batch gate (BLOCKING):** Before dispatching the next engineer batch, verify all previous tasks are reviewed. Track dispatched engineer count and completed review count in-memory. If reviews < results: **STOP. Do not dispatch the next engineer batch.** Return to Phase 2C and dispatch reviewers for the unreviewed tasks. Only proceed when reviews equal results.
 
 ##### Phase 2C — Batch Reviewer Dispatch
 
-Split completed tasks into groups of TASKS_PER_REVIEWER. Dispatch 1 reviewer per group. Each reviewer receives the task specs AND engineer results for its group. Dispatch up to MAX_PARALLEL reviewers concurrently.
+Split completed tasks into groups of TASKS_PER_REVIEWER. Dispatch 1 reviewer per group. Each reviewer receives the tasks from the plan AND engineer results for its group. Dispatch up to MAX_PARALLEL reviewers concurrently.
 
 Track `review_cycle` per task, starting at 0.
 
@@ -295,11 +279,11 @@ Track `review_cycle` per task, starting at 0.
 
 Read all review verdicts from `docs/reports/TASK-{id}-review.md`. For each task:
 
-- **APPROVED** → Phase 3
-- **APPROVED WITH CHANGES** → Phase 3 (non-blocking)
+- **APPROVED** → done
+- **APPROVED WITH CHANGES** → done (non-blocking)
 - **BLOCKED** → increment `review_cycle`, then:
   - If `review_cycle < 2` → dispatch Bug-Fixer (template #5), then re-review that task only (use individual template #4)
-  - If `review_cycle >= 2` → STOP. Write escalation to `docs/reports/TASK-{id}-escalation.md`. Move to `docs/tasks/blocked/`. Present to human.
+  - If `review_cycle >= 2` → STOP. Write escalation to `docs/reports/TASK-{id}-escalation.md`. Present to human.
 
 If CROSS_TASK_REVIEW is enabled (see Runtime Configuration), dispatch a cross-task integration reviewer after all individual reviews pass (template #8, Step 5).
 
@@ -308,7 +292,7 @@ If CROSS_TASK_REVIEW is enabled (see Runtime Configuration), dispatch a cross-ta
 **This agent runs ONCE per dev-loop execution.** Not once per task, not once per batch — once total, after ALL reviews are complete. In audited sessions, this agent was dispatched 2-14 times. That is wrong.
 
 Trigger condition: ALL of these must be true before dispatching:
-1. Every task in `docs/tasks/` is in `done/` or `blocked/` (no pending/in-progress)
+1. All tasks from the plan have been dispatched to engineers
 2. Every `docs/results/TASK-*-result.md` has a corresponding `docs/reports/TASK-*-review.md`
 3. All review verdicts are APPROVED or APPROVED WITH CHANGES (no unresolved BLOCKED)
 4. Cross-task review is complete (if CROSS_TASK_REVIEW is enabled)
@@ -324,8 +308,8 @@ Agent(
   ## Original User Requirement
   {paste the original user requirement VERBATIM — do not paraphrase}
 
-  ## Completed Task Specs
-  {paste all task specs from docs/tasks/done/}
+  ## Completed Tasks
+  {paste all tasks from the plan}
 
   ## Engineer Results
   {paste all engineer results from docs/results/TASK-{id}-result.md}
@@ -351,54 +335,20 @@ Agent(
 
 Read the verdict from `docs/reports/reflect-report.md`. Handle as follows:
 
-- **PROCEED** → continue to Phase 3.
-- **REVISE** → extract remediation tasks from the reflect report's identified gaps. Create new task specs in `docs/tasks/pending/` for each gap. Loop back to Phase 2A to implement them. **Max 1 remediation cycle** — if the second reflect verdict is still REVISE, escalate to human.
-- **REJECT** → STOP. Present the reflect report to the human. Do not proceed to Phase 3.
-- **ESCALATE** → STOP. Present the reflect report to the human. Do not proceed to Phase 3.
-
-#### Phase 3 — Close & Holistic Check
-
-1. For each task: read acceptance criteria, engineer result, reviewer report. If all pass → move to `docs/tasks/done/`
-2. **Holistic requirements check:** After all tasks are done, verify: do these tasks TOGETHER deliver what was asked? Check for gaps between task boundaries, missed edge cases, integration issues. If gaps found → create new tasks and loop back to Phase 1 (max 2 remediation cycles).
-
-**GATE:** `docs/tasks/done/` is non-empty. All tasks reviewed and closed. No unresolved escalations.
+- **PROCEED** → continue to Step 5.
+- **REVISE** → extract remediation tasks from the reflect report's identified gaps. Loop back to Phase 2A to implement them. **Max 1 remediation cycle** — if the second reflect verdict is still REVISE, escalate to human.
+- **REJECT** → STOP. Present the reflect report to the human. Do not proceed to Step 5.
+- **ESCALATE** → STOP. Present the reflect report to the human. Do not proceed to Step 5.
 
 ---
 
-**Artifact Verification (mandatory — run these commands before Step 5):**
+**Pre-Step 5 check:** Verify that:
+1. Engineers were dispatched (you made Agent() calls with `mas:engineer:engineer`)
+2. Reviewers were dispatched (you made Agent() calls with `mas:reviewer:reviewer`)
+3. All review verdicts are APPROVED or APPROVED WITH CHANGES
+4. Reflect agent was dispatched (or `.reflect-skipped` exists)
 
-Before proceeding, you MUST run ALL of these commands. If ANY fails, you bypassed the pipeline — go back to Step 4.
-
-**Review count check:** Count `docs/results/TASK-*-result.md` files and `docs/reports/TASK-*-review.md` files. Expected reviews = expected engineer dispatches. If counts diverge, you skipped reviews.
-
-```bash
-# 1. Task specs were created (Phase 1 happened)
-ls docs/tasks/done/*.md 2>/dev/null || ls docs/tasks/pending/*.md 2>/dev/null
-
-# 2. Engineer result files exist (agents were dispatched, not main session)
-ls docs/results/TASK-*-result.md
-
-# 3. Review reports exist (reviewer was dispatched after each engineer)
-ls docs/reports/TASK-*-review.md
-
-# 4. Review count check (engineer count must equal reviewer count)
-echo "Engineer results: $(ls docs/results/TASK-*-result.md 2>/dev/null | wc -l | tr -d ' ')"
-echo "Review reports:   $(ls docs/reports/TASK-*-review.md 2>/dev/null | wc -l | tr -d ' ')"
-# If these numbers differ, reviews were skipped — go back to Phase 2.
-
-# 5. Self-review files exist (engineer self-reviewed before submitting)
-ls docs/results/TASK-*-self-review.md
-
-# 6. Reflect report exists (Reflect Agent evaluated branch against requirement)
-ls docs/reports/reflect-report.md
-```
-
-**Why this works:** `docs/results/TASK-*-result.md` files are written ONLY by Engineer agents. `docs/reports/TASK-*-review.md` files are written ONLY by Reviewer agents. If the main session implemented directly, these files don't exist and the gate fails.
-
-**If the gate fails:**
-1. Do NOT create these files manually — that is fraud
-2. Go back to Step 4 Phase 2 and dispatch agents
-3. If Agent() calls fail, report to the human before proceeding
+If any condition is false, go back to Step 4 and dispatch the missing agents. Do NOT create result/review files manually.
 
 ---
 
@@ -416,7 +366,46 @@ Skill(skill: "verification")
 
 Final technical checks: all tests pass, lint clean, typecheck clean, no debug artifacts.
 
-**GATE:** `docs/reports/verification-{branch}.md` must exist before proceeding to Step 6.
+**GATE:** `docs/reports/verification-{branch}.md` must exist before proceeding to Step 5.5.
+
+---
+
+### Step 5.5 — Delivery Report
+
+Write a delivery report to `docs/superpowers/reports/YYYY-MM-DD-{branch-name}.md` that validates what was delivered against the plan.
+
+The report must contain:
+
+````markdown
+# Delivery Report: {branch-name}
+
+**Plan:** `docs/superpowers/plans/{plan-file}.md`
+**Date:** {YYYY-MM-DD}
+**Branch:** {branch-name}
+
+## Task Delivery
+
+| # | Task (from plan) | Status | Evidence |
+|---|-----------------|--------|----------|
+| 1 | {task description} | DONE / PARTIAL / SKIPPED | {what was implemented, or why skipped} |
+| 2 | ... | ... | ... |
+
+## Deviations from Plan
+
+{List any changes made that were not in the original plan, or plan items that were modified during execution. "None" if plan was followed exactly.}
+
+## Verification Summary
+
+- Lint: {PASS/FAIL}
+- Typecheck: {PASS/FAIL}
+- Tests: {PASS/FAIL} ({count})
+
+## Verdict
+
+{DELIVERED / PARTIAL / FAILED}
+````
+
+**GATE:** `docs/superpowers/reports/` contains a delivery report for this branch.
 
 ---
 
@@ -430,16 +419,12 @@ Final technical checks: all tests pass, lint clean, typecheck clean, no debug ar
 
 ### PIPELINE SELF-AUDIT (mandatory before finishing)
 
-Before proceeding to Step 6, verify each item with evidence.
-
-- [ ] **Routing decision log exists?** — Check `docs/tasks/pending/` or `docs/tasks/done/` for task specs with `routing:` lines.
-- [ ] **Engineer agents dispatched?** — Check `docs/results/` for TASK-*-result.md files.
-- [ ] **Reviewer issued verdict?** — Check `docs/reports/` for TASK-*-review.md files.
-- [ ] **Review count matches?** — Engineer result count = Review report count. If not, reviews were skipped.
-- [ ] **Bug-Fixer handled blocks?** — If any review verdict is BLOCKED, check for TASK-*-bugfix-result.md.
-- [ ] **Self-review files exist?** — Check `docs/results/` for TASK-*-self-review.md files.
-- [ ] **Reflect report exists?** — `docs/reports/reflect-report.md` must exist with a PROCEED/REVISE/REJECT/ESCALATE verdict.
-- [ ] **Verification report exists?** — `docs/reports/verification-{branch}.md` must exist.
+- [ ] **Plan exists?** — Check `docs/superpowers/plans/` for the plan file.
+- [ ] **Engineers dispatched?** — Confirm Agent() calls with `mas:engineer:engineer` in this session.
+- [ ] **Reviewers dispatched?** — Confirm Agent() calls with `mas:reviewer:reviewer` in this session.
+- [ ] **Reflect dispatched?** — `docs/reports/reflect-report.md` exists (or `.reflect-skipped` with reason).
+- [ ] **Delivery report exists?** — Check `docs/superpowers/reports/` for the delivery report.
+- [ ] **Verification report exists?** — `docs/reports/verification-{branch}.md` exists.
 
 **If any check fails:** Go back to the first failed step.
 
@@ -459,7 +444,7 @@ Skill(skill: "finishing-branch")
 - The dev-loop owns all agent dispatch via flat dispatch — route tasks per the routing table, dispatch agents directly. Do NOT write production code yourself.
 - All agents use `mas:` plugin prefix (e.g., `mas:engineer:engineer`)
 - Do NOT use EnterPlanMode / PlanMode — use `Skill(skill: "superpowers:writing-plans")`
-- Artifact gates are load-bearing enforcement — `docs/results/TASK-*-result.md` and `docs/reports/TASK-*-review.md` MUST exist before Step 5. Do NOT create them manually.
+- The plan and delivery report are the user-facing contract. Internal artifacts (docs/results/, docs/reports/TASK-*) are used during execution but cleaned up before merge.
 
 For battle-tested lessons, see `rules/agent-workflow.md`.
 
@@ -467,13 +452,13 @@ For battle-tested lessons, see `rules/agent-workflow.md`.
 
 | Agent | subagent_type | Role |
 |-------|--------------|------|
-| Engineer | `mas:engineer:engineer` | TDD implementation, writes to `docs/results/` |
-| Reviewer | `mas:reviewer:reviewer` | Two-stage review, writes to `docs/reports/` |
-| Researcher | `mas:researcher:researcher` | Explores approaches, writes to `docs/plans/` |
-| Differential Reviewer | `mas:differential-reviewer:differential-reviewer` | Stress-tests proposals, writes to `docs/reports/` |
+| Engineer | `mas:engineer:engineer` | TDD implementation |
+| Reviewer | `mas:reviewer:reviewer` | Two-stage review |
+| Researcher | `mas:researcher:researcher` | Explores approaches |
+| Differential Reviewer | `mas:differential-reviewer:differential-reviewer` | Stress-tests proposals |
 | Bug-Fixer | `mas:bug-fixer:bug-fixer` | TDD fixes from reviewer reports |
 | UI/UX Designer | `mas:ui-ux-designer:ui-ux-designer` | Design specs + HTML mockups (has_ui: true only) |
-| Reflect Agent | `mas:reflect-agent:reflect-agent` | Product-architect evaluation, writes to `docs/reports/` |
+| Reflect Agent | `mas:reflect-agent:reflect-agent` | Product-architect evaluation |
 | ~~Orchestrator~~ | ~~`orchestrator`~~ | DEPRECATED — routing logic is inline in Step 4 |
 
 ## Lessons Learned

@@ -42,6 +42,7 @@ bug-fix (this command)
   │       └─ BLOCKED? ──→ Agent(subagent_type: "mas:bug-fixer:bug-fixer") (max 2 cycles)
   │
   ├─ 6. Verify ─── Skill(skill: "verification")
+  ├─ 6.5 Report ─── Bug fix report → docs/superpowers/reports/
   └─ 7. Finish ─── Skill(skill: "finishing-branch")
 ```
 
@@ -223,6 +224,48 @@ Skill(skill: "verification")
 
 ---
 
+### Step 6.5 — Delivery Report
+
+Write a delivery report to `docs/superpowers/reports/YYYY-MM-DD-{branch-name}.md`:
+
+```markdown
+# Bug Fix Report: {branch-name}
+
+**Date:** {YYYY-MM-DD}
+**Branch:** {branch-name}
+
+## Bug
+
+{Bug description from Step 1}
+
+## Root Cause
+
+{Root cause identified in Step 3}
+
+## Fix Applied
+
+{Summary of what the Bug-Fixer changed}
+
+## Review Verdict
+
+{APPROVED / APPROVED WITH CHANGES — from Step 5}
+
+## Verification
+
+- Lint: {PASS/FAIL}
+- Typecheck: {PASS/FAIL}
+- Tests: {PASS/FAIL} ({count})
+- Reproduction test: {PASS (bug no longer reproduces)}
+
+## Verdict
+
+{FIXED / PARTIAL / FAILED}
+```
+
+**GATE:** `docs/superpowers/reports/` contains a bug fix report for this branch.
+
+---
+
 ### PIPELINE SELF-AUDIT (mandatory before finishing)
 
 Before proceeding to Step 7, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
@@ -232,6 +275,7 @@ Before proceeding to Step 7, verify each item with evidence. Self-assessment is 
 - [ ] **Reviewer issued verdict?** — Check `docs/reports/` for a review file with a verdict line. If no review file exists, no reviewer was dispatched.
 - [ ] **Bug-Fixer handled blocks?** — If review verdict is BLOCKED, check for a second bugfix-result file. If none exists and you fixed it yourself, this is a violation.
 - [ ] **Verification report exists?** — Run: `test -f docs/reports/verification-{branch}.md && grep "Verdict:" docs/reports/verification-{branch}.md`. File must exist AND contain Build, Code, Spec, Regression sections.
+- [ ] **Delivery report exists?** — Check `docs/superpowers/reports/` for the bug fix report.
 
 **If any check fails:** You violated the pipeline. Do NOT proceed to Step 7. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
 
