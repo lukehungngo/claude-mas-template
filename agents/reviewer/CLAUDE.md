@@ -59,8 +59,8 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 1. **Build check:** Run `{{lint-command}}` + `{{typecheck-command}}` + `{{test-command}}`
 
-   - **Language diagnostics:** If `rules/language-stack.md` exists, read it and run ALL commands listed under "Mandatory Diagnostic Commands". A review cannot be APPROVED if any diagnostic command fails — this is a P0 regardless of other findings.
-   - **Language-specific anti-pattern checks:** If `rules/language-stack.md` exists, apply the checks listed under "Reviewer Rules — Language-Specific Checks". Add any findings to the appropriate P0/P1/P2 section of the report.
+   - **Language diagnostics:** If `.claude/rules/language-stack.md` exists, read it and run ALL commands listed under "Mandatory Diagnostic Commands". A review cannot be APPROVED if any diagnostic command fails — this is a P0 regardless of other findings.
+   - **Language-specific anti-pattern checks:** If `.claude/rules/language-stack.md` exists, apply the checks listed under "Reviewer Rules — Language-Specific Checks". Add any findings to the appropriate P0/P1/P2 section of the report.
 
 2. **Diff review:** Read the full diff — every line
 3. **Architecture check:** Verify no architecture invariants are violated (see CLAUDE.md)

@@ -107,27 +107,27 @@ PLUGIN_DIR=$(ls -d ~/.claude/plugins/cache/luke-plugins/mas/*/ 2>/dev/null | sor
 > If `$PLUGIN_DIR` is empty (plugin cache not found), print: `ERROR: MAS plugin cache not found — skipping language-stack.md generation.` and skip the rest of Step 1b.
 
 ```bash
-mkdir -p rules
+mkdir -p .claude/rules
 ```
 
 **Single-stack TypeScript:**
 ```bash
-cp "$PLUGIN_DIR/rules/language-stack-typescript.md" rules/language-stack.md
+cp "$PLUGIN_DIR/rules/language-stack-typescript.md" .claude/rules/language-stack.md
 ```
 
 **Single-stack Python:**
 ```bash
-cp "$PLUGIN_DIR/rules/language-stack-python.md" rules/language-stack.md
+cp "$PLUGIN_DIR/rules/language-stack-python.md" .claude/rules/language-stack.md
 ```
 
 **Single-stack Rust:**
 ```bash
-cp "$PLUGIN_DIR/rules/language-stack-rust.md" rules/language-stack.md
+cp "$PLUGIN_DIR/rules/language-stack-rust.md" .claude/rules/language-stack.md
 ```
 
 **Multi-stack Rust + TypeScript:**
 
-Create `rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
+Create `.claude/rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
 
 ```
 # Language Stack
@@ -153,20 +153,20 @@ This project has multiple language stacks. Each section below defines the rules 
 <!-- Add project-specific anti-patterns and rules below. This section is preserved on --update. -->
 ```
 
-**After writing rules/language-stack.md** (whether copied or assembled), resolve `{{test-command}}` using the value detected in Step 1:
+**After writing .claude/rules/language-stack.md** (whether copied or assembled), resolve `{{test-command}}` using the value detected in Step 1:
 
 ```bash
 # Resolve {{test-command}} in the generated file
 # Use the test command detected in Step 1
 # Use | as delimiter to handle test commands that contain / (e.g. pytest --cov=src/)
 # macOS/BSD: sed -i ''   Linux: sed -i   — use whichever matches the current OS
-sed -i '' 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' rules/language-stack.md   # macOS
-# sed -i 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' rules/language-stack.md    # Linux (uncomment if needed)
+sed -i '' 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' .claude/rules/language-stack.md   # macOS
+# sed -i 's|{{test-command}}|'"${DETECTED_TEST_COMMAND}"'|g' .claude/rules/language-stack.md    # Linux (uncomment if needed)
 ```
 
 Replace `${DETECTED_TEST_COMMAND}` with the actual test command from Step 1 (e.g., `npm test`, `pytest`, `go test ./...`). If no test command was detected, leave `{{test-command}}` as-is with a printed warning.
 
-**Multi-stack (Python + TypeScript):** Create `rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
+**Multi-stack (Python + TypeScript):** Create `.claude/rules/language-stack.md` with the following structure. Write each section as a separate block — use actual newlines, not `\n` escape sequences:
 
 ```
 # Language Stack
@@ -193,32 +193,32 @@ This project has multiple language stacks. Each section below defines the rules 
 ```
 
 **Single-stack JavaScript (package.json, no tsconfig.json):**
-- Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
+- Create `.claude/rules/language-stack.md` containing only a `## Project-Specific Rules` section
 - Print:
   ```
   ℹ️  JavaScript (no TypeScript) detected — no language-stack template available yet.
-      Created rules/language-stack.md with an empty Project-Specific Rules section.
+      Created .claude/rules/language-stack.md with an empty Project-Specific Rules section.
       Consider adding TypeScript, or populate the Project-Specific Rules section manually
       with your ESLint and test commands.
   ```
 
 **If no template exists for the detected stack** (e.g., Go):
-- Create `rules/language-stack.md` containing only a `## Project-Specific Rules` section
-- Print: `ℹ️  No language-stack template for {language} yet. Created rules/language-stack.md with an empty Project-Specific Rules section.`
+- Create `.claude/rules/language-stack.md` containing only a `## Project-Specific Rules` section
+- Print: `ℹ️  No language-stack template for {language} yet. Created .claude/rules/language-stack.md with an empty Project-Specific Rules section.`
 
 **If no language is detected** (e.g., pure config repo): skip this step silently.
 
-**`--update` behavior** (when `$ARGUMENTS` contains `--update` and `rules/language-stack.md` already exists):
+**`--update` behavior** (when `$ARGUMENTS` contains `--update` and `.claude/rules/language-stack.md` already exists):
 - If the file contains `<!-- BEGIN:auto-detected -->` and `<!-- END:auto-detected -->` markers: regenerate only the content between those markers (overwrite with fresh template); preserve everything outside the markers (especially `## Project-Specific Rules`). For multi-stack projects, rebuild the full inner block using both templates, using the same construction logic as the initial write.
 - If the file has no markers (hand-written): print warning and skip:
   ```
-  ⚠️  rules/language-stack.md exists without auto-detection markers. Skipping overwrite — edit manually.
+  ⚠️  .claude/rules/language-stack.md exists without auto-detection markers. Skipping overwrite — edit manually.
   ```
 
 **Report at end of this step:**
 ```
 Language stack: {detected stack(s)}
-rules/language-stack.md: written  (or: skipped — no language detected)
+.claude/rules/language-stack.md: written  (or: skipped — no language detected)
 ```
 
 ### Step 2 — Create or update CLAUDE.md
@@ -391,8 +391,8 @@ Then re-run /mas:bootstrap to update the test command.
 MAS Template bootstrapped for: {project name}
 Stack: {language} + {framework}
 has_ui: {true/false}
-rules/language-stack.md: written — language diagnostics will activate in engineer and reviewer agents
-{Omit the rules/language-stack.md line if language detection was skipped.}
+.claude/rules/language-stack.md: written — language diagnostics will activate in engineer and reviewer agents
+{Omit the .claude/rules/language-stack.md line if language detection was skipped.}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 All agents, skills, and commands are provided by the MAS plugin.

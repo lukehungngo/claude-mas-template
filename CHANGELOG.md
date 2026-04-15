@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.12.1] — 2026-04-15
+
+### Fixed
+- **bootstrap writes `rules/` instead of `.claude/rules/`** — Language-stack files were written to `rules/language-stack.md` but Claude Code loads rules from `.claude/rules/`. Fixed all 21 path references across `commands/bootstrap.md`, `agents/engineer/CLAUDE.md`, and `agents/reviewer/CLAUDE.md`.
+
 ## [2.12.0] — 2026-04-15
 
 ### Added
