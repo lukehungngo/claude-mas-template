@@ -12,7 +12,7 @@ This command configures your project — agent, skill, and command files are NOT
 
 1. Detects your tech stack (language, test/lint/build commands, has_ui)
 2. Creates or updates CLAUDE.md with detected values
-3. Creates hooks (.claude/hooks/lint.sh, .claude/hooks/pre-stop-gate.sh)
+3. Creates hooks (.claude/hooks/ — 6 hooks for lint, quality gate, dispatch validation, skill validation, compaction, pipeline validation)
 4. Creates output directories (docs/tasks/, docs/reports/, etc.)
 5. Verifies no unfilled placeholders remain
 6. Warns if no testing framework is detected
@@ -251,90 +251,371 @@ mkdir -p .claude/hooks
 Write `lint.sh` with the detected lint command:
 ```bash
 #!/bin/bash
-{detected-lint-command}
+# PostToolUse hook: Fast lint after file edits
+# Triggered on: Edit, Write tool uses
+#
+# CUSTOMIZE: Replace the LINT_CMD with your project's linter
+# Examples:
+#   Python:     "ruff check src/ tests/"
+#   TypeScript: "eslint src/ --quiet"
+#   Go:         "golangci-lint run ./..."
+
+set -euo pipefail
+
+# CUSTOMIZE THIS LINE:
+LINT_CMD="{detected-lint-command}"
+
+# Only lint if source files were recently changed
+if git diff --name-only HEAD 2>/dev/null | grep -qE '\.(py|ts|js|tsx|jsx|go|rs)$'; then
+  $LINT_CMD 2>&1 || true
+fi
 ```
 
 Write `pre-stop-gate.sh` with the detected test command:
 ```bash
 #!/bin/bash
-{detected-test-command}
+# Stop hook: Non-blocking quality summary before session ends
+# Always exits 0 (non-blocking) — informational only
+#
+# CUSTOMIZE: Replace LINT_CMD and TEST_CMD with your project's commands
+
+set -euo pipefail
+
+# CUSTOMIZE THESE LINES:
+LINT_CMD="{detected-lint-command}"
+TEST_CMD="{detected-test-command}"
+
+LINT_RESULT=$($LINT_CMD 2>&1 || true)
+TEST_RESULT=$($TEST_CMD 2>&1 | tail -5 || true)
+
+cat <<EOF
+{"systemMessage": "Session Quality Summary:\n\nLint:\n${LINT_RESULT}\n\nTests:\n${TEST_RESULT}"}
+EOF
+
+# Always exit 0 — this hook is informational, never blocks
+exit 0
 ```
 
 Write `validate-dispatch.sh` to block bare agent names at dispatch time:
 ```bash
 #!/bin/bash
-# PreToolUse hook: Validate Agent dispatch naming convention
+# PreToolUse hook: validate Agent dispatch naming
+# Blocks bare agent names (e.g., "engineer" instead of "mas:engineer:engineer")
+
+# Read tool input from stdin
 INPUT=$(cat)
+
+# Extract tool name from environment
 TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-if [ "$TOOL_NAME" != "Agent" ]; then exit 0; fi
+
+# Debug logging — appends to ~/.claude/hook-debug.log
+DEBUG_LOG="${HOME}/.claude/hook-debug.log"
+_debug() {
+  echo "[$(date '+%Y-%m-%dT%H:%M:%S')] validate-dispatch: $*" >> "$DEBUG_LOG" 2>/dev/null || true
+}
+
+# Only check Agent tool calls
+if [ "$TOOL_NAME" != "Agent" ]; then
+  exit 0
+fi
+
+# Extract subagent_type value
 SUBAGENT_TYPE=$(echo "$INPUT" | grep -o '"subagent_type"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"subagent_type"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
-if [ -z "$SUBAGENT_TYPE" ]; then exit 0; fi
+
+# Extract model value
+MODEL=$(echo "$INPUT" | grep -o '"model"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"model"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
+
+if [ -z "$SUBAGENT_TYPE" ]; then
+  exit 0
+fi
+
+_debug "TOOL_NAME='${TOOL_NAME}' SUBAGENT_TYPE='${SUBAGENT_TYPE}'"
+
+# Known MAS agent slugs that MUST use mas: prefix
 BARE_NAMES="engineer reviewer bug-fixer researcher differential-reviewer ui-ux-designer reflect-agent orchestrator"
+
 for name in $BARE_NAMES; do
   if [ "$SUBAGENT_TYPE" = "$name" ]; then
-    echo "BLOCKED: Bare agent name '$name'. Use 'mas:${name}:${name}' instead."
+    _debug "BLOCKED bare name: ${SUBAGENT_TYPE}"
+    echo "BLOCKED: Bare agent name '$name' detected."
+    echo "Use 'mas:${name}:${name}' instead."
+    echo ""
+    echo "Quick reference:"
+    echo "  BAD:  Agent(subagent_type: \"$name\")"
+    echo "  GOOD: Agent(subagent_type: \"mas:${name}:${name}\")"
     exit 2
   fi
 done
+
+# Block deprecated orchestrator
 if [ "$SUBAGENT_TYPE" = "mas:orchestrator:orchestrator" ]; then
-  echo "BLOCKED: mas:orchestrator:orchestrator is DEPRECATED. The dev-loop IS the orchestrator."
+  _debug "BLOCKED deprecated orchestrator"
+  echo "BLOCKED: mas:orchestrator:orchestrator is DEPRECATED since v2.0."
+  echo "The dev-loop command IS the orchestrator. Do not dispatch this agent."
   exit 2
 fi
+
+# Block standard/deep reviewer on Haiku — those depths require judgment
+if [ "$SUBAGENT_TYPE" = "mas:reviewer:reviewer" ] && echo "$MODEL" | grep -qi "haiku"; then
+  # Extract depth from prompt field to allow quick+haiku
+  PROMPT=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('prompt',''))" 2>/dev/null || echo "")
+  DEPTH=$(echo "$PROMPT" | grep -oi 'depth:[[:space:]]*[a-z]*' | head -1 | sed 's/depth:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
+  if [ "$DEPTH" != "quick" ]; then
+    _debug "BLOCKED reviewer on haiku (depth=${DEPTH:-standard}): ${MODEL}"
+    cat <<EOF
+BLOCKED: mas:reviewer:reviewer cannot run on Haiku for standard/deep reviews.
+Depth '${DEPTH:-standard}' requires minimum model: sonnet.
+
+Options:
+  1. Use model: "sonnet" for standard/deep review
+  2. Set depth: quick in prompt if this is truly a trivial change (grep-only scan)
+
+BAD:  Agent(subagent_type: "mas:reviewer:reviewer", model: "haiku")
+GOOD: Agent(subagent_type: "mas:reviewer:reviewer", model: "sonnet")
+EOF
+    exit 2
+  fi
+fi
+
+# Block reflect re-dispatch if report already exists
 REFLECT_REPORT="${CLAUDE_PROJECT_DIR}/docs/reports/reflect-report.md"
 if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ] && [ -f "$REFLECT_REPORT" ]; then
+  _debug "BLOCKED reflect re-dispatch (report exists)"
   echo "BLOCKED: Reflect agent already ran (docs/reports/reflect-report.md exists)."
-  echo "Dispatch-exactly-once constraint: reflect must run exactly once per dev-loop session."
+  echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
+  echo "To re-run reflect, delete docs/reports/reflect-report.md first."
   exit 2
 fi
+
+_debug "ALLOWED: ${SUBAGENT_TYPE}"
 exit 0
 ```
 
 Write `validate-skill.sh` to block bare skill names at invocation time:
 ```bash
 #!/bin/bash
-# PreToolUse hook: Validate Skill invocation naming
+# PreToolUse hook: Validate Skill tool invocation naming
+# Blocks bare superpowers skill names that should use 'superpowers:' prefix
+# Blocks bare MAS skill names that should use 'mas:' prefix
+
 INPUT=$(cat)
 TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-if [ "$TOOL_NAME" != "Skill" ]; then exit 0; fi
+
+# Only check Skill tool calls
+if [ "$TOOL_NAME" != "Skill" ]; then
+  exit 0
+fi
+
+# Extract skill name
 SKILL=$(echo "$INPUT" | grep -o '"skill"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"skill"[[:space:]]*:[[:space:]]*"//' | sed 's/"//')
-if [ -z "$SKILL" ]; then exit 0; fi
+
+if [ -z "$SKILL" ]; then
+  exit 0
+fi
+
+# Project-local allowlist: if this bare name is explicitly allowed, skip blocking
+ALLOWLIST="${CLAUDE_PROJECT_DIR}/.claude/hooks/allowed-bare-skills.txt"
+if [ -f "$ALLOWLIST" ] && grep -qxF "$SKILL" "$ALLOWLIST" 2>/dev/null; then
+  exit 0
+fi
+
+# Superpowers skills that MUST use superpowers: prefix
 SUPERPOWERS_SKILLS="writing-plans brainstorm brainstorming executing-plans verification verification-before-completion finishing-branch finishing-a-development-branch subagent-driven-development test-driven-development systematic-debugging using-git-worktrees dispatching-parallel-agents requesting-code-review receiving-code-review"
+
 for s in $SUPERPOWERS_SKILLS; do
   if [ "$SKILL" = "$s" ]; then
-    echo "BLOCKED: Bare superpowers skill name '$s'. Use 'superpowers:${s}' instead."
+    echo "BLOCKED: Bare superpowers skill name '$s' detected."
+    echo "Use 'superpowers:${s}' instead."
+    echo ""
+    echo "Quick reference:"
+    echo "  BAD:  Skill(skill: \"$s\")"
+    echo "  GOOD: Skill(skill: \"superpowers:${s}\")"
     exit 2
   fi
 done
-MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development obsidian"
+
+# MAS skills that MUST use mas: prefix
+MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions verification reliability-review se-principles differential-review obsidian"
+
 for s in $MAS_SKILLS; do
   if [ "$SKILL" = "$s" ]; then
-    echo "BLOCKED: Bare MAS skill name '$s'. Use 'mas:${s}' instead."
+    echo "BLOCKED: Bare MAS skill name '$s' detected."
+    echo "Use 'mas:${s}' instead."
+    echo ""
+    echo "Quick reference:"
+    echo "  BAD:  Skill(skill: \"$s\")"
+    echo "  GOOD: Skill(skill: \"mas:${s}\")"
     exit 2
   fi
 done
+
 exit 0
 ```
 
 > **Project-local allowlist:** If your project has custom skills whose bare names collide with MAS/superpowers names, add them one per line to `.claude/hooks/allowed-bare-skills.txt`. The hook will pass them through without blocking.
+
+Write `suggest-compact.sh` to suggest /compact at strategic intervals:
+```bash
+#!/bin/bash
+# PreToolUse hook: Suggest /compact at strategic intervals
+# Triggered on: Edit, Write, Bash tool uses
+#
+# Adapted from ECC's suggest-compact.js. Tracks tool call count per
+# session and suggests /compact at configurable intervals.
+#
+# Why manual over auto-compact:
+# - Auto-compact happens at arbitrary points, often mid-task
+# - Strategic compacting preserves context through logical phases
+#
+# CUSTOMIZE: Adjust COMPACT_THRESHOLD (default: 50)
+
+set -euo pipefail
+
+COMPACT_THRESHOLD="${COMPACT_THRESHOLD:-50}"
+COMPACT_INTERVAL=25
+
+SESSION_ID="${CLAUDE_SESSION_ID:-default}"
+SESSION_ID=$(echo "$SESSION_ID" | tr -cd 'a-zA-Z0-9_-')
+COUNTER_FILE="${TMPDIR:-/tmp}/claude-tool-count-${SESSION_ID}"
+
+# Read current count
+COUNT=0
+if [ -f "$COUNTER_FILE" ]; then
+  COUNT=$(cat "$COUNTER_FILE" 2>/dev/null || echo "0")
+  # Validate count is a number
+  if ! [[ "$COUNT" =~ ^[0-9]+$ ]]; then
+    COUNT=0
+  fi
+fi
+
+COUNT=$((COUNT + 1))
+echo "$COUNT" > "$COUNTER_FILE"
+
+if [ "$COUNT" -eq "$COMPACT_THRESHOLD" ]; then
+  echo "[StrategicCompact] ${COMPACT_THRESHOLD} tool calls — consider /compact if transitioning phases" >&2
+fi
+
+if [ "$COUNT" -gt "$COMPACT_THRESHOLD" ]; then
+  PAST=$((COUNT - COMPACT_THRESHOLD))
+  if [ $((PAST % COMPACT_INTERVAL)) -eq 0 ]; then
+    echo "[StrategicCompact] ${COUNT} tool calls — good checkpoint for /compact if context is stale" >&2
+  fi
+fi
+
+exit 0
+```
+
+Write `validate-pipeline.sh` to validate the MAS pipeline ran at session end:
+```bash
+#!/bin/bash
+# Stop hook: Validate that the MAS pipeline actually ran
+# Triggered on: Every session stop (non-blocking, informational)
+#
+# Checks for the presence of pipeline artifacts:
+# - docs/results/TASK-*-result.md   (engineer agents dispatched)
+# - docs/reports/TASK-*-review.md   (reviewer agents dispatched)
+# - docs/reports/reflect-report.md  (reflect agent ran)
+#
+# If task specs exist but results/reviews don't, the pipeline was bypassed.
+# This is the structural enforcement that dev-loop checkpoint assertions
+# tried to achieve with prose (and failed in 5/5 sessions).
+
+set -euo pipefail
+
+# Check if we're in a dev-loop session (task specs exist)
+TASK_SPECS=$( (find docs/tasks -name "TASK-*.md" 2>/dev/null || true) | wc -l | tr -d ' ')
+
+# No task specs = not a dev-loop session, nothing to validate
+if [ "$TASK_SPECS" = "0" ]; then
+  exit 0
+fi
+
+RESULTS=$( (ls docs/results/TASK-*-result.md 2>/dev/null || true) | wc -l | tr -d ' ')
+REVIEWS=$( (ls docs/reports/TASK-*-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
+REFLECT=$( (ls docs/reports/reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
+SELF_REVIEWS=$( (ls docs/results/TASK-*-self-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
+
+WARNINGS=""
+
+if [ "$RESULTS" = "0" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠ No engineer results found (docs/results/TASK-*-result.md) — agents may not have been dispatched"
+fi
+
+if [ "$REVIEWS" = "0" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠ No review reports found (docs/reports/TASK-*-review.md) — reviews may have been skipped"
+fi
+
+if [ "$RESULTS" != "$REVIEWS" ] && [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠ Result/review count mismatch: ${RESULTS} results vs ${REVIEWS} reviews"
+fi
+
+if [ "$REFLECT" = "0" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠ No reflect report found (docs/reports/reflect-report.md)"
+fi
+
+if [ "$SELF_REVIEWS" = "0" ] && [ "$RESULTS" != "0" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠ No self-review files found (docs/results/TASK-*-self-review.md)"
+fi
+
+# Sentinel escape hatch: if .reflect-skipped exists with a non-empty reason, skip blocking
+SENTINEL="docs/reports/.reflect-skipped"
+if [ -f "$SENTINEL" ]; then
+  REASON=$(head -1 "$SENTINEL" | tr -d '\n')
+  if [ -n "$REASON" ]; then
+    cat <<EOF
+{"systemMessage": "Pipeline Validation: reflect skipped (intentional).\n  Reason: ${REASON}\n  To require reflect again, delete docs/reports/.reflect-skipped"}
+EOF
+    exit 0
+  fi
+fi
+
+# Block session end only when a full pipeline ran but reflect was skipped
+# Condition: task specs + results + reviews all present, but NO reflect report
+if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
+  cat <<EOF
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+EOF
+  exit 2
+fi
+
+# Warn only (non-blocking) for partial pipeline issues
+if [ -n "$WARNINGS" ]; then
+  cat <<EOF
+{"systemMessage": "Pipeline Validation:\n  Task specs: ${TASK_SPECS}\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}\n\n  If task specs exist but artifacts don't, the pipeline was likely bypassed."}
+EOF
+fi
+
+exit 0
+```
 
 Make executable:
 ```bash
 chmod +x .claude/hooks/*.sh
 ```
 
-Create or update `.claude/settings.json` to wire the validation hooks as PreToolUse handlers. If `.claude/settings.json` already exists, merge the `hooks` entries; otherwise create it:
+Create or update `.claude/settings.json` to wire all hooks. If `.claude/settings.json` already exists, merge the `hooks` entries; otherwise create it:
 ```json
 {
   "hooks": {
     "PreToolUse": [
       { "matcher": "Agent", "hooks": [{ "type": "command", "command": ".claude/hooks/validate-dispatch.sh" }] },
-      { "matcher": "Skill",  "hooks": [{ "type": "command", "command": ".claude/hooks/validate-skill.sh"  }] }
+      { "matcher": "Skill", "hooks": [{ "type": "command", "command": ".claude/hooks/validate-skill.sh" }] },
+      { "matcher": "Edit|Write|Bash", "hooks": [{ "type": "command", "command": ".claude/hooks/suggest-compact.sh" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write", "hooks": [{ "type": "command", "command": ".claude/hooks/lint.sh" }] }
+    ],
+    "Stop": [
+      { "matcher": "*", "hooks": [
+        { "type": "command", "command": ".claude/hooks/pre-stop-gate.sh" },
+        { "type": "command", "command": ".claude/hooks/validate-pipeline.sh" }
+      ]}
     ]
   }
 }
 ```
 
-> If `.claude/settings.json` already has a `hooks.PreToolUse` array, append the two entries above to it rather than overwriting the existing entries.
+> If `.claude/settings.json` already has a `hooks` section, merge the PreToolUse, PostToolUse, and Stop entries rather than overwriting.
 
 ### Step 4 — Create output directories and update .gitignore
 
