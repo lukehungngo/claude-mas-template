@@ -1,5 +1,5 @@
 ---
-description: Focused bug-fix loop — debug, fix with TDD, review, verify, finish
+description: Focused bug-fix loop — debug, plan, fix with TDD, review, verify, finish
 ---
 
 # Bug-Fix Loop (MAS)
@@ -10,7 +10,7 @@ Fix a bug for: $ARGUMENTS
 
 Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no human checkpoints, run everything end-to-end). If no → **interactive mode** (pause for approval at key steps).
 
-**`--auto` scope:** Skips human approval gates at Steps 1 and 7 only. It does NOT skip the Bug-Fixer, Reviewer, or verification. The full pipeline runs in both modes.
+**`--auto` scope:** Skips human approval gates at Steps 1 and 9 only. It does NOT skip the Bug-Fixer, Reviewer, or verification. The full pipeline runs in both modes.
 
 **What `--auto` does NOT mean:**
 
@@ -21,10 +21,12 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → **autonomous mode** (no huma
 
 ✅ **GOOD** (correct --auto behavior):
 > "Bug is clear (`--auto` skips step 1 clarification). Creating worktree...
-> Running systematic-debugging skill (step 3)... Dispatching Bug-Fixer agent (step 4)...
+> Running systematic-debugging skill (step 3)... Writing plan (step 4)...
+> Dispatching Bug-Fixer agent (step 5)...
 > Bug-Fixer writes reproduction test first, then minimal fix...
-> Dispatching Reviewer (step 5)... Invoking verification skill (step 6)...
-> Creating PR automatically (`--auto` skips human choice, step 7)."
+> Dispatching Reviewer (step 6)... Invoking verification skill (step 7)...
+> Writing delivery report (step 8)...
+> Creating PR automatically (`--auto` skips human choice, step 9)."
 
 `--auto` removes 2 human pauses. It does NOT remove 3 agent dispatches.
 
@@ -36,15 +38,15 @@ bug-fix (this command)
   ├─ 1. Clarify ─── Skill(skill: "ask-questions")
   ├─ 2. Branch ─── git worktree
   ├─ 3. Debug ─── Skill(skill: "superpowers:systematic-debugging")
-  ├─ 3.5 Plan ─── Skill(skill: "superpowers:writing-plans") → docs/superpowers/plans/
-  ├─ 4. Fix ─── Agent(subagent_type: "mas:bug-fixer:bug-fixer")
+  ├─ 4. Plan ─── Skill(skill: "superpowers:writing-plans") → docs/superpowers/plans/
+  ├─ 5. Fix ─── Agent(subagent_type: "mas:bug-fixer:bug-fixer")
   │
-  ├─ 5. Review ─── Agent(subagent_type: "mas:reviewer:reviewer")
+  ├─ 6. Review ─── Agent(subagent_type: "mas:reviewer:reviewer")
   │       └─ BLOCKED? ──→ Agent(subagent_type: "mas:bug-fixer:bug-fixer") (max 2 cycles)
   │
-  ├─ 6. Verify ─── Skill(skill: "verification")
-  ├─ 6.5 Report ─── Bug fix report → docs/superpowers/reports/
-  └─ 7. Finish ─── Skill(skill: "finishing-branch")
+  ├─ 7. Verify ─── Skill(skill: "verification")
+  ├─ 8. Report ─── Bug fix report → docs/superpowers/reports/
+  └─ 9. Finish ─── Skill(skill: "finishing-branch")
 ```
 
 ## Steps
@@ -96,7 +98,7 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 
 ---
 
-### Step 3.5 — Plan
+### Step 4 — Plan
 
 Now that the root cause is known, write a fix plan:
 
@@ -145,7 +147,7 @@ The plan should cover: what files to change, what the fix is, what tests to add/
 > **Build failure shortcut:** If the bug is a build/type error (not a logic bug), dispatch the build resolver instead:
 > | `everything-claude-code:build-error-resolver` | Fixes build errors with minimal diffs — faster than full bug-fixer for compile/type issues |
 
-### Step 4 — Fix
+### Step 5 — Fix
 
 Dispatch the Bug-Fixer with the reproduction test and root cause:
 
@@ -158,6 +160,9 @@ Agent(
 
   ## Root Cause
   {paste root cause from Step 3}
+
+  ## Fix Plan
+  {paste plan from Step 4}
 
   ## Reproduction Test
   {paste the failing test from Step 3}
@@ -172,7 +177,7 @@ Agent(
 ```
 
 - Interactive: present the Bug-Fixer's result to human before reviewing.
-- `--auto`: proceed directly to Step 5.
+- `--auto`: proceed directly to Step 6.
 
 **GATE:** `docs/reports/bugfix-result.md` exists and reports all tests passing. Do NOT proceed if the Bug-Fixer reports unresolved failures.
 
@@ -185,7 +190,7 @@ Agent(
 
 ---
 
-### Step 5 — Review
+### Step 6 — Review
 
 Dispatch the Reviewer to verify the fix is correct and doesn't introduce new issues:
 
@@ -198,6 +203,9 @@ Agent(
 
   ## Root Cause
   {paste root cause}
+
+  ## Fix Plan
+  {paste plan from Step 4}
 
   ## Bug-Fixer Result
   {paste from docs/reports/bugfix-result.md}
@@ -216,7 +224,7 @@ Agent(
 
 Track `review_cycle` starting at 0. After each review:
 
-- **APPROVED / APPROVED WITH CHANGES** → exit loop, proceed to Step 6.
+- **APPROVED / APPROVED WITH CHANGES** → exit loop, proceed to Step 7.
 - **BLOCKED** (and `review_cycle < 2`):
   1. Increment `review_cycle`.
   2. Interactive: show blocking issues to human, ask "Re-fix automatically? (y/n)". If no → escalate.
@@ -234,23 +242,24 @@ Track `review_cycle` starting at 0. After each review:
 
 ---
 
-### Step 6 — Verify
+### Step 7 — Verify
 
 ```
 Skill(skill: "verification")
 ```
 
-**GATE:** `docs/reports/verification-{branch}.md` exists with verdict PASS. Do NOT proceed to Step 7 without this file.
+**GATE:** `docs/reports/verification-{branch}.md` exists with verdict PASS. Do NOT proceed to Step 8 without this file.
 
 ---
 
-### Step 6.5 — Delivery Report
+### Step 8 — Delivery Report
 
 Write a delivery report to `docs/superpowers/reports/YYYY-MM-DD-{branch-name}.md`:
 
 ```markdown
 # Bug Fix Report: {branch-name}
 
+**Plan:** `docs/superpowers/plans/{plan-file}.md`
 **Date:** {YYYY-MM-DD}
 **Branch:** {branch-name}
 
@@ -264,11 +273,11 @@ Write a delivery report to `docs/superpowers/reports/YYYY-MM-DD-{branch-name}.md
 
 ## Fix Applied
 
-{Summary of what the Bug-Fixer changed}
+{Summary of what the Bug-Fixer changed, validated against the plan}
 
 ## Review Verdict
 
-{APPROVED / APPROVED WITH CHANGES — from Step 5}
+{APPROVED / APPROVED WITH CHANGES — from Step 6}
 
 ## Verification
 
@@ -288,8 +297,9 @@ Write a delivery report to `docs/superpowers/reports/YYYY-MM-DD-{branch-name}.md
 
 ### PIPELINE SELF-AUDIT (mandatory before finishing)
 
-Before proceeding to Step 7, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
+Before proceeding to Step 9, verify each item with evidence. Self-assessment is not sufficient — check for artifacts.
 
+- [ ] **Plan exists?** — Check `docs/superpowers/plans/` for the fix plan.
 - [ ] **Bug-Fixer dispatched?** — Scroll up and confirm an `Agent(subagent_type: "mas:bug-fixer:bug-fixer")` tool call exists in this conversation. If you fixed the bug via Write/Edit yourself, this is a violation.
 - [ ] **Reproduction test written first?** — Check the Bug-Fixer's result file in `docs/reports/` for a reproduction test entry. If no test is listed, the reproduction-test-first requirement was bypassed.
 - [ ] **Reviewer issued verdict?** — Check `docs/reports/` for a review file with a verdict line. If no review file exists, no reviewer was dispatched.
@@ -297,11 +307,11 @@ Before proceeding to Step 7, verify each item with evidence. Self-assessment is 
 - [ ] **Verification report exists?** — Run: `test -f docs/reports/verification-{branch}.md && grep "Verdict:" docs/reports/verification-{branch}.md`. File must exist AND contain Build, Code, Spec, Regression sections.
 - [ ] **Delivery report exists?** — Check `docs/superpowers/reports/` for the bug fix report.
 
-**If any check fails:** You violated the pipeline. Do NOT proceed to Step 7. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
+**If any check fails:** You violated the pipeline. Do NOT proceed to Step 9. Go back to the first failed step and execute it properly. If an Agent() call failed, follow the FALLBACK guidance above.
 
 **This is not optional.** In 3/3 audited bug-fix sessions, zero dispatched the bug-fixer agent. You are being explicitly asked to break that pattern.
 
-### Step 7 — Finish
+### Step 9 — Finish
 
 ```
 Skill(skill: "finishing-branch")
