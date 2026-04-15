@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.14.1] — 2026-04-15
+
+### Fixed
+- **dev-loop + bug-fix: block superpowers:subagent-driven-development** — Plan header says "Use superpowers:subagent-driven-development" which caused 3 sessions to bypass MAS agents. Both commands now explicitly say to ignore the plan's execution handoff and dispatch MAS agents directly.
+
 ## [2.14.0] — 2026-04-15
 
 ### Bug-Fix Pipeline — Plan Step + Hook Fix

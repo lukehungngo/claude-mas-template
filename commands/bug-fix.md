@@ -108,6 +108,8 @@ Skill(skill: "superpowers:writing-plans")
 
 The plan should cover: what files to change, what the fix is, what tests to add/modify, and verification steps. This is the source of truth for the Bug-Fixer dispatch and the delivery report at the end.
 
+**IMPORTANT: Ignore the plan's execution handoff.** The plan header says "Use superpowers:subagent-driven-development." Do NOT invoke that skill. The bug-fix loop dispatches MAS agents directly (`mas:bug-fixer:bug-fixer`, `mas:reviewer:reviewer`) — those have specialized system prompts that generic superpowers agents lack.
+
 - Interactive: present plan to human for approval.
 - `--auto`: approve plan automatically.
 

@@ -129,6 +129,8 @@ This produces a structured implementation plan with tasks, file paths, verificat
 
 **Do NOT use EnterPlanMode / PlanMode.** Use the `superpowers:writing-plans` skill which follows a specific template.
 
+**IMPORTANT: Ignore the plan's execution handoff.** The plan header says "Use superpowers:subagent-driven-development." Do NOT invoke that skill. The dev-loop dispatches MAS agents directly (`mas:engineer:engineer`, `mas:reviewer:reviewer`, etc.) — those have specialized system prompts (TDD enforcement, deviation taxonomy, two-phase review) that generic superpowers agents lack. The plan is used for WHAT to build. The dev-loop controls HOW to execute.
+
 - Interactive: present plan to human for approval before proceeding.
 - `--auto`: approve plan automatically and proceed.
 
