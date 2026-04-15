@@ -40,7 +40,7 @@ for s in $SUPERPOWERS_SKILLS; do
 done
 
 # MAS skills that MUST use mas: prefix
-MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions finishing-branch verification reliability-review se-principles differential-review subagent-driven-development test-driven-development"
+MAS_SKILLS="dev-loop bug-fix reflect release bootstrap ask-questions verification reliability-review se-principles differential-review obsidian"
 
 for s in $MAS_SKILLS; do
   if [ "$SKILL" = "$s" ]; then

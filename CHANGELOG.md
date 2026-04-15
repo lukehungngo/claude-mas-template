@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.12.2] — 2026-04-15
+
+### Fixed
+- **bootstrap: validate-dispatch.sh stub missing features** — Replaced 28-line stub with full 92-line production hook including debug logging (`~/.claude/hook-debug.log`), haiku model blocking for reviewer (depth-aware), and quick-reference error messages.
+- **bootstrap: validate-skill.sh stub missing allowlist** — Replaced stub with full hook including `allowed-bare-skills.txt` check. Fixed MAS_SKILLS: removed `test-driven-development` (not a MAS skill), removed duplicates (`finishing-branch`, `subagent-driven-development`) already caught by SUPERPOWERS_SKILLS, added `obsidian`.
+- **bootstrap: settings.json missing 4 of 6 hooks** — Added PostToolUse (lint.sh on Edit|Write), Stop (pre-stop-gate.sh + validate-pipeline.sh), and PreToolUse (suggest-compact.sh on Edit|Write|Bash). Bootstrapped projects now get all 6 hooks wired.
+- **bootstrap: lint.sh and pre-stop-gate.sh were bare stubs** — Replaced with full templates including git-diff-based lint triggering and structured quality summary output.
+- **bootstrap: suggest-compact.sh and validate-pipeline.sh not installed** — Now written inline by bootstrap and wired into settings.json Stop hooks.
+
 ## [2.12.1] — 2026-04-15
 
 ### Fixed
