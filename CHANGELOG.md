@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.14.0] — 2026-04-15
+
+### Bug-Fix Pipeline — Plan Step + Hook Fix
+
+- **bug-fix: added Step 4 (Plan)** — After debugging (Step 3), write a fix plan via `superpowers:writing-plans` before dispatching the Bug-Fixer. Plan becomes source of truth for both the fix and the delivery report. Bug-Fixer and Reviewer dispatch prompts now include the plan.
+- **bug-fix: renumbered steps** — Clean integer steps 1-9 (was 1-7 with fractional 3.5 and 6.5). Pipeline: Clarify → Branch → Debug → Plan → Fix → Review → Verify → Report → Finish.
+- **validate-pipeline.sh: fixed false-positive BLOCKED** — Plans persist on main after merge (plan-report contract), but the hook was using "plans exist" as "active pipeline" signal. Changed to "results or reviews exist" as the active pipeline detection. No more spurious blocks on session stop.
+
 ## [2.13.0] — 2026-04-15
 
 ### Plan-Report Contract
