@@ -36,6 +36,7 @@ bug-fix (this command)
   ├─ 1. Clarify ─── Skill(skill: "ask-questions")
   ├─ 2. Branch ─── git worktree
   ├─ 3. Debug ─── Skill(skill: "superpowers:systematic-debugging")
+  ├─ 3.5 Plan ─── Skill(skill: "superpowers:writing-plans") → docs/superpowers/plans/
   ├─ 4. Fix ─── Agent(subagent_type: "mas:bug-fixer:bug-fixer")
   │
   ├─ 5. Review ─── Agent(subagent_type: "mas:reviewer:reviewer")
@@ -92,6 +93,25 @@ Skill(skill: "superpowers:systematic-debugging")
 This skill produces a confirmed root cause with a reproduction test. Skip only if the caller has already identified the exact file:line and cause.
 
 **GATE:** Root cause is identified and a failing reproduction test exists. Do NOT dispatch Bug-Fixer without knowing exactly what is broken.
+
+---
+
+### Step 3.5 — Plan
+
+Now that the root cause is known, write a fix plan:
+
+```
+Skill(skill: "superpowers:writing-plans")
+```
+
+The plan should cover: what files to change, what the fix is, what tests to add/modify, and verification steps. This is the source of truth for the Bug-Fixer dispatch and the delivery report at the end.
+
+- Interactive: present plan to human for approval.
+- `--auto`: approve plan automatically.
+
+**GATE:** Plan exists in `docs/superpowers/plans/` with fix steps and verification commands.
+
+---
 
 > **CHECKPOINT ASSERTION — Bug-Fixer agent is mandatory**
 >
