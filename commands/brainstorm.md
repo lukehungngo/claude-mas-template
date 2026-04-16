@@ -21,8 +21,8 @@ Elon Musk's 3-step first principles framework:
 | You bring | You get |
 |-----------|---------|
 | **Context** — background, situation, landscape | **Framing** — how to think about this, what matters |
-| **Problem** — "X is broken" | **Solution** — how to fix it, built from fundamentals |
-| **Observation** — "something feels off about X" | **Root cause** — what's actually wrong (or confirmation nothing is) |
+| **Problem** — "X is broken" | **Framing / Solution direction** — might reframe the problem itself, or provide a solution built from fundamentals |
+| **Observation** — "something feels off about X" | **Hypothesis / Root cause** — what might be wrong, or confirmed root cause if evidence supports it |
 | **Question** — "should we even have X?" | **Answer** — yes/no with reasoning from first principles |
 | **Idea** — "what if we built X?" | **Validation** — is this worth doing? what's the real need? |
 | **Hunch** — "X feels too heavy" | **Analysis** — where exactly, why, and what would better look like |
@@ -46,7 +46,7 @@ brainstorm (this command)
 
 Accept whatever the human brings. Identify the input type from the contract table above.
 
-If unclear, ask one question: "Is this something broken, something you noticed, something you're questioning, something you want to build, or something that feels off?"
+If unclear, ask up to one clarifying question. If still ambiguous, proceed with best-effort classification and state your assumptions explicitly — the human can correct.
 
 ### Step 2 — First Principles
 
@@ -72,8 +72,8 @@ Keep asking "why" until hitting bedrock — a truth that can't be decomposed fur
 Based on the input type, deliver the promised output:
 
 - **Context → Framing.** How to think about this. What matters, what doesn't.
-- **Problem → Solution direction.** What to do, built from fundamentals. Not a plan — a direction.
-- **Observation → Root cause.** What's actually happening and why. May conclude "nothing is wrong."
+- **Problem → Framing / Solution direction.** Might reframe the problem before solving. Or provide direction built from fundamentals.
+- **Observation → Hypothesis / Root cause.** What might be wrong (hypothesis) or what is wrong (root cause, if evidence confirms it).
 - **Question → Answer.** Yes, no, or "wrong question" with the right question identified.
 - **Idea → Validation.** Worth doing or not, with reasoning. What's the real need underneath?
 - **Hunch → Analysis.** Where the friction is, why it exists, what better looks like.
