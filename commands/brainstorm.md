@@ -20,11 +20,14 @@ Elon Musk's 3-step first principles framework:
 
 | You bring | You get |
 |-----------|---------|
+| **Context** — background, situation, landscape | **Framing** — how to think about this, what matters |
 | **Problem** — "X is broken" | **Solution** — how to fix it, built from fundamentals |
 | **Observation** — "something feels off about X" | **Root cause** — what's actually wrong (or confirmation nothing is) |
 | **Question** — "should we even have X?" | **Answer** — yes/no with reasoning from first principles |
 | **Idea** — "what if we built X?" | **Validation** — is this worth doing? what's the real need? |
 | **Hunch** — "X feels too heavy" | **Analysis** — where exactly, why, and what would better look like |
+| **Constraints** — "we can't use X, budget is Y" | **Feasibility check** — what's possible within these bounds |
+| **Criteria** — "it needs to handle X, Y, Z" | **Evaluation / Confidence** — how well does the current direction meet these? |
 
 ## Flow
 
@@ -68,11 +71,14 @@ Keep asking "why" until hitting bedrock — a truth that can't be decomposed fur
 
 Based on the input type, deliver the promised output:
 
-- **Problem → Solution direction.** What to do, built from the fundamentals. Not a plan — a direction.
+- **Context → Framing.** How to think about this. What matters, what doesn't.
+- **Problem → Solution direction.** What to do, built from fundamentals. Not a plan — a direction.
 - **Observation → Root cause.** What's actually happening and why. May conclude "nothing is wrong."
 - **Question → Answer.** Yes, no, or "wrong question" with the right question identified.
 - **Idea → Validation.** Worth doing or not, with reasoning. What's the real need underneath?
 - **Hunch → Analysis.** Where the friction is, why it exists, what better looks like.
+- **Constraints → Feasibility check.** What's possible within these bounds. What's not.
+- **Criteria → Evaluation / Confidence.** How well the current direction meets these. Gaps identified.
 
 Present to the human. Iterate until they're satisfied.
 
@@ -95,7 +101,7 @@ Next steps (your choice):
 # Brainstorm: <topic>
 
 **Date:** YYYY-MM-DD
-**Input type:** Problem / Observation / Question / Idea / Hunch
+**Input type:** Context / Problem / Observation / Question / Idea / Hunch / Constraints / Criteria
 **Input:** <what the human brought — verbatim>
 
 ## Assumptions
@@ -110,7 +116,7 @@ Next steps (your choice):
 
 ## Output
 
-<The deliverable: solution / root cause / answer / validation / analysis>
+<The deliverable: framing / solution / root cause / answer / validation / analysis / feasibility check / evaluation>
 
 ## Next Steps
 
