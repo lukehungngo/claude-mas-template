@@ -6,6 +6,18 @@ description: First principles decomposition — turn observations, ideas, or pro
 
 First principles decomposition for: $ARGUMENTS
 
+## Foundation
+
+Elon Musk's 3-step first principles framework:
+
+1. **Identify and challenge assumptions** — What do we assume is true? Why?
+2. **Break down to fundamentals** — What are the basic truths we're sure of?
+3. **Build up from scratch** — Reconstruct a solution from those truths, not from analogy
+
+> "Boil things down to the most fundamental truths and say 'OK, what are we sure is true?' And then reason up from there." — Elon Musk
+
+This command applies that framework. Every step below maps to one of these three moves.
+
 ## Flow
 
 ```
