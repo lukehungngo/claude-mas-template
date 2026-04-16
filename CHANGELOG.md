@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.15.0] — 2026-04-15
+
+### Added
+- **`/mas:brainstorm` command** — First principles decomposition for turning vague observations, ideas, or problems into clear, actionable problem statements. 7-step process: receive input → challenge assumptions → decompose to fundamentals → discover real problem → build up from truths → save brainstorm → suggest next steps. Three questions applied at every step: can we break it down further? can we do it differently? can we remove something without breaking it? Standalone — no agents, no execution. Output saved to `docs/brainstorms/`.
+- **`docs/brainstorms/` directory** — added to bootstrap mkdir for brainstorm artifacts
+
 ## [2.14.1] — 2026-04-15
 
 ### Fixed
