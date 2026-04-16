@@ -625,9 +625,10 @@ mkdir -p docs/superpowers/{plans,reports}
 mkdir -p docs/brainstorms
 ```
 
-Ensure `.worktrees/` is in `.gitignore` (dev-loop creates worktrees there). If not already present, append it:
+Ensure `.worktrees/` and `.mcp.json` are in `.gitignore`. If not already present, append them:
 ```bash
 grep -qxF '.worktrees/' .gitignore 2>/dev/null || echo '.worktrees/' >> .gitignore
+grep -qxF '.mcp.json' .gitignore 2>/dev/null || echo '.mcp.json' >> .gitignore
 ```
 
 ### Step 5 — Verify
