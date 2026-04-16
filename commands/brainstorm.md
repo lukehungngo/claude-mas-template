@@ -90,8 +90,8 @@ Write to `docs/brainstorms/YYYY-MM-DD-<topic>.md`. Suggest next steps without au
 Brainstorm saved to docs/brainstorms/<file>.md
 
 Next steps (your choice):
-  /mas:dev-loop <description>  — implement as a feature
-  /mas:bug-fix <description>   — fix as a bug
+  /mas:dev-loop implement brainstorm at docs/brainstorms/<file>.md
+  /mas:bug-fix fix based on brainstorm at docs/brainstorms/<file>.md
   Or continue refining.
 ```
 

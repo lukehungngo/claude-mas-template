@@ -100,6 +100,8 @@ This skill produces a confirmed root cause with a reproduction test. Skip only i
 
 ### Step 4 — Plan
 
+**Check for existing brainstorm:** If `$ARGUMENTS` references a brainstorm doc (e.g., `docs/brainstorms/...`), read it first. The brainstorm contains the decomposed problem and root cause analysis — use it as input for the plan.
+
 Now that the root cause is known, write a fix plan:
 
 ```

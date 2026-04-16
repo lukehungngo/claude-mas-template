@@ -109,17 +109,11 @@ Verify clean baseline: `{{test-command}}` must pass.
 
 ### Step 2 — Plan
 
-**Pre-planning brainstorm (if requirement is ambiguous or open-ended):**
+**Check for existing brainstorm:** If `$ARGUMENTS` references a brainstorm doc (e.g., `docs/brainstorms/2026-04-15-topic.md`), read it first. The brainstorm contains the decomposed problem, assumptions challenged, and solution direction — use it as the primary input for the plan.
 
-If the requirement could be solved multiple ways, or the scope is unclear, brainstorm first:
+If no brainstorm exists and the requirement is vague, tell the human to run `/mas:brainstorm` first. Do NOT invoke `superpowers:brainstorming` — use `/mas:brainstorm` which applies first principles decomposition.
 
-```
-Skill(skill: "superpowers:brainstorming")
-```
-
-Skip this if the requirement is already specific and scoped (e.g., "fix the login button" or "add pagination to /api/users"). Use it when the requirement is broad (e.g., "improve the auth system" or "add analytics").
-
-**Then write the plan:**
+**Write the plan:**
 
 ```
 Skill(skill: "superpowers:writing-plans")
