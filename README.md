@@ -37,7 +37,7 @@ If you use `superpowers:subagent-driven-development`, you can specify `mas:engin
 | **Agents** | 7 | engineer, reviewer, researcher, differential-reviewer, bug-fixer, reflect-agent, ui-ux-designer |
 | **Skills** | 9 | ask-questions, subagent-driven-development, verification, finishing-branch, se-principles, reliability-review, property-based-testing, differential-review, obsidian |
 | **Rules** | 4 | honesty-first, severity-discipline, meta-rules guide, agent workflow lessons |
-| **Commands** | 5 | bootstrap, dev-loop, bug-fix, reflect, release |
+| **Commands** | 6 | bootstrap, dev-loop, bug-fix, reflect, release, brainstorm |
 | **Hooks** | 6 | lint (PostToolUse), compaction suggester (PreToolUse), quality gate (Stop), pipeline validator (Stop), dispatch name enforcer (PreToolUse:Agent), skill name enforcer (PreToolUse:Skill) |
 | **Templates** | 4 | task-spec, review-report (with YAML frontmatter), dispatch-templates, local-inject |
 | **Scripts** | 2 | mas-audit.py, mas-local-install.sh |

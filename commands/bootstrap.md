@@ -622,6 +622,7 @@ Create or update `.claude/settings.json` to wire all hooks. If `.claude/settings
 ```bash
 mkdir -p docs/{design,plans,reports,results}
 mkdir -p docs/superpowers/{plans,reports}
+mkdir -p docs/brainstorms
 ```
 
 Ensure `.worktrees/` is in `.gitignore` (dev-loop creates worktrees there). If not already present, append it:
