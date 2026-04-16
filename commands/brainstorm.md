@@ -1,5 +1,5 @@
 ---
-description: First principles decomposition — turn observations, ideas, or problems into clear, actionable problem statements
+description: First principles decomposition — turn any input into a clear, actionable output
 ---
 
 # Brainstorm (MAS)
@@ -16,154 +16,69 @@ Elon Musk's 3-step first principles framework:
 
 > "Boil things down to the most fundamental truths and say 'OK, what are we sure is true?' And then reason up from there." — Elon Musk
 
-This command applies that framework. Every step below maps to one of these three moves.
+## Input → Output Contract
+
+| You bring | You get |
+|-----------|---------|
+| **Problem** — "X is broken" | **Solution** — how to fix it, built from fundamentals |
+| **Observation** — "something feels off about X" | **Root cause** — what's actually wrong (or confirmation nothing is) |
+| **Question** — "should we even have X?" | **Answer** — yes/no with reasoning from first principles |
+| **Idea** — "what if we built X?" | **Validation** — is this worth doing? what's the real need? |
+| **Hunch** — "X feels too heavy" | **Analysis** — where exactly, why, and what would better look like |
 
 ## Flow
 
 ```
 brainstorm (this command)
   │
-  ├─ Step 1 — Receive input
-  │     Classify and handle whatever the human brings.
-  │
-  ├─ Step 2 — Challenge assumptions
-  │     Surface beliefs, test against evidence.
-  │
-  ├─ Step 3 — Decompose to fundamentals
-  │     Break down to smallest true components.
-  │
-  ├─ Step 4 — Discover the real problem (or not)
-  │     Three outcomes: PROBLEM FOUND / PROBLEM CONFIRMED / NO PROBLEM
-  │
-  ├─ Step 5 — Build up from truths (if problem exists)
-  │     Construct solution from fundamentals, not analogy.
-  │
-  ├─ Step 6 — Save brainstorm
-  │     Write to docs/brainstorms/YYYY-MM-DD-<topic>.md
-  │
-  └─ Step 7 — Suggest next steps (don't auto-invoke)
-        Present options. Human decides.
+  ├─ Step 1 — Receive input and identify which type
+  ├─ Step 2 — First principles (challenge → decompose → build up)
+  ├─ Step 3 — Deliver the output matching the input type
+  └─ Step 4 — Save and suggest next steps
 ```
-
-Apply the 3-step framework at every step. If you can still break something down, you haven't reached fundamentals yet.
 
 ## Steps
 
 ### Step 1 — Receive Input
 
-Accept whatever the human brings. Classify the input and handle accordingly:
+Accept whatever the human brings. Identify the input type from the contract table above.
 
-**Clear problem statement:**
-> "bootstrap writes rules/ instead of .claude/rules/"
+If unclear, ask one question: "Is this something broken, something you noticed, something you're questioning, something you want to build, or something that feels off?"
 
-Acknowledge. Jump to Step 2 to challenge assumptions. Don't decompose what's already clear — validate it.
+### Step 2 — First Principles
 
-**Vague observation:**
-> "something feels off about how hooks are wired"
+Apply Musk's 3 steps:
 
-Explore. Ask: What specifically feels off? What did you see that triggered this? When did you notice it?
+**Challenge assumptions.** For each belief surfaced:
+- Why do we think this is true?
+- What evidence do we have?
+- What if the opposite were true?
 
-**Question:**
-> "should we even have task tracking?"
+List assumptions as CONFIRMED (evidence exists) or QUESTIONED (no evidence).
 
-Reframe as investigation. What is task tracking supposed to do? Is it doing that? What would happen without it?
-
-**Idea / what-if:**
-> "what if brainstorming was a first-class command?"
-
-Ask why. What's missing today? What would change if this existed? Who benefits?
-
-**Hunch / friction:**
-> "the dev-loop feels too heavy"
-
-Measure. Where exactly is the friction? Which step? What would "not heavy" look like?
-
-**GATE:** Input is classified into one of the five types above and you have enough context to proceed. If the input is too vague even for the "vague observation" path, ask the human to say more before continuing.
-
----
-
-### Step 2 — Challenge Assumptions
-
-For each claim or belief surfaced in Step 1:
-
-- "Why do we think this is true?"
-- "What evidence do we have?"
-- "What if the opposite were true?"
-- "Who told us this, and were they right?"
-
-List assumptions explicitly. Mark each as:
-- **CONFIRMED** — evidence exists
-- **QUESTIONED** — no evidence, or contradicted by evidence
-
-Apply the framework: Why do we assume this? What evidence exists? What if the opposite were true?
-
-**GATE:** At least one assumption is explicitly listed and marked CONFIRMED or QUESTIONED. Do NOT proceed to decomposition with zero assumptions surfaced — every input has hidden assumptions.
-
----
-
-### Step 3 — Decompose to Fundamentals
-
-Break down the subject into its smallest components. For each component:
-
-- What is actually true about this? (not assumed, not hoped — true)
-- What is the fundamental constraint?
-- What is actually true here? (not assumed — true)
+**Decompose to fundamentals.** Break down into smallest components. For each:
+- What is actually true? (not assumed — true)
 - What is the fundamental constraint?
 
-Use the Socratic method — keep asking "why" until hitting bedrock. Bedrock = a truth that can't be decomposed further without changing the domain.
+Keep asking "why" until hitting bedrock — a truth that can't be decomposed further.
 
-Keep asking "why" until you hit bedrock — a truth that can't be decomposed further.
+**Build up from truths.** Take the fundamentals and construct the output from the ground up. Not from analogy. Not from "how others do it."
 
-**GATE:** At least two components identified, each with a stated truth and constraint. If you only found one component, you haven't decomposed far enough.
+### Step 3 — Deliver
 
----
+Based on the input type, deliver the promised output:
 
-### Step 4 — Discover the Real Problem (or Not)
+- **Problem → Solution direction.** What to do, built from the fundamentals. Not a plan — a direction.
+- **Observation → Root cause.** What's actually happening and why. May conclude "nothing is wrong."
+- **Question → Answer.** Yes, no, or "wrong question" with the right question identified.
+- **Idea → Validation.** Worth doing or not, with reasoning. What's the real need underneath?
+- **Hunch → Analysis.** Where the friction is, why it exists, what better looks like.
 
-Based on the decomposition, arrive at one of three outcomes:
+Present to the human. Iterate until they're satisfied.
 
-**A) PROBLEM FOUND** — different from the original input.
-"You thought the issue was X, but the real issue is Y."
-Define Y precisely. This becomes the problem statement.
+### Step 4 — Save
 
-**B) PROBLEM CONFIRMED** — same as the original input.
-"Your observation was correct. The problem is exactly X."
-Sharpen the definition. Add constraints and scope.
-
-**C) NO PROBLEM** — the observation doesn't lead to action.
-"After decomposition, this works as designed. The assumption that it was wrong was itself wrong."
-Document why. This is a valid and valuable outcome.
-
-**GATE:** Outcome is explicitly stated as one of the three above (PROBLEM FOUND / PROBLEM CONFIRMED / NO PROBLEM). If you can't decide, you need more decomposition — go back to Step 3.
-
----
-
-### Step 5 — Build Up from Truths (if problem exists)
-
-**Skip this step if Step 4 outcome is NO PROBLEM.** Jump to Step 6.
-
-DON'T: look at how others solve this, pick from options, reason by analogy.
-DO: take the fundamental truths from Step 3 and construct a solution from those truths bottom-up.
-
-Present the solution direction to the human. Iterate until they are satisfied. This is a conversation, not a one-shot answer.
-
-**GATE:** Human has acknowledged the solution direction (or explicitly said "good enough, save it"). Do NOT save a brainstorm the human hasn't seen.
-
----
-
-### Step 6 — Save Brainstorm
-
-Write to: `docs/brainstorms/YYYY-MM-DD-<topic>.md`
-
-Use the output artifact template defined below. The brainstorm document is the deliverable — it captures the full thinking process, not just the conclusion.
-
-**GATE:** File exists at `docs/brainstorms/YYYY-MM-DD-<topic>.md` and contains all sections from the output artifact template.
-
----
-
-### Step 7 — Suggest Next Steps (Don't Auto-Invoke)
-
-Present the saved artifact path and suggest options. **Do NOT auto-invoke any command.** The human decides.
+Write to `docs/brainstorms/YYYY-MM-DD-<topic>.md`. Suggest next steps without auto-invoking:
 
 ```
 Brainstorm saved to docs/brainstorms/<file>.md
@@ -171,57 +86,31 @@ Brainstorm saved to docs/brainstorms/<file>.md
 Next steps (your choice):
   /mas:dev-loop <description>  — implement as a feature
   /mas:bug-fix <description>   — fix as a bug
-  Or continue refining the brainstorm.
+  Or continue refining.
 ```
 
-If the outcome was NO PROBLEM, adjust the suggestions:
-
-```
-Brainstorm saved to docs/brainstorms/<file>.md
-
-Outcome: No problem found. The observation was explored and decomposed.
-The brainstorm document captures the reasoning.
-
-No action needed — or continue exploring if something still feels off.
-```
-
----
-
-## Output Artifact Template
-
-The brainstorm saved in Step 6 must follow this structure:
+## Output Format
 
 ```markdown
 # Brainstorm: <topic>
 
 **Date:** YYYY-MM-DD
+**Input type:** Problem / Observation / Question / Idea / Hunch
 **Input:** <what the human brought — verbatim>
-**Outcome:** PROBLEM FOUND / PROBLEM CONFIRMED / NO PROBLEM
 
-## Assumptions Challenged
+## Assumptions
 
-| # | Assumption | Status | Evidence |
-|---|-----------|--------|----------|
-| 1 | ... | CONFIRMED / QUESTIONED | ... |
+| Assumption | Status | Evidence |
+|-----------|--------|----------|
+| ... | CONFIRMED / QUESTIONED | ... |
 
-## Decomposition
+## Fundamentals
 
-### Component: <name>
-- **Truth:** ...
-- **Constraint:** ...
-- **Can remove?** yes/no — why
+<Components broken down, truths identified, constraints stated>
 
-### Component: <name>
-- **Truth:** ...
-- ...
+## Output
 
-## Discovery
-
-<What the real problem is (or why there isn't one)>
-
-## Solution Direction (if applicable)
-
-<Built from the truths above, not from analogy>
+<The deliverable: solution / root cause / answer / validation / analysis>
 
 ## Next Steps
 
@@ -230,21 +119,16 @@ The brainstorm saved in Step 6 must follow this structure:
 
 ## What This Command Does NOT Do
 
-- **No worktree** — thinking, not executing
-- **No agent dispatch** — human conversation, not pipeline
-- **No plan writing** — that's the next command's job (`/mas:dev-loop`)
-- **No code changes** — purely analytical
-- **Does NOT invoke `superpowers:brainstorming`** — that skill uses collaborative dialogue and analogy-based proposals; first principles reasoning is fundamentally different
-- **Does NOT invoke `superpowers:writing-plans`** — planning happens after brainstorming, as a separate step
+- No worktree, no agents, no code changes — purely analytical
+- Does not invoke `superpowers:brainstorming` or `superpowers:writing-plans`
+- Does not auto-invoke any next command — human decides
 
 ## Integration
 
 ```
 /mas:brainstorm → brainstorm doc → human decision
-                                     │
-                                     ├─ /mas:dev-loop (reads brainstorm as context)
-                                     ├─ /mas:bug-fix (reads brainstorm as context)
-                                     └─ nothing (brainstorm was enough)
+                                    │
+                                    ├─ /mas:dev-loop
+                                    ├─ /mas:bug-fix
+                                    └─ nothing (brainstorm was enough)
 ```
-
-dev-loop and bug-fix should check `docs/brainstorms/` for recent brainstorms related to the task and use them as input context for the plan.
