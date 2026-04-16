@@ -45,15 +45,7 @@ brainstorm (this command)
         Present options. Human decides.
 ```
 
-## Three Questions (applied at every step)
-
-These are the first principles check. Apply them continuously throughout the brainstorm — not just at one step:
-
-1. **Can we break it down further?** — If yes, we haven't hit bedrock yet.
-2. **Can we do it differently?** — If we're copying a pattern, challenge why.
-3. **Can we remove something without breaking it?** — Simplest solution that works.
-
-Every step should circle back to these. If you can still answer "yes" to question 1, keep decomposing.
+Apply the 3-step framework at every step. If you can still break something down, you haven't reached fundamentals yet.
 
 ## Steps
 
@@ -103,7 +95,7 @@ List assumptions explicitly. Mark each as:
 - **CONFIRMED** — evidence exists
 - **QUESTIONED** — no evidence, or contradicted by evidence
 
-Apply the three questions: Can we break this assumption down further? Are we assuming this because everyone else does? Can we remove this assumption without breaking the argument?
+Apply the framework: Why do we assume this? What evidence exists? What if the opposite were true?
 
 **GATE:** At least one assumption is explicitly listed and marked CONFIRMED or QUESTIONED. Do NOT proceed to decomposition with zero assumptions surfaced — every input has hidden assumptions.
 
@@ -115,12 +107,12 @@ Break down the subject into its smallest components. For each component:
 
 - What is actually true about this? (not assumed, not hoped — true)
 - What is the fundamental constraint?
-- Can we break it down further?
-- Can we remove it without breaking anything?
+- What is actually true here? (not assumed — true)
+- What is the fundamental constraint?
 
 Use the Socratic method — keep asking "why" until hitting bedrock. Bedrock = a truth that can't be decomposed further without changing the domain.
 
-Apply the three questions at each level of decomposition. If you can still break something down, you haven't reached fundamentals yet.
+Keep asking "why" until you hit bedrock — a truth that can't be decomposed further.
 
 **GATE:** At least two components identified, each with a stated truth and constraint. If you only found one component, you haven't decomposed far enough.
 
@@ -152,11 +144,6 @@ Document why. This is a valid and valuable outcome.
 
 DON'T: look at how others solve this, pick from options, reason by analogy.
 DO: take the fundamental truths from Step 3 and construct a solution from those truths bottom-up.
-
-Three questions on loop:
-1. Can we break it down further?
-2. Can we do it differently?
-3. Can we remove something without breaking it?
 
 Present the solution direction to the human. Iterate until they are satisfied. This is a conversation, not a one-shot answer.
 
