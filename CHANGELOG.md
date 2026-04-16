@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.16.0] — 2026-04-15
+
+### Brainstorm Hardening + Chain Wiring
+
+- **brainstorm: 8 input/output contract** — Context→Framing, Problem→Framing/Solution, Observation→Hypothesis/Root cause, Question→Answer, Idea→Validation, Hunch→Analysis, Constraints→Feasibility, Criteria→Evaluation/Confidence
+- **brainstorm: 7 steps → 4** — Receive → First Principles → Deliver → Save. Removed gates, dead code, over-structured template.
+- **brainstorm: Musk's 3-step framework** as the explicit foundation, removed redundant three questions
+- **brainstorm: honest outputs** — problem may need reframing not just solving, observation may yield hypothesis not confirmed root cause
+- **brainstorm → dev-loop → bug-fix chain wired** — brainstorm suggests next command with doc path; dev-loop and bug-fix read brainstorm doc as input for planning; dev-loop no longer references superpowers:brainstorming
+- **bootstrap: .mcp.json added to .gitignore**
+
 ## [2.15.0] — 2026-04-15
 
 ### Added
