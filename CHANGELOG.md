@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.18.0] — 2026-04-17
+
+### Reflect Agent Optimization + Stop Hook Loop Fix
+
+- **reflect agent: scope boundary sharpened** — Reflect now checks *what* was built against the spec, not *why*. Engineer result narratives (`docs/results/`) removed from all dispatch points (agent CLAUDE.md, dispatch template #9, `commands/reflect.md`, dev-loop Phase 2E). The diff is sufficient; engineer reasoning is the Reviewer's domain.
+- **reflect agent: Phase 2 reframed as scope-creep detection** — "Was this the simplest approach?" dropped entirely (Reviewer's job). Phase 2 now asks two questions only: is this change traceable to a requirement? does it stay within that requirement's scope?
+- **reflect agent: fast path** — If Phase 1 shows all requirements COVERED and zero unmapped tasks, Phase 2 is a single-pass spot check rather than exhaustive audit. Estimated 60% token reduction on passing deliveries.
+- **reflect agent: checklist condensed 17 → 8 items** — Decision Quality section removed. Feature-Level SRP merged. Architectural Fitness merged.
+- **reflect agent: token budget instruction** — Always start with `git diff --stat`. If diff >500 lines, sample (first 50 lines per file) and flag it.
+- **reflect agent: verdict-first report** — `## Verdict` now appears at the top of the output report so the orchestrator finds it without scrolling.
+- **reflect agent: reinterpretation check** — Phase 1 now explicitly checks that each COVERED requirement matches the *literal intent*, not just nominally. Catches the most common silent failure mode.
+- **fix: stop hook infinite loop** — `validate-pipeline.sh` used `exit 2` to block session end when reflect was missing. This created an infinite loop: hook blocks → Claude responds → session tries to stop → hook fires again. Changed to `exit 0` with a warning message. The hook still alerts on missing reflect, but no longer traps the session.
+- **tests/lint.sh: regression guards** — Checks 13 and 14 added to lock in the reflect scope-boundary changes against future regression.
+
 ## [2.17.0] — 2026-04-17
 
 ### Brainstorm Smart Next-Step Suggestion
