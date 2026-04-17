@@ -114,7 +114,7 @@ Agent(
 ## 4. Reviewer Dispatch
 
 **Dispatcher guidance:** Set `change_class` based on the task type. The reviewer maps it to depth automatically:
-- `docs` / `config` / `test` → quick (Phase B skipped or minimal)
+- `docs` / `config` / `test-only` → quick (Phase B skipped or minimal)
 - `bugfix` / `refactor` / `feature` → standard
 - `p0-fix` → deep
 
@@ -125,7 +125,7 @@ Agent(
   subagent_type: "mas:reviewer:reviewer",
   prompt: """
   depth: {standard | quick | deep — or omit and let reviewer auto-classify from change_class}
-  change_class: {feature | bugfix | refactor | config | test | docs | p0-fix}
+  change_class: {feature | bugfix | refactor | config | test-only | docs | p0-fix}
 
   ## Task
   {paste the task from the plan}
@@ -305,7 +305,7 @@ Agent(
   subagent_type: "mas:reviewer:reviewer",
   prompt: """
   depth: {standard | quick | deep — or omit and let reviewer auto-classify from change_class}
-  change_class: {feature | bugfix | refactor | config | test | docs | p0-fix}
+  change_class: {feature | bugfix | refactor | config | test-only | docs | p0-fix}
   change_class_per_task: {if tasks in the batch have different types, e.g. "TASK-01: docs, TASK-02: feature"}
 
   ## Tasks to Review

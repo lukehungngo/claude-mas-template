@@ -41,7 +41,7 @@ Apply this table. Use the **first row that matches**:
 
 | Classification | Match criteria | Effect |
 |---|---|---|
-| `docs` | All changed files are `.md`, `.txt`, README, CHANGELOG, or docs/ | Skip Phase B entirely. Phase A only. depth → quick. |
+| `docs` | All changed files are `.md`, `.txt`, README, CHANGELOG, or docs/ | Skip Phase B entirely. Run Phase A (acceptance criteria check). Note: quick depth normally skips Phase A — for docs classification, Phase A still runs to verify spec compliance. |
 | `config` | Only JSON, YAML, TOML, `.env`, manifest, or lock files changed | depth → quick |
 | `test-only` | Only test files changed (test_*.py, *.test.ts, *_test.go, spec/, __tests__/) | Skip Phase A+B. Verify test quality (correctness, coverage of edge cases) only. |
 | `refactor` | No new public APIs, no new external calls, no new files — moves/renames/restructures only | Skip `reliability-review` and security checks in Phase B |
@@ -56,7 +56,7 @@ If `change_class` was specified in the dispatch prompt, map it to depth using th
 |---|---|
 | docs | quick |
 | config | quick |
-| test | quick |
+| test-only | quick |
 | bugfix | standard |
 | refactor | standard |
 | feature | standard |
