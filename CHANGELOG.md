@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.17.0] — 2026-04-17
+
+### Brainstorm Smart Next-Step Suggestion
+
+- **brainstorm: conditional primary suggestion in Step 4** — After saving the brainstorm, the command now emits a primary next-step suggestion tailored to the concluded output type. Root cause confirmed → `/mas:bug-fix`. Solution direction clear or idea validated YES → `/mas:dev-loop`. Framing/Answer/Idea-NO → no suggestion (human decides). Analysis of a hunch → conditional on whether a root cause or solution surfaced. Free-form fallback for cases that don't fit cleanly.
+- **brainstorm: alternatives menu preserved** — The existing three-line `/mas:dev-loop` / `/mas:bug-fix` / "Or continue refining" menu is kept as a fallback beneath the primary suggestion. Change is additive.
+- **Step 4 renamed** — "Save" → "Save and Suggest" to reflect new behavior. Contract table, Output Format, and Integration diagram are unchanged; the smart-suggestion logic reuses the existing input/output taxonomy as its decision keys (single source of truth).
+
 ## [2.16.0] — 2026-04-15
 
 ### Brainstorm Hardening + Chain Wiring
