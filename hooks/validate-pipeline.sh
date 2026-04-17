@@ -60,13 +60,13 @@ EOF
   fi
 fi
 
-# Block session end only when a full pipeline ran but reflect was skipped
-# Condition: a plan + results + reviews all present, but NO reflect report
+# Warn (non-blocking) when a full pipeline ran but reflect was skipped.
+# exit 2 caused an infinite loop: hook blocks → Claude responds → session tries to stop → hook blocks again.
+# Non-zero exit is reserved for fatal hook errors only, not pipeline warnings.
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+{"systemMessage": "Pipeline Validation WARNING:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING\n\n  A full pipeline ran but the reflect agent was not dispatched.\n  Dispatch reflect before ending: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)"}
 EOF
-  exit 2
 fi
 
 # Warn only (non-blocking) for partial pipeline issues
