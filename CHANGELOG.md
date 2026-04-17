@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.19.0] — 2026-04-17
+
+### Reviewer Optimizations — Diff Classification + Conditional Skill Gates
+
+- **reviewer: Phase 0 diff classification prepass** — Reviewer now runs `git diff --stat` before Phase A/B and classifies the change into docs/config/test-only/refactor/bugfix/feature. Each type routes to a reduced checklist, eliminating expensive checks on low-risk diffs.
+- **reviewer: conditional skill gates** — `se-principles` skips for docs/config/test-only/bugfix and single-function fixes ≤ 20 lines. `reliability-review` only invokes when diff touches auth/IO/DB/HTTP keywords. `property-based-testing` only invokes for feature changes or algorithmic diffs.
+- **dispatch templates: `change_class` auto-depth hints** — Reviewer dispatch templates #4 and #8 now accept `change_class` (feature/bugfix/refactor/config/test-only/docs/p0-fix). Reviewer auto-selects depth from this value, removing manual depth selection from dispatchers.
+
 ## [2.18.0] — 2026-04-17
 
 ### Reflect Agent Optimization + Stop Hook Loop Fix
