@@ -411,9 +411,6 @@ Agent(
   ## Plan
   {paste the implementation plan from docs/superpowers/plans/}
 
-  ## Engineer Results
-  {paste all engineer results from docs/results/TASK-{id}-result.md}
-
   ## Research Proposals (if applicable)
   {paste approved research proposals, or "N/A — no research phase"}
 

@@ -165,6 +165,37 @@ else
   echo "$SEVERITY_TABLES" | sed 's/^/       /'
 fi
 
+# ─── 13. reflect.md bullets match reflect-agent scope ─────
+echo "13. commands/reflect.md — correct What This Does bullets"
+STALE_REFLECT_BULLETS=$(grep -n "Feature-level SRP\|Decision quality" commands/reflect.md 2>/dev/null || true)
+if [ -z "$STALE_REFLECT_BULLETS" ]; then
+  pass "commands/reflect.md has no stale SRP/Decision-quality bullets"
+else
+  fail "commands/reflect.md still contains removed bullets:"
+  echo "$STALE_REFLECT_BULLETS" | sed 's/^/       /'
+fi
+
+REQUIRED_REFLECT_BULLETS=true
+for bullet in "Requirement coverage" "Scope alignment" "Reinterpretation"; do
+  if ! grep -q "$bullet" commands/reflect.md 2>/dev/null; then
+    fail "commands/reflect.md missing required bullet: $bullet"
+    REQUIRED_REFLECT_BULLETS=false
+  fi
+done
+if $REQUIRED_REFLECT_BULLETS; then
+  pass "commands/reflect.md has all three required bullets"
+fi
+
+# ─── 14. reflect-agent CLAUDE.md uses consistent fast-path phrasing ─
+echo "14. reflect-agent/CLAUDE.md — consistent fast-path phrasing"
+INCONSISTENT_PHRASING=$(grep -n "5-minute spot check" agents/reflect-agent/CLAUDE.md 2>/dev/null || true)
+if [ -z "$INCONSISTENT_PHRASING" ]; then
+  pass "reflect-agent/CLAUDE.md uses 'single-pass spot check' consistently"
+else
+  fail "reflect-agent/CLAUDE.md still has '5-minute spot check' (should be 'single-pass spot check'):"
+  echo "$INCONSISTENT_PHRASING" | sed 's/^/       /'
+fi
+
 # ─── Summary ──────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════"

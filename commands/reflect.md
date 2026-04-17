@@ -15,8 +15,7 @@ Check if `$ARGUMENTS` contains `--auto`. If yes → autonomous (skip human check
 Dispatches the Reflect Agent to compare the current branch diff against the original requirement/spec. Checks:
 - **Requirement coverage** — does every requirement map to implemented work?
 - **Scope alignment** — is there scope creep or drift?
-- **Feature-level SRP** — does each change do ONE thing?
-- **Decision quality** — is each decision the simplest approach?
+- **Reinterpretation** — was each requirement implemented as literally intended, or silently reinterpreted?
 
 This command works **standalone** — it does not require a dev-loop. Use it:
 - After manual work (no dev-loop involved)
@@ -47,10 +46,9 @@ git diff main...HEAD
 
 # Task artifacts (if they exist from a dev-loop)
 ls docs/superpowers/plans/*.md 2>/dev/null
-ls docs/results/TASK-*-result.md 2>/dev/null
 ```
 
-If task specs and results exist, include them. If not (manual work, no dev-loop), the Reflect Agent works from the branch diff alone.
+If a plan exists in docs/superpowers/plans/, read it. The Reflect Agent works from the diff and plan.
 
 ## Step 3 — Dispatch Reflect Agent
 
@@ -63,9 +61,6 @@ Agent(
 
   ## Implementation Plan (if available)
   {paste from docs/superpowers/plans/ or "N/A — no plan, this was manual work"}
-
-  ## Engineer Results (if available)
-  {paste from docs/results/ or "N/A — no engineer results, this was manual work"}
 
   ## Branch Diff Stats
   {paste git diff main...HEAD --stat}
