@@ -82,14 +82,38 @@ Based on the input type, deliver the promised output:
 
 Present to the human. Iterate until they're satisfied.
 
-### Step 4 — Save
+### Step 4 — Save and Suggest
 
-Write to `docs/brainstorms/YYYY-MM-DD-<topic>.md`. Suggest next steps without auto-invoking:
+Write the brainstorm to `docs/brainstorms/YYYY-MM-DD-<topic>.md`.
+
+Then, based on the concluded output type, print a **primary suggestion** plus the **alternatives menu**. Do not auto-invoke — human decides.
+
+**Pick the primary suggestion using this table:**
+
+| Concluded output | Primary suggestion |
+|------------------|--------------------|
+| Root cause confirmed (evidence supports it) | `/mas:bug-fix fix <root cause> — see docs/brainstorms/<file>.md` |
+| Hypothesis only (root cause not yet confirmed) | Investigate further to confirm the hypothesis, then `/mas:bug-fix` |
+| Solution direction is clear and actionable | `/mas:dev-loop implement <solution> — see docs/brainstorms/<file>.md` |
+| Idea validated YES (worth building) | `/mas:dev-loop implement <idea> — see docs/brainstorms/<file>.md` |
+| Idea validated NO (not worth building) | Stop. Refine scope or pick a different idea. |
+| Answer to a question (yes/no) | Usually none — human decides what to do with the answer. |
+| Framing for context | None — analytical only. Proceed with your own next action. |
+| Analysis of a hunch | If root cause surfaced → `/mas:bug-fix`. If solution direction clear → `/mas:dev-loop`. Otherwise refine. |
+| Feasibility check on constraints | Situational — depends on whether the path is feasible. |
+| Evaluation against criteria | Depends on identified gaps — address gaps first, then `/mas:dev-loop` if cleared. |
+
+If none of the rows fit cleanly, suggest the most relevant next action in plain language (e.g., "gather more data on X", "prototype the risky part first", "defer until Y is decided").
+
+**Print format:**
 
 ```
 Brainstorm saved to docs/brainstorms/<file>.md
 
-Next steps (your choice):
+Suggested next step:
+  <primary suggestion from the table above>
+
+Alternatives (your choice):
   /mas:dev-loop implement brainstorm at docs/brainstorms/<file>.md
   /mas:bug-fix fix based on brainstorm at docs/brainstorms/<file>.md
   Or continue refining.
