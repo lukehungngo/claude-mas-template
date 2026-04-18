@@ -231,6 +231,8 @@ Read the approved plan from Step 2. For each task in the plan, determine routing
 
 If in doubt, route to Researcher.
 
+**Novel routing pre-screen:** Before routing to Researcher, ask: "Can this task be solved with a 30-minute codebase read + one web search?" If yes — the answer is *discoverable*, not novel — route directly to Engineer and save research budget. Reserve Researcher for tasks where the *approach itself* is non-obvious and competing options have real trade-offs.
+
 > **Deprecated agents — do NOT dispatch:**
 > - `mas:orchestrator:orchestrator` — Deprecated since v2.0. The dev-loop (this command) IS the orchestrator. Never dispatch this agent.
 
