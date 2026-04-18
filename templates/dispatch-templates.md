@@ -165,13 +165,19 @@ Agent(
 Agent(
   subagent_type: "mas:bug-fixer:bug-fixer",
   prompt: """
-  ## Reviewer Report
-  {paste from docs/reports/TASK-{id}-review.md}
+  ## Scope Constraints (read before anything else)
+  - Fix ONLY the P0/P1 issues listed below. Ignore P2/P3.
+  - Allowed files (ONLY touch these): {paste relevant_files from the BLOCKED task}
+  - Do NOT touch: {paste do_not_touch from the original task}
+  - Minimum-change: fix the minimum lines necessary. Note lines-before/lines-after in result.
+
+  ## Reviewer Report — P0/P1 Issues Only
+  {paste ONLY the P0 and P1 sections from docs/reports/TASK-{id}-review.md — strip P2/P3}
 
   ## Task
   {paste the task from the plan}
 
-  ## Skills (use during bug fixing)
+  ## Skills
   - `Skill(skill: "superpowers:test-driven-development")` — reproduction test FIRST, then minimal fix
   - `Skill(skill: "superpowers:systematic-debugging")` — if root cause unclear after reproduction test
 
@@ -180,6 +186,7 @@ Agent(
 
   ## Output
   Write your result to docs/reports/TASK-{id}-bugfix-result.md
+  Include "Lines changed: N before → M after" in the Build Status section.
   """
 )
 ```
