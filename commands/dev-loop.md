@@ -222,6 +222,21 @@ Read the approved plan from Step 2. For each task in the plan, determine routing
 | UI component (`has_ui: true`) | UI/UX Designer → Engineer |
 | Refactor / cleanup | Engineer directly |
 
+**Task Size → Pipeline Variant:**
+
+Every task in the plan has a `size` field. Use it to select the pipeline variant before dispatching:
+
+| Size | Pipeline | Skipped Steps |
+|------|----------|---------------|
+| `micro` | Engineer → quick review | No researcher. Reviewer `depth: quick`. Skip reflect (`echo "micro task" > docs/reports/.reflect-skipped`). Skip delivery report. |
+| `standard` | Full pipeline | Nothing skipped. |
+| `complex` | Researcher → Differential Reviewer → Engineer → deep review → reflect | Nothing skipped. Reviewer `depth: deep`. |
+
+**Applying size:**
+- Read each task's `size` field before dispatch. If absent, treat as `standard`.
+- `micro` quick-review: set `depth: quick` in the reviewer prompt.
+- `complex`: always run Research Convergence Protocol (template #7) regardless of routing table.
+
 **Novel task criteria** (if ANY apply, route to Researcher):
 1. No existing implementation of this pattern in the codebase
 2. Algorithm/approach not yet used in this project
