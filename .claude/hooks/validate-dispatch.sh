@@ -55,6 +55,22 @@ if [ "$SUBAGENT_TYPE" = "mas:orchestrator:orchestrator" ]; then
   exit 2
 fi
 
+# Block general agent — use Explore (haiku) for discovery or a MAS specialist instead
+if [ "$SUBAGENT_TYPE" = "general" ]; then
+  _debug "BLOCKED general agent"
+  cat <<'BLOCKED_MSG'
+BLOCKED: 'general' is not a valid dispatch in the MAS pipeline.
+
+Use a specific agent instead:
+  Discovery / codebase search:  Agent(subagent_type: "Explore")
+  Implementation:                Agent(subagent_type: "mas:engineer:engineer")
+  Code review:                   Agent(subagent_type: "mas:reviewer:reviewer")
+  Research:                      Agent(subagent_type: "mas:researcher:researcher")
+  Bug fix:                       Agent(subagent_type: "mas:bug-fixer:bug-fixer")
+BLOCKED_MSG
+  exit 2
+fi
+
 # Block standard/deep reviewer on Haiku — those depths require judgment
 if [ "$SUBAGENT_TYPE" = "mas:reviewer:reviewer" ] && echo "$MODEL" | grep -qi "haiku"; then
   # Extract depth from prompt field to allow quick+haiku
