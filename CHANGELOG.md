@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.20.0] — 2026-04-18
+
+### Researcher + Differential-Reviewer Hardening + Lint Fixes
+
+- **researcher: underspecified bailout** — If the task spec has no success criteria, constraints, or scope, the Researcher stops immediately and raises a blocker instead of producing a low-confidence proposal.
+- **researcher: source quality hierarchy** — Proposals now rank sources: RFCs/specs > academic papers > official repos > engineering blogs > general blog posts. Sources predating 2023 are flagged with a staleness warning.
+- **researcher: Confidence field in proposal template** — Each proposal now includes `Confidence: HIGH/MEDIUM/LOW` with rationale. LOW confidence blocks the Differential Reviewer from issuing PROCEED.
+- **researcher: Open Questions section** — Proposals include an Open Questions section after References. Non-empty section blocks Differential Reviewer from issuing PROCEED.
+- **differential-reviewer: confidence gate** — PROCEED verdict blocked when researcher proposal carries LOW confidence.
+- **differential-reviewer: open questions gate** — PROCEED verdict blocked when researcher proposal has unresolved open questions.
+- **dev-loop: novel routing pre-screen** — Added criteria check before routing to Researcher to reduce unnecessary dispatches on tasks that clearly use known patterns.
+- **tests/lint.sh: false-positive fixes** — Three lint checks updated: unprefixed-dispatch check now ignores echo/BAD-example lines; placeholder check now excludes `language-stack-*.md` (intentional bootstrap templates); orchestrator check now matches dispatch patterns only, not prose role descriptions. Line budgets updated for dev-loop (500) and bootstrap (720) to reflect intentional growth.
+
 ## [2.19.0] — 2026-04-17
 
 ### Reviewer Optimizations — Diff Classification + Conditional Skill Gates
