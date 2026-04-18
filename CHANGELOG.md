@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.21.0] — 2026-04-18
+
+### Task Sizing + Precise Spec + Bug-Fixer Scope Constraints
+
+- **task-spec: `size` field** — Tasks now carry `size: micro | standard | complex` with inline routing annotations for each level (micro skips researcher + reflect + delivery report, complex forces researcher + deep review).
+- **task-spec: `success_test` field** — Exact test command + specific assertion that proves the task is done. Replaces vague acceptance criteria.
+- **task-spec: `contract` field** — Exact function/API signature with return type and raised errors. Gives engineer and reviewer a shared definition of done.
+- **task-spec: line-ranged `relevant_files`** — Required format is now `file:start-end` (e.g., `src/auth.ts:45-80`), not bare file names.
+- **dev-loop: size-based pipeline routing** — New `Task Size → Pipeline Variant` table after the routing table. micro → quick review + skip reflect/delivery report. standard → full pipeline. complex → Researcher → Differential Reviewer → Engineer → deep review + reflect.
+- **bug-fixer: P0/P1-only scope** — Bug-fixer receives only P0/P1 issues from the review report; P2/P3 explicitly excluded.
+- **bug-fixer: file allowlist** — Bug-fixer may only touch files listed in the dispatch's `allowed_files`. Everything else is `do_not_touch`.
+- **bug-fixer: minimum-change constraint** — Must fix minimum lines necessary and document "lines changed: N before → M after" in result.
+- **bug-fixer: 5-read Analysis Paralysis Guard** — After 5 Read/Grep/Glob calls without writing, stop reading and make the fix or document a specific blocker.
+- **validate-dispatch: block `general` agent** — `general` now exits 2 with alternatives: Explore for discovery, MAS specialist for implementation/review/research/bugfix.
+
 ## [2.20.0] — 2026-04-18
 
 ### Researcher + Differential-Reviewer Hardening + Lint Fixes
