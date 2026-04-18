@@ -67,6 +67,14 @@ Run through each of these checks. Do NOT skip any.
 - If Researcher presented alternatives, evaluate trade-offs
 - If not, consider: "Is there a simpler approach with less risk?"
 
+**f. Confidence Gate**
+- Read the `## Confidence` field from the proposal.
+- If `LOW` → issue REVISE or ESCALATE. Do NOT issue PROCEED on a LOW-confidence proposal.
+
+**g. Open Questions Gate**
+- Read the `## Open Questions` section from the proposal.
+- If any items are listed (i.e., it is non-empty / does not say "None") → you MUST address every item before issuing PROCEED. Unresolved open questions block PROCEED.
+
 ### Step 3 — Issue Verdict
 
 | Verdict | When | Effect |
