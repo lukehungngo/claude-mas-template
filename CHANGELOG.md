@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.22.0] — 2026-04-19
+
+### New Command: `/mas:loop` — Lean 3-Phase Pipeline
+
+Addresses over-engineering in `dev-loop` by providing a lighter-weight alternative command. Same agent quality, 60% less orchestration overhead.
+
+- **`commands/loop.md`** — New lean pipeline: Branch+Plan → Implement+Review (batched) → Finish. No research convergence by default, no mandatory reflect phase, no size-based routing, no cross-task review, no delivery report.
+- **Reflect folded into reviewer** — Reviewer prompt includes a `## Requirement Coverage Check` section that checks requirement coverage inline. Eliminates the separate reflect-agent phase and its enforcement machinery.
+- **Research opt-in** — Researcher and differential-reviewer are available but not dispatched by default. Only use when there is a genuine unknown (specific API, library selection, architectural decision).
+- **Simpler task specs** — Plan format: description + goal + relevant_files (bare paths) + acceptance criteria. No `success_test`, `contract`, or line-ranged files.
+- **`dev-loop` unchanged** — Kept for complex work that genuinely needs the full pipeline (research convergence, reflect agent, design phase, delivery report).
+
 ## [2.21.2] — 2026-04-19
 
 ### Reflect Report Named by Spec
