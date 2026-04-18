@@ -1,6 +1,6 @@
 #!/bin/bash
 # Stop hook: Validate that the MAS pipeline actually ran
-# Triggered on: Every session stop (non-blocking, informational)
+# Triggered on: Every session stop (exit 2 = blocking when reflect is missing)
 #
 # Checks for the presence of pipeline artifacts:
 # - docs/results/TASK-*-result.md   (engineer agents dispatched)
@@ -40,10 +40,6 @@ if [ "$RESULTS" != "$REVIEWS" ] && [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" 
   WARNINGS="${WARNINGS}\n  ⚠ Result/review count mismatch: ${RESULTS} results vs ${REVIEWS} reviews"
 fi
 
-if [ "$REFLECT" = "0" ]; then
-  WARNINGS="${WARNINGS}\n  ⚠ No reflect report found (docs/reports/reflect-report.md)"
-fi
-
 if [ "$SELF_REVIEWS" = "0" ] && [ "$RESULTS" != "0" ]; then
   WARNINGS="${WARNINGS}\n  ⚠ No self-review files found (docs/results/TASK-*-self-review.md)"
 fi
@@ -60,16 +56,17 @@ EOF
   fi
 fi
 
-# Warn (non-blocking) when a full pipeline ran but reflect was skipped.
-# exit 2 caused an infinite loop: hook blocks → Claude responds → session tries to stop → hook blocks again.
-# Non-zero exit is reserved for fatal hook errors only, not pipeline warnings.
+# Block session end when a full pipeline ran but reflect was not dispatched.
+# exit 2 = Claude receives systemMessage and must act before stopping.
+# Loop prevention: once reflect-report.md exists, hook exits 0 on next stop.
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation WARNING:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING\n\n  A full pipeline ran but the reflect agent was not dispatched.\n  Dispatch reflect before ending: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)"}
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}, Review reports: ${REVIEWS}, Reflect: MISSING\n\n  Dispatch the reflect agent NOW (foreground, not background):\n  Agent(subagent_type: 'mas:reflect-agent:reflect-agent', prompt: '...', isolation: 'worktree')\n\n  To skip reflect, write a reason to docs/reports/.reflect-skipped"}
 EOF
+  exit 2
 fi
 
-# Warn only (non-blocking) for partial pipeline issues
+# Warn only (non-blocking) for other partial pipeline issues
 if [ -n "$WARNINGS" ]; then
   cat <<EOF
 {"systemMessage": "Pipeline Validation:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Self-reviews: ${SELF_REVIEWS}\n  Reflect report: ${REFLECT}\n${WARNINGS}"}

@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.21.1] — 2026-04-18
+
+### Fix: Reflect Step Enforcement
+
+- **validate-pipeline.sh: re-enable `exit 2` blocking** — hook now blocks session end when results + reviews exist but reflect report is missing; non-blocking WARNING was not being enforced in practice (failed in 5/5 sessions).
+- **validate-pipeline.sh: fix double output bug** — reflect-missing case was emitting two JSON messages (the specific WARNING block AND the generic WARNINGS accumulator); resolved by removing reflect from WARNINGS and exiting immediately on the blocking path.
+- **validate-pipeline.sh: clarify message** — blocking message now explicitly says "foreground, not background" to prevent dispatching reflect with `run_in_background: true` and the session ending before the file is written.
+
 ## [2.21.0] — 2026-04-18
 
 ### Task Sizing + Precise Spec + Bug-Fixer Scope Constraints
