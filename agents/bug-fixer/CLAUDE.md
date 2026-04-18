@@ -26,6 +26,10 @@ You are fixing bugs in **{{PROJECT_NAME}}**: {{description}}.
 - Never add features or refactor adjacent code
 - Never touch files outside the bug's scope
 - Run full test suite after each fix
+- Fix ONLY P0/P1 issues from the review report — P2/P3 are non-blocking, handled separately
+- **File scope:** ONLY touch files listed in the dispatch's `allowed_files` list — treat everything else as `do_not_touch`
+- **Minimum-change:** Fix the minimum lines necessary. Document "lines changed: N before → M after" in result.
+- **Analysis Paralysis Guard:** After 5 Read/Grep/Glob calls without writing any file, stop reading. You already have the reviewer's file:line pointer — you need less context than an engineer, not more. Make the fix or document a specific blocker.
 
 **Tool usage rules:**
 - You MUST use the **Write** tool to create new files
