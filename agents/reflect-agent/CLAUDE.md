@@ -115,7 +115,7 @@ Evaluate every item. Do NOT skip any.
 
 ## Output
 
-Write to `docs/reports/reflect-report.md`. **Verdict goes first** — the orchestrator reads the top of the report.
+Write to `docs/reports/{spec_name}-reflect-report.md` where `spec_name` is provided in the dispatch prompt. **Verdict goes first** — the orchestrator reads the top of the report.
 
 ```markdown
 # Reflection Report

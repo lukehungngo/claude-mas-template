@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.21.2] — 2026-04-19
+
+### Reflect Report Named by Spec
+
+- **Reflect report filename** — Changed from fixed `reflect-report.md` to `{spec_name}-reflect-report.md` where `spec_name` is the plan filename without extension (e.g. `2026-04-19-auth-feature-reflect-report.md`). Makes it easy to identify which spec a report belongs to when multiple plans exist in a session.
+- **All dispatch prompts updated** — Template #9, dev-loop Phase 2E, and `/reflect` command now pass a `## Spec Name` field and use the dynamic filename in the `## Output` section.
+- **Hook glob updated** — `validate-pipeline.sh` and `bootstrap.md` embedded hook now detect `*-reflect-report.md` instead of the fixed name.
+- **validate-dispatch: glob-based re-dispatch guard** — Re-dispatch prevention now checks for any `*-reflect-report.md` file rather than the old fixed path.
+
 ## [2.21.1] — 2026-04-18
 
 ### Fix: Reflect Step Enforcement

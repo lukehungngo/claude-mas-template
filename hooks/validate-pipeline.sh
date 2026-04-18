@@ -5,7 +5,7 @@
 # Checks for the presence of pipeline artifacts:
 # - docs/results/TASK-*-result.md   (engineer agents dispatched)
 # - docs/reports/TASK-*-review.md   (reviewer agents dispatched)
-# - docs/reports/reflect-report.md  (reflect agent ran)
+# - docs/reports/*-reflect-report.md  (reflect agent ran)
 #
 # If a plan exists but results/reviews don't, the pipeline was bypassed.
 # This is the structural enforcement that dev-loop checkpoint assertions
@@ -23,7 +23,7 @@ if [ "$RESULTS" = "0" ] && [ "$REVIEWS" = "0" ]; then
   exit 0
 fi
 
-REFLECT=$( (ls docs/reports/reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
+REFLECT=$( (ls docs/reports/*-reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
 SELF_REVIEWS=$( (ls docs/results/TASK-*-self-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
 
 WARNINGS=""
@@ -58,7 +58,7 @@ fi
 
 # Block session end when a full pipeline ran but reflect was not dispatched.
 # exit 2 = Claude receives systemMessage and must act before stopping.
-# Loop prevention: once reflect-report.md exists, hook exits 0 on next stop.
+# Loop prevention: once *-reflect-report.md exists, hook exits 0 on next stop.
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
 {"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}, Review reports: ${REVIEWS}, Reflect: MISSING\n\n  Dispatch the reflect agent NOW (foreground, not background):\n  Agent(subagent_type: 'mas:reflect-agent:reflect-agent', prompt: '...', isolation: 'worktree')\n\n  To skip reflect, write a reason to docs/reports/.reflect-skipped"}

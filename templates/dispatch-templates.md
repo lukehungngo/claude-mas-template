@@ -18,7 +18,7 @@ All agent outputs follow a structured directory layout. When dispatching an agen
 |-----------|---------------|------------|---------|
 | `docs/design/` | UI/UX design specs (`TASK-{id}-design.md`), HTML mockups | UI/UX Designer | Engineer (implements against spec) |
 | `docs/plans/` | Research proposals (`TASK-{id}-research-r{round}.md`) | Researcher | Differential Reviewer, Engineer |
-| `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports, `reflect-report.md` | Reviewer, Differential Reviewer, Bug-Fixer, Reflect Agent | Dev-loop (Phase 3), Bug-Fixer, Engineer |
+| `docs/reports/` | Review reports, differential reviews, bugfix results, requirements validation reports, `{spec_name}-reflect-report.md` | Reviewer, Differential Reviewer, Bug-Fixer, Reflect Agent | Dev-loop (Phase 3), Bug-Fixer, Engineer |
 | `docs/results/` | Implementation results (`TASK-{id}-result.md`), self-reviews (`TASK-{id}-self-review.md`) | Engineer | Reviewer, Dev-loop |
 | `docs/superpowers/plans/` | Implementation plans | superpowers:writing-plans | All agents |
 | `docs/superpowers/reports/` | Delivery reports | Dev-loop, Bug-fix | Dev-loop |
@@ -434,8 +434,11 @@ Agent(
   ## Working Directory
   {worktree path}
 
+  ## Spec Name
+  {plan filename without extension, e.g. 2026-04-19-auth-feature}
+
   ## Output
-  Write your report to docs/reports/reflect-report.md
+  Write your report to docs/reports/{spec_name}-reflect-report.md
   Issue verdict: PROCEED / REVISE / REJECT / ESCALATE
   """
 )

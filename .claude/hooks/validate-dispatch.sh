@@ -93,14 +93,16 @@ EOF
   fi
 fi
 
-# Block reflect re-dispatch if report already exists
-REFLECT_REPORT="${CLAUDE_PROJECT_DIR}/docs/reports/reflect-report.md"
-if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ] && [ -f "$REFLECT_REPORT" ]; then
-  _debug "BLOCKED reflect re-dispatch (report exists)"
-  echo "BLOCKED: Reflect agent already ran (docs/reports/reflect-report.md exists)."
-  echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
-  echo "To re-run reflect, delete docs/reports/reflect-report.md first."
-  exit 2
+# Block reflect re-dispatch if any reflect report already exists
+if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ]; then
+  EXISTING_REFLECT=$(ls "${CLAUDE_PROJECT_DIR}/docs/reports/"*-reflect-report.md 2>/dev/null | head -1)
+  if [ -n "$EXISTING_REFLECT" ]; then
+    _debug "BLOCKED reflect re-dispatch (report exists: $EXISTING_REFLECT)"
+    echo "BLOCKED: Reflect agent already ran ($(basename "$EXISTING_REFLECT") exists)."
+    echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
+    echo "To re-run reflect, delete the existing reflect report first."
+    exit 2
+  fi
 fi
 
 _debug "ALLOWED: ${SUBAGENT_TYPE}"

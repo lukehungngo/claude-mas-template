@@ -68,8 +68,11 @@ Agent(
   ## Working Directory
   {current directory or worktree path}
 
+  ## Spec Name
+  {plan filename without extension, or a short slug derived from the argument/branch name}
+
   ## Output
-  Write your report to docs/reports/reflect-report.md
+  Write your report to docs/reports/{spec_name}-reflect-report.md
   Issue verdict: PROCEED / REVISE / REJECT / ESCALATE
   """
 )
@@ -77,7 +80,7 @@ Agent(
 
 ## Step 4 — Present Results
 
-Read `docs/reports/reflect-report.md` and present to the user.
+Read `docs/reports/{spec_name}-reflect-report.md` and present to the user.
 
 | Verdict | Action |
 |---------|--------|

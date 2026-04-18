@@ -330,8 +330,11 @@ Agent(
   ## Working Directory
   {worktree path}
 
+  ## Spec Name
+  {plan filename without extension, e.g. 2026-04-19-auth-feature}
+
   ## Output
-  Write your report to docs/reports/reflect-report.md
+  Write your report to docs/reports/{spec_name}-reflect-report.md
   Issue verdict: PROCEED / REVISE / REJECT / ESCALATE
   """
 )
@@ -343,7 +346,7 @@ Agent(
 > ```
 > The `validate-pipeline.sh` Stop hook will accept this and exit 0 instead of blocking.
 
-Read the verdict from `docs/reports/reflect-report.md`. Handle as follows:
+Read the verdict from `docs/reports/{spec_name}-reflect-report.md`. Handle as follows:
 
 - **PROCEED** → continue to Step 5.
 - **REVISE** → extract remediation tasks from the reflect report's identified gaps. Loop back to Phase 2A to implement them. **Max 1 remediation cycle** — if the second reflect verdict is still REVISE, escalate to human.
@@ -432,7 +435,7 @@ The report must contain:
 - [ ] **Plan exists?** — Check `docs/superpowers/plans/` for the plan file.
 - [ ] **Engineers dispatched?** — Confirm Agent() calls with `mas:engineer:engineer` in this session.
 - [ ] **Reviewers dispatched?** — Confirm Agent() calls with `mas:reviewer:reviewer` in this session.
-- [ ] **Reflect dispatched?** — `docs/reports/reflect-report.md` exists (or `.reflect-skipped` with reason).
+- [ ] **Reflect dispatched?** — `docs/reports/{spec_name}-reflect-report.md` exists (or `.reflect-skipped` with reason).
 - [ ] **Delivery report exists?** — Check `docs/superpowers/reports/` for the delivery report.
 - [ ] **Verification report exists?** — `docs/reports/verification-{branch}.md` exists.
 

@@ -393,14 +393,16 @@ EOF
   fi
 fi
 
-# Block reflect re-dispatch if report already exists
-REFLECT_REPORT="${CLAUDE_PROJECT_DIR}/docs/reports/reflect-report.md"
-if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ] && [ -f "$REFLECT_REPORT" ]; then
-  _debug "BLOCKED reflect re-dispatch (report exists)"
-  echo "BLOCKED: Reflect agent already ran (docs/reports/reflect-report.md exists)."
-  echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
-  echo "To re-run reflect, delete docs/reports/reflect-report.md first."
-  exit 2
+# Block reflect re-dispatch if any reflect report already exists
+if [ "$SUBAGENT_TYPE" = "mas:reflect-agent:reflect-agent" ]; then
+  EXISTING_REFLECT=$(ls "${CLAUDE_PROJECT_DIR}/docs/reports/"*-reflect-report.md 2>/dev/null | head -1)
+  if [ -n "$EXISTING_REFLECT" ]; then
+    _debug "BLOCKED reflect re-dispatch (report exists: $EXISTING_REFLECT)"
+    echo "BLOCKED: Reflect agent already ran ($(basename "$EXISTING_REFLECT") exists)."
+    echo "Dispatch-exactly-once constraint: reflect runs exactly once per dev-loop session."
+    echo "To re-run reflect, delete the existing reflect report first."
+    exit 2
+  fi
 fi
 
 _debug "ALLOWED: ${SUBAGENT_TYPE}"
@@ -530,7 +532,7 @@ Write `validate-pipeline.sh` to validate the MAS pipeline ran at session end:
 # Checks for the presence of pipeline artifacts:
 # - docs/results/TASK-*-result.md   (engineer agents dispatched)
 # - docs/reports/TASK-*-review.md   (reviewer agents dispatched)
-# - docs/reports/reflect-report.md  (reflect agent ran)
+# - docs/reports/*-reflect-report.md  (reflect agent ran)
 #
 # If a plan exists but results/reviews don't, the pipeline was bypassed.
 # This is the structural enforcement that dev-loop checkpoint assertions
@@ -548,7 +550,7 @@ if [ "$RESULTS" = "0" ] && [ "$REVIEWS" = "0" ]; then
   exit 0
 fi
 
-REFLECT=$( (ls docs/reports/reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
+REFLECT=$( (ls docs/reports/*-reflect-report.md 2>/dev/null || true) | wc -l | tr -d ' ')
 SELF_REVIEWS=$( (ls docs/results/TASK-*-self-review.md 2>/dev/null || true) | wc -l | tr -d ' ')
 
 WARNINGS=""
@@ -566,7 +568,7 @@ if [ "$RESULTS" != "$REVIEWS" ] && [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" 
 fi
 
 if [ "$REFLECT" = "0" ]; then
-  WARNINGS="${WARNINGS}\n  ⚠ No reflect report found (docs/reports/reflect-report.md)"
+  WARNINGS="${WARNINGS}\n  ⚠ No reflect report found (docs/reports/*-reflect-report.md)"
 fi
 
 if [ "$SELF_REVIEWS" = "0" ] && [ "$RESULTS" != "0" ]; then
@@ -589,7 +591,7 @@ fi
 # Condition: plan + results + reviews all present, but NO reflect report
 if [ "$RESULTS" != "0" ] && [ "$REVIEWS" != "0" ] && [ "$REFLECT" = "0" ]; then
   cat <<EOF
-{"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/reflect-report.md before ending this session."}
+{"systemMessage": "Pipeline Validation BLOCKED:\n  Engineer results: ${RESULTS}\n  Review reports: ${REVIEWS}\n  Reflect report: MISSING ← REQUIRED\n\n  A full pipeline ran (results + reviews present) but the reflect agent was never dispatched.\n  Run: Agent(subagent_type: 'mas:reflect-agent:reflect-agent', ...)\n  Then save the verdict to docs/reports/{spec_name}-reflect-report.md before ending this session."}
 EOF
   exit 2
 fi
