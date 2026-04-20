@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.24.0] — 2026-04-20
+
+### Fix: Remove `{{test-command}}` from reviewer entirely
+
+The real fix for the parallel-reviewer vitest OOM. The previous coordination approach (pre-run + pass results) was too fragile. The reviewer should never run tests — the engineer already runs them during TDD, and the verification skill runs them at the end. Removing it is structurally correct and requires no orchestrator coordination.
+
+- **`agents/reviewer/CLAUDE.md`** — Phase B item 1 now runs `{{lint-command}}` + `{{typecheck-command}}` only. `{{test-command}}` removed entirely.
+- **`templates/dispatch-templates.md`** — Removed the `## Build Results` field from templates #4 and #8 (no longer needed).
+- **`commands/dev-loop.md`** — Removed the build pre-run step from Phase 2C (no longer needed).
+
 ## [2.23.0] — 2026-04-20
 
 ### Fix: Reviewer OOM — run build once before batch reviewer dispatch
