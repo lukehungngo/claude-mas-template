@@ -147,6 +147,11 @@ Agent(
   - **Intent duplication:** Multiple implementations of the same problem? Consolidate.
   - **Knowledge duplication:** Business rules, constants, config hardcoded in multiple locations? Single source of truth.
 
+  ## Build Results (pre-run by dev-loop — do NOT re-run)
+  - Lint: {PASS | FAIL}
+  - Typecheck: {PASS | FAIL | N/A}
+  - Tests: {PASS (N total) | FAIL — paste first failing line}
+
   ## Working Directory
   {worktree path}
 
@@ -349,6 +354,11 @@ Agent(
   - **Code duplication:** Same logic in multiple places? Extract shared utility.
   - **Intent duplication:** Multiple implementations of the same problem? Consolidate.
   - **Knowledge duplication:** Business rules, constants, config hardcoded in multiple locations? Single source of truth.
+
+  ## Build Results (pre-run by dev-loop — do NOT re-run)
+  - Lint: {PASS | FAIL}
+  - Typecheck: {PASS | FAIL | N/A}
+  - Tests: {PASS (N total) | FAIL — paste first failing line}
 
   ## Working Directory
   {worktree path}

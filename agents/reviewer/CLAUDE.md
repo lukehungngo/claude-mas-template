@@ -92,7 +92,7 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 ### Phase B — Technical Audit
 
-1. **Build check:** Run `{{lint-command}}` + `{{typecheck-command}}` + `{{test-command}}`
+1. **Build check:** If a `## Build Results` section is present in this prompt, use those results — **do NOT re-run** `{{lint-command}}`, `{{typecheck-command}}`, or `{{test-command}}`. Re-running wastes RAM (parallel reviewers each spawning vitest = OOM) and produces no new information. If `## Build Results` is absent, run `{{lint-command}}` + `{{typecheck-command}}` + `{{test-command}}` and record the results yourself.
 
    - **Language diagnostics:** If `.claude/rules/language-stack.md` exists, read it and run ALL commands listed under "Mandatory Diagnostic Commands". A review cannot be APPROVED if any diagnostic command fails — this is a P0 regardless of other findings.
    - **Language-specific anti-pattern checks:** If `.claude/rules/language-stack.md` exists, apply the checks listed under "Reviewer Rules — Language-Specific Checks". Add any findings to the appropriate P0/P1/P2 section of the report.
