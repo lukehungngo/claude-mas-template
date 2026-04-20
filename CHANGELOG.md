@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.23.0] — 2026-04-20
+
+### Fix: Reviewer OOM — run build once before batch reviewer dispatch
+
+Parallel reviewers each spawned an independent vitest process, causing RAM exhaustion.
+
+- **`agents/reviewer/CLAUDE.md`** — Phase B item 1 now skips `{{test-command}}` when a `## Build Results` section is present in the prompt. Falls back to running if absent, preserving correctness for standalone invocations.
+- **`templates/dispatch-templates.md`** — Added `## Build Results (pre-run by dev-loop — do NOT re-run)` field to reviewer templates #4 (individual) and #8 (batch). Dev-loop fills this in before dispatch.
+- **`commands/dev-loop.md`** — Phase 2C now opens with a build pre-run step: run lint + typecheck + tests once, capture result, pass into every reviewer prompt. If build fails → route to Bug-Fixer before dispatching any reviewers.
+
 ## [2.22.0] — 2026-04-19
 
 ### New Command: `/mas:loop` — Lean 3-Phase Pipeline
