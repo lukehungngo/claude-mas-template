@@ -284,11 +284,6 @@ Wait for all engineers in the current batch to finish. Read each result file at 
 
 ##### Phase 2C — Batch Reviewer Dispatch
 
-**Build pre-run (run once — do NOT skip):** Before dispatching any reviewer, run the build suite once and capture the result. Run `{{lint-command}}` + `{{typecheck-command}}` + `{{test-command}}` and record: Lint (PASS/FAIL), Typecheck (PASS/FAIL or N/A), Tests (PASS N total / FAIL + first failing line).
-
-- **If any command fails → do NOT dispatch reviewers.** Route the failing task(s) to Bug-Fixer (template #5) first. Fix the build before reviewing.
-- **If all pass → fill in `## Build Results` in every reviewer prompt** (templates #4 and #8). Reviewers will skip re-running the suite.
-
 Split completed tasks into groups of TASKS_PER_REVIEWER. Dispatch 1 reviewer per group. Each reviewer receives the tasks from the plan AND engineer results for its group. Dispatch up to MAX_PARALLEL reviewers concurrently.
 
 Track `review_cycle` per task, starting at 0.
