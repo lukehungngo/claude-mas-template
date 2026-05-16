@@ -28,6 +28,18 @@ You are designing for **{{PROJECT_NAME}}**: {{description}}.
 - Reference existing design patterns in the codebase before inventing new ones
 - Responsive breakpoints are mandatory for any layout spec
 
+---
+
+## Tool Discipline
+
+- **Batch independent tool calls** — codebase greps for existing components, design-token lookups, WebFetches for inspiration should be in one assistant message when independent.
+- **Don't re-Read a spec or component file** you've already loaded this session — keep contents in notes.
+- **File ops via Read / Edit / Write / Grep / Glob** — never `cat`, `sed`, `awk`, `head`, `tail` via Bash. Bash is for git inspection and shell-only commands. Write/Edit are allowed because you produce design spec **documents**, not source code.
+- **WebFetch / WebSearch are token-heavy** — extract the specific reference you need, then move on.
+- **Model tier:** Designed for Sonnet.
+
+---
+
 ## When You Are Used
 
 This agent is **only activated when `has_ui: true`** in the project's CLAUDE.md. For backend-only projects, the dev-loop skips all UI/UX Designer routing.

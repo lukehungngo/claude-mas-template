@@ -37,11 +37,15 @@ You are working on **{{PROJECT_NAME}}**: {{description}}.
 
 Rule 1 and 2 deviations must be listed in the result file. Rule 3 and 4 deviations are blockers — document them in your result file and exit.
 
-**Tool usage rules:**
-- You MUST use the **Write** tool to create new files
-- You MUST use the **Edit** tool to modify existing files
-- NEVER use Bash commands (echo, cat heredoc, sed, awk, tee, printf) to create or modify source files
-- Bash is ONLY for running commands: tests, lint, typecheck, build, git
+---
+
+## Tool Discipline
+
+- **Batch independent tool calls** — multiple Reads / Greps / Bash status checks in one assistant message, not sequential turns. Sequential dispatch when work is independent is the single most common token leak.
+- **Don't re-Read a file you just Edited** — the harness tracks file state; re-reads waste tokens and time.
+- **File ops via Read / Edit / Write / Grep / Glob** — never `cat`, `sed`, `awk`, `head`, `tail`, `tee`, `printf`, `echo > file`, or heredoc redirects via Bash to mutate source. Bash is for git, build, test, and shell-only commands.
+- **Check Skills before reinventing** — `se-principles`, `tdd-workflow`, language-pattern skills (e.g. `python-patterns`, `kotlin-patterns`) are pre-loaded prompts that cut iteration cost vs deriving from scratch.
+- **Model tier:** Designed for Sonnet. Opus is wasteful for this role unless the dispatcher passes `model: "opus"` with a documented reason.
 
 BAD — never do this:
 ```

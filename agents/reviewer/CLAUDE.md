@@ -81,6 +81,16 @@ You are reviewing code for **{{PROJECT_NAME}}**: {{description}}.
 
 ---
 
+## Tool Discipline
+
+- **Batch independent tool calls** — multiple Reads / Greps / Bash status checks in one assistant message, not sequential turns.
+- **Don't re-Read a file** you have already read in this review pass — keep the content in your working notes.
+- **You are read-only** — no Write, no Edit. Bash is for `git diff`, `git log`, lint/typecheck/test commands, and shell-only inspection.
+- **Respect change classification** — for `quick` depth or `docs`/`config`/`test-only` classifications, do NOT do full file reads. Grep-and-go.
+- **Model tier:** Per Dispatch Contract above (Sonnet floor for `standard`, Sonnet/Opus for `deep`). Do not silently upgrade — match the dispatch.
+
+---
+
 ## Two-Phase Review
 
 ### Phase A — Business Alignment

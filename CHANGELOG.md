@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.26.0] — 2026-05-16
+
+### Agent Efficiency: Tool Discipline on all agents, orchestrator archived
+
+Companion to v2.25.0. The previous release fixed the dispatcher (`/mas:loop`); this release fixes the agents themselves so the discipline holds regardless of which command dispatched them. Driven by the same 30-day session audit (0% parallel tool use, 43% redundant reads, 57% Bash share, Opus-by-default cost leak).
+
+- **`agents/engineer/CLAUDE.md`** — Replaced legacy "Tool usage rules" subsection with a top-level `## Tool Discipline` section covering: batch independent tool calls, no re-Reads after Edit, file ops via Read/Edit/Write/Grep/Glob (not cat/sed/awk/heredoc), check Skills before reinventing, Sonnet model tier.
+- **`agents/bug-fixer/CLAUDE.md`** — Same `## Tool Discipline` block (full variant).
+- **`agents/researcher/CLAUDE.md`** — `## Tool Discipline` block + explicit Write boundary (allow-list: `docs/plans/`, `docs/research/`, scratch under `docs/`) + model tier note (Sonnet default, Opus optional for novel synthesis).
+- **`agents/reviewer/CLAUDE.md`** — `## Tool Discipline` block (read-only variant). Existing Dispatch Contract `model floor` continues to govern model choice.
+- **`agents/reflect-agent/CLAUDE.md`** — `## Tool Discipline` block (read-only variant). Honors existing Token Budget rule.
+- **`agents/differential-reviewer/CLAUDE.md`** — `## Tool Discipline` block (read-only variant).
+- **`agents/ui-ux-designer/CLAUDE.md`** — `## Tool Discipline` block (Write/Edit retained for spec docs).
+- **`agents/orchestrator/` → `docs/archive/agents/orchestrator/`** — Orchestrator was DEPRECATED since v2.0 (replaced by flat dispatch from `dev-loop.md` and `loop.md`). Moved out of the active `agents/` directory so it no longer occupies plugin attention. Dispatch-guard hook continues to block invocations.
+- **`docs/archive/agents/README.md`** (new) — Explains the archive convention and re-activation steps.
+- **`docs/superpowers/plans/2026-05-16-agent-efficiency-optimization.md`** (new) — Implementation plan for this release.
+
+## [2.25.0] — 2026-05-16
+
+### Cost & Efficiency: Pin subagents to Sonnet, kill redundant reads, add cost gate
+
+Driven by a 30-day session audit: one autonomous-loop session burned $8,232 because every dispatched subagent inherited Opus. Engineers/reviewers don't need Opus reasoning — Sonnet is 5× cheaper at indistinguishable quality for these roles.
+
+- **`commands/loop.md`** — All subagent dispatches (engineer, reviewer, bug-fixer, researcher) now specify `model: "sonnet"`. Reviewer/bug-fixer never re-Read the engineer's result file: the orchestrator passes the engineer's returned summary directly into the reviewer prompt under `## Engineer Summary`. Result files remain on disk for audit trail.
+- **`commands/loop.md`** — Removed `isolation: "worktree"` from every subagent dispatch. Pipeline already creates the worktree in Phase 1a; nested isolation duplicates work for every task.
+- **`commands/loop.md`** — Added Phase 2c-bis "Cost / time gate": before each batch, verify wall-clock < 4h, cumulative Opus messages < 200, no task BLOCKED twice. STOP and ask the user if any condition fails. Prevents the multi-day unattended Opus runs observed in production.
+- **`commands/loop.md`** — Engineer/bug-fixer prompts now forbid `cat`/`sed`/`awk`/`head`/`tail` via Bash for file work — must use Read/Edit/Write/Grep/Glob. Aligns subagent behavior with global rules and cuts shell thrash.
+
 ## [2.24.0] — 2026-04-20
 
 ### Fix: Remove `{{test-command}}` from reviewer entirely

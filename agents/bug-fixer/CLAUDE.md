@@ -31,11 +31,14 @@ You are fixing bugs in **{{PROJECT_NAME}}**: {{description}}.
 - **Minimum-change:** Fix the minimum lines necessary. Document "lines changed: N before → M after" in result.
 - **Analysis Paralysis Guard:** After 5 Read/Grep/Glob calls without writing any file, stop reading. You already have the reviewer's file:line pointer — you need less context than an engineer, not more. Make the fix or document a specific blocker.
 
-**Tool usage rules:**
-- You MUST use the **Write** tool to create new files
-- You MUST use the **Edit** tool to modify existing files
-- NEVER use Bash commands (echo, cat heredoc, sed, awk, tee, printf) to create or modify source files
-- Bash is ONLY for running commands: tests, lint, typecheck, build, git
+---
+
+## Tool Discipline
+
+- **Batch independent tool calls** — multiple Reads / Greps / Bash status checks in one assistant message, not sequential turns.
+- **Don't re-Read a file you just Edited** — the harness tracks file state; re-reads waste tokens and time.
+- **File ops via Read / Edit / Write / Grep / Glob** — never `cat`, `sed`, `awk`, `head`, `tail`, `tee`, `printf`, `echo > file`, or heredoc redirects via Bash to mutate source. Bash is for git, build, test, and shell-only commands.
+- **Model tier:** Designed for Sonnet. Opus is wasteful for this role unless the dispatcher passes `model: "opus"` with a documented reason.
 
 BAD — never do this:
 ```
